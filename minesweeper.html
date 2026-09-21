@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#24390e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Minesweeper</title>
+<style>
+  /* ============ RESET & BASE ============ */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: #2a3f12;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+  body { display: flex; justify-content: center; }
+
+  /* ============ APP SHELL ============ */
+  .app {
+    position: relative; width: 100%; max-width: 540px;
+    height: 100vh; height: 100dvh;
+    display: flex; flex-direction: column;
+    background: #33501a; overflow: hidden;
+  }
+
+  /* ============ HEADER ============ */
+  .topbar {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 8px;
+    padding: 10px 14px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+    background: #24390e;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .35);
+    z-index: 15; flex: 0 0 auto;
+  }
+  .dropdown {
+    justify-self: start;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 13px; border: none; border-radius: 999px;
+    background: rgba(255, 255, 255, .12);
+    color: #eaf5d8; font-size: 15px; font-weight: 700;
+    letter-spacing: .2px; cursor: pointer; transition: background .15s;
+  }
+  .dropdown:active { background: rgba(255, 255, 255, .22); }
+  .dropdown .chev { transition: transform .2s; }
+  .dropdown.open .chev { transform: rotate(180deg); }
+
+  .stats { justify-self: center; display: flex; align-items: center; gap: 18px; }
+  .stat {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #ffffff; font-size: 15px; font-weight: 800;
+    font-variant-numeric: tabular-nums; letter-spacing: .5px;
+  }
+  .stat .ico { width: 19px; height: 19px; display: block; }
+
+  .sound {
+    justify-self: end;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; padding: 0; border: none; border-radius: 50%;
+    background: rgba(255, 255, 255, .10); cursor: pointer;
+    transition: background .15s;
+  }
+  .sound:active { background: rgba(255, 255, 255, .22); }
+  .sound svg { width: 21px; height: 21px; display: block; }
+  .sound .slash { display: none; }
+  .sound.muted .waves { display: none; }
+  .sound.muted .slash { display: block; }
+
+  /* ============ DROPDOWN MENU (header) ============ */
+  .menu {
+    position: absolute;
+    top: calc(58px + env(safe-area-inset-top));
+    left: 14px; z-index: 50;
+    min-width: 170px; padding: 6px; border-radius: 14px;
+    background: #1a2b09;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, .5);
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity .18s, transform .18s, visibility .18s;
+  }
+  .menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+  .menu button {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 11px 14px; border: none; border-radius: 9px;
+    background: none; color: #e8f5d0; font-size: 14px; font-weight: 700;
+    text-align: left; cursor: pointer;
+  }
+  .menu button small { font-weight: 600; font-size: 11px; opacity: .6; }
+  .menu button:active { background: rgba(255, 255, 255, .1); }
+  .menu button.active { background: rgba(163, 209, 72, .18); color: #c9e86a; }
+
+  /* ============ BOARD (CANVAS) ============ */
+  .board-wrap {
+    flex: 1 1 auto; min-height: 0;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    touch-action: none;
+  }
+  .board {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: grab;
+    background: #33501a;
+  }
+  .board:active { cursor: grabbing; }
+  .board.shake { animation: shake .4s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-4px, 2px); }
+    40% { transform: translate(4px, -2px); }
+    60% { transform: translate(-3px, -2px); }
+    80% { transform: translate(3px, 2px); }
+  }
+
+  /* ============ OPTIONS POPUP MENU ============ */
+  .options-menu {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 999px;
+    background: #16250a;
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, .55),
+      0 0 0 1px rgba(163, 209, 72, .30),
+      inset 0 1px 0 rgba(255, 255, 255, .06);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.72);
+    transform-origin: center bottom;
+    transition: opacity .16s ease, transform .18s cubic-bezier(.2, 1.4, .5, 1), visibility .16s;
+    pointer-events: none;
+  }
+  .options-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+  .opt-btn {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .06);
+    color: #eaf5d8;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .opt-btn svg { width: 21px; height: 21px; display: block; }
+  .opt-btn:active { transform: scale(.9); }
+  .opt-btn.opt-cancel { background: rgba(255, 255, 255, .08); color: #ff9d9d; }
+  .opt-btn.opt-cancel:active { background: rgba(255, 255, 255, .16); }
+  .opt-btn.opt-reveal { background: rgba(163, 209, 72, .20); color: #c9e86a; }
+  .opt-btn.opt-reveal:active { background: rgba(163, 209, 72, .35); }
+  .opt-btn.opt-flag { background: rgba(229, 57, 53, .18); color: #ff6b6b; }
+  .opt-btn.opt-flag:active { background: rgba(229, 57, 53, .30); }
+
+  /* ============ SIDE BUTTONS (zoom + FAB) ============ */
+  .side-buttons {
+    position: absolute;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+  }
+  .side-buttons > * { pointer-events: auto; }
+
+  .fab {
+    width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; border: none; border-radius: 50%;
+    background: #a3d148; color: #2b4112; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .45), inset 0 -3px 0 rgba(0, 0, 0, .18);
+    transition: transform .12s, background .15s;
+  }
+  .fab:active { transform: scale(.9); background: #b7e05e; }
+  .fab svg { width: 24px; height: 24px; }
+
+  /* Zoom buttons — hidden by default, shown only when zoom is available */
+  .zoom-btn {
+    display: none;
+    width: 44px; height: 44px;
+    align-items: center; justify-content: center;
+    padding: 0; border: none; border-radius: 50%;
+    background: rgba(36, 57, 14, .88);
+    color: #eaf5d8;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .4), inset 0 -2px 0 rgba(0, 0, 0, .18);
+    transition: transform .12s, background .15s, opacity .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .zoom-btn:active { transform: scale(.9); background: rgba(36, 57, 14, 1); }
+  .zoom-btn svg { width: 20px; height: 20px; display: block; }
+  .zoom-btn.disabled { opacity: 0.35; pointer-events: none; }
+  .side-buttons.zoom-available .zoom-btn { display: flex; }
+
+  /* ============ DASHBOARD MODAL ============ */
+  .dashboard {
+    position: absolute; inset: 0; z-index: 70;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px 16px;
+    background: rgba(8, 16, 3, .68);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+  }
+  .dashboard.show { opacity: 1; visibility: visible; }
+  .dash-card {
+    width: 100%; max-width: 380px;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    display: flex; flex-direction: column;
+    padding: 18px;
+    border-radius: 22px;
+    background: #f3f9e6;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255,255,255,.05);
+    transform: scale(.9);
+    transition: transform .28s cubic-bezier(.2, 1.4, .5, 1);
+    overflow: hidden;
+  }
+  .dashboard.show .dash-card { transform: scale(1); }
+
+  .dash-result {
+    display: none;
+    align-items: center; gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    background: #e3f0c4;
+    border: 2px solid #c5e08a;
+  }
+  .dash-result.show { display: flex; animation: popIn .35s cubic-bezier(.2, 1.4, .5, 1); }
+  .dash-result.lose { background: #fbe4e4; border-color: #f0baba; }
+  .dash-result .ri { font-size: 32px; line-height: 1; }
+  .dash-result-info { display: flex; flex-direction: column; min-width: 0; }
+  .dash-result-title { font-size: 15px; font-weight: 800; color: #2b4112; }
+  .dash-result-sub   { font-size: 12px; font-weight: 600; color: #6b8248; margin-top: 2px; }
+  .dash-result.lose .dash-result-title { color: #7a2020; }
+  .dash-result.lose .dash-result-sub   { color: #9b5252; }
+  @keyframes popIn {
+    0% { transform: scale(.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .dash-tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 4px; padding: 4px;
+    border-radius: 12px;
+    background: #e0ecc3;
+    margin-bottom: 14px;
+    flex: 0 0 auto;
+  }
+  .dash-tab {
+    padding: 9px 6px; border: none; border-radius: 9px;
+    background: none; color: #5c7233;
+    font-size: 12px; font-weight: 800; letter-spacing: .3px;
+    cursor: pointer; transition: background .15s, color .15s;
+  }
+  .dash-tab.active {
+    background: #ffffff;
+    color: #2b4112;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  }
+  .dash-tab:active { transform: scale(.97); }
+
+  .dash-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px;
+  }
+  .dash-pane { display: none; }
+  .dash-pane.active { display: block; animation: fadeIn .2s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 14px;
+  }
+  .stat-box {
+    padding: 12px 10px; border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #dbe8c0;
+    text-align: center;
+  }
+  .stat-val {
+    font-size: 22px; font-weight: 800; color: #2b4112;
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .stat-lbl {
+    margin-top: 3px;
+    font-size: 10px; font-weight: 700;
+    color: #7c9256; letter-spacing: .6px; text-transform: uppercase;
+  }
+  .best-title {
+    font-size: 11px; font-weight: 800; color: #7c9256;
+    letter-spacing: .8px; text-transform: uppercase;
+    margin: 4px 0 8px;
+  }
+  .best-list { display: flex; flex-direction: column; gap: 6px; }
+  .best-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #dbe8c0;
+    font-size: 13px; font-weight: 700; color: #3f5720;
+  }
+  .best-row span:last-child { color: #2b4112; font-variant-numeric: tabular-nums; }
+
+  .opt-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #dbe8c0;
+    margin-bottom: 10px;
+    font-size: 13px; font-weight: 700; color: #3f5720;
+  }
+  .opt-diff { flex-direction: column; align-items: stretch; gap: 10px; }
+  .diff-group {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .diff-group-4 { grid-template-columns: repeat(4, 1fr); }
+  .diff-btn {
+    padding: 10px 4px; border: 1.5px solid #dbe8c0; border-radius: 10px;
+    background: #f7fbe8; color: #5c7233;
+    font-size: 11px; font-weight: 800; letter-spacing: .3px;
+    cursor: pointer; transition: all .15s;
+  }
+  .diff-btn.active {
+    background: #7cb518; color: #ffffff; border-color: #7cb518;
+    box-shadow: 0 3px 0 #5d8a10;
+  }
+  .diff-btn:active { transform: scale(.96); }
+
+  .custom-config { display: none; }
+  .custom-config.show { display: block; animation: fadeIn .2s ease; }
+  .cfg-input {
+    width: 100px;
+    padding: 8px 10px;
+    border: 1.5px solid #dbe8c0;
+    border-radius: 8px;
+    background: #f7fbe8;
+    color: #2b4112;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    text-align: right;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .cfg-input::-webkit-outer-spin-button,
+  .cfg-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .cfg-input:focus { border-color: #7cb518; background: #ffffff; }
+
+  .switch {
+    position: relative;
+    width: 46px; height: 26px;
+    border: none; border-radius: 999px;
+    background: #c5d6a3; cursor: pointer; padding: 0;
+    transition: background .2s;
+    flex: 0 0 auto;
+  }
+  .switch-knob {
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    transition: transform .2s;
+  }
+  .switch.on { background: #7cb518; }
+  .switch.on .switch-knob { transform: translateX(20px); }
+
+  .history-list {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 260px; overflow-y: auto;
+  }
+  .hist-item {
+    display: grid; grid-template-columns: 1fr auto auto;
+    gap: 10px; align-items: center;
+    padding: 10px 12px; border-radius: 10px;
+    background: #ffffff; border: 1px solid #dbe8c0;
+    font-size: 12px; font-weight: 700;
+  }
+  .hist-diff { color: #3f5720; }
+  .hist-res {
+    padding: 3px 8px; border-radius: 999px;
+    font-size: 10px; letter-spacing: .4px; text-transform: uppercase;
+  }
+  .hist-res.win  { background: #d6eeb0; color: #3d6b0a; }
+  .hist-res.lose { background: #f5c9c9; color: #8c2020; }
+  .hist-time {
+    color: #2b4112; font-variant-numeric: tabular-nums;
+    min-width: 44px; text-align: right;
+  }
+  .hist-empty {
+    padding: 30px 12px; text-align: center;
+    color: #9aae7c; font-size: 12px; font-weight: 700;
+  }
+
+  .dash-actions {
+    flex: 0 0 auto;
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+  }
+  .dash-actions .play-btn,
+  .dash-actions .resume-btn { flex: 1 1 0; min-width: 0; }
+  .dash-actions .resume-btn { display: none; }
+  .dash-actions.has-resume .resume-btn { display: flex; }
+
+  .play-btn, .resume-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border: none; border-radius: 14px;
+    font-size: 15px; font-weight: 800; letter-spacing: .5px;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s, background .15s;
+    white-space: nowrap;
+  }
+  .play-btn {
+    background: #7cb518; color: #ffffff;
+    box-shadow: 0 4px 0 #5d8a10;
+  }
+  .play-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #5d8a10; }
+  .resume-btn {
+    background: #ffffff; color: #3f5720;
+    box-shadow: 0 4px 0 #c5d6a3;
+    border: 1.5px solid #dbe8c0;
+  }
+  .resume-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c5d6a3; }
+  .play-btn svg, .resume-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ================= HEADER ================= -->
+  <header class="topbar">
+    <button class="dropdown" id="ddBtn" aria-label="Select difficulty">
+      <span id="ddLabel">Medium</span>
+      <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </button>
+
+    <div class="stats">
+      <div class="stat">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 21V3.8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M7.8 4.6l10.4 3.2-10.4 3.2z" fill="#ff4d4d"/>
+          <path d="M4 21h6.4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <span id="mineCount">40</span>
+      </div>
+
+      <div class="stat">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+             stroke="#ffd23f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="13.6" r="7.4"/>
+          <path d="M12 9.6v4.2l2.8 1.9"/>
+          <path d="M9.6 2.6h4.8"/>
+          <path d="M12 2.6v3.4"/>
+        </svg>
+        <span id="timer">000</span>
+      </div>
+    </div>
+
+    <button class="sound" id="soundBtn" aria-label="Toggle sound">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 9.4v5.2h3.4L12 18.4V5.6L7.4 9.4H4z" fill="#ffffff"/>
+        <g class="waves">
+          <path d="M15 9.2a4 4 0 010 5.6" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round"/>
+          <path d="M17.7 6.7a7.6 7.6 0 010 10.6" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round"/>
+        </g>
+        <g class="slash">
+          <path d="M15.5 9.5l5.5 5.5M21 9.5l-5.5 5.5" stroke="#ff6b6b" stroke-width="2.1" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ================= HEADER DROPDOWN ================= -->
+  <div class="menu" id="menu">
+    <button data-key="easy">Easy <small>9 × 9 · 10</small></button>
+    <button data-key="medium" class="active">Medium <small>12 × 16 · 40</small></button>
+    <button data-key="hard">Hard <small>16 × 24 · 75</small></button>
+    <button data-key="custom">Custom <small>Configure…</small></button>
+  </div>
+
+  <!-- ================= BOARD (Canvas) ================= -->
+  <main class="board-wrap" id="boardWrap">
+    <canvas class="board" id="board"></canvas>
+  </main>
+
+  <!-- ================= OPTIONS POPUP MENU ================= -->
+  <div class="options-menu" id="optionsMenu" role="dialog" aria-label="Cell actions">
+    <button class="opt-btn opt-cancel" id="optCancel" aria-label="Cancel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+    <button class="opt-btn opt-reveal" id="optReveal" aria-label="Reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v9"/>
+        <path d="M9 3h6"/>
+        <path d="M8 12h8v3a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-3z" fill="currentColor" stroke="none"/>
+      </svg>
+    </button>
+    <button class="opt-btn opt-flag" id="optFlag" aria-label="Flag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 21V4"/>
+        <path d="M7.6 5l9 2.6-9 2.6z" fill="currentColor" stroke="none"/>
+        <path d="M4 21h6"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ================= SIDE BUTTONS (Zoom In / Zoom Out / FAB) ================= -->
+  <div class="side-buttons" id="sideButtons">
+    <!-- Zoom In (top) -->
+    <button class="zoom-btn" id="zoomInBtn" aria-label="Zoom in">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="M20 20l-3.6-3.6"/>
+        <path d="M11 8v6M8 11h6"/>
+      </svg>
+    </button>
+
+    <!-- Zoom Out (middle) -->
+    <button class="zoom-btn" id="zoomOutBtn" aria-label="Zoom out">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="M20 20l-3.6-3.6"/>
+        <path d="M8 11h6"/>
+      </svg>
+    </button>
+
+    <!-- FAB / Menu (bottom) -->
+    <button class="fab" id="fabBtn" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ================= DASHBOARD ================= -->
+  <div class="dashboard" id="dashboard">
+    <div class="dash-card">
+
+      <div class="dash-result" id="dashResult">
+        <span class="ri" id="dashResultIcon">💥</span>
+        <div class="dash-result-info">
+          <div class="dash-result-title" id="dashResultTitle">Game Over</div>
+          <div class="dash-result-sub" id="dashResultSub">You hit a mine!</div>
+        </div>
+      </div>
+
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="stats">Statistics</button>
+        <button class="dash-tab" data-tab="options">Options</button>
+        <button class="dash-tab" data-tab="history">History</button>
+      </div>
+
+      <div class="dash-body">
+
+        <!-- Statistics -->
+        <div class="dash-pane active" data-pane="stats">
+          <div class="stat-grid">
+            <div class="stat-box">
+              <div class="stat-val" id="statPlayed">0</div>
+              <div class="stat-lbl">Games Played</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statWins">0</div>
+              <div class="stat-lbl">Wins</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statLosses">0</div>
+              <div class="stat-lbl">Losses</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statWinRate">0%</div>
+              <div class="stat-lbl">Win Rate</div>
+            </div>
+          </div>
+          <div class="best-title">Best Times</div>
+          <div class="best-list">
+            <div class="best-row"><span>Easy</span><span id="bestEasy">—</span></div>
+            <div class="best-row"><span>Medium</span><span id="bestMedium">—</span></div>
+            <div class="best-row"><span>Hard</span><span id="bestHard">—</span></div>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="dash-pane" data-pane="options">
+          <div class="opt-row">
+            <span>Sound</span>
+            <button class="switch on" id="optSound" aria-label="Toggle sound">
+              <span class="switch-knob"></span>
+            </button>
+          </div>
+          <div class="opt-row opt-diff">
+            <span>Difficulty</span>
+            <div class="diff-group diff-group-4">
+              <button class="diff-btn" data-diff="easy">Easy</button>
+              <button class="diff-btn active" data-diff="medium">Medium</button>
+              <button class="diff-btn" data-diff="hard">Hard</button>
+              <button class="diff-btn" data-diff="custom">Custom</button>
+            </div>
+          </div>
+
+          <div class="custom-config" id="customConfig">
+            <div class="opt-row">
+              <span>Width (cols)</span>
+              <input type="number" class="cfg-input" id="cfgCols" value="16" min="5" max="500">
+            </div>
+            <div class="opt-row">
+              <span>Height (rows)</span>
+              <input type="number" class="cfg-input" id="cfgRows" value="16" min="5" max="500">
+            </div>
+            <div class="opt-row">
+              <span>Bombs</span>
+              <input type="number" class="cfg-input" id="cfgMines" value="40" min="1" max="100000">
+            </div>
+            <div class="opt-row">
+              <span>Infinite Mode</span>
+              <button class="switch" id="cfgInfinite" aria-label="Toggle infinite mode">
+                <span class="switch-knob"></span>
+              </button>
+            </div>
+            <div style="font-size:11px;color:#7c9256;font-weight:700;padding:0 4px 4px;line-height:1.4;">
+              Infinite mode uses hash-based lazy bomb generation — pan the board to explore endlessly. No win condition.
+            </div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="dash-pane" data-pane="history">
+          <div class="history-list" id="historyList">
+            <div class="hist-empty">No games played yet.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dash-actions" id="dashActions">
+        <button class="play-btn" id="playBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playBtnLabel">Play</span>
+        </button>
+        <button class="resume-btn" id="resumeBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 14l-4-4 4-4"/>
+            <path d="M5 10h11a4 4 0 0 1 0 8h-1"/>
+          </svg>
+          Resume
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+     CONFIG — preset difficulties
+     ========================================================= */
+  const CONFIG = {
+    easy:   { cols: 9,  rows: 9,  mines: 10, label: 'Easy'   },
+    medium: { cols: 12, rows: 16, mines: 40, label: 'Medium' },
+    hard:   { cols: 16, rows: 24, mines: 75, label: 'Hard'   }
+  };
+
+  /* =========================================================
+     DOM
+     ========================================================= */
+  const appEl      = document.getElementById('app');
+  const canvas     = document.getElementById('board');
+  const ctx        = canvas.getContext('2d', { alpha: false });
+  const boardWrap  = document.getElementById('boardWrap');
+  const mineCountEl= document.getElementById('mineCount');
+  const timerEl    = document.getElementById('timer');
+  const ddBtn      = document.getElementById('ddBtn');
+  const ddLabel    = document.getElementById('ddLabel');
+  const menuEl     = document.getElementById('menu');
+  const soundBtn   = document.getElementById('soundBtn');
+  const fabBtn     = document.getElementById('fabBtn');
+
+  const sideButtons = document.getElementById('sideButtons');
+  const zoomInBtn   = document.getElementById('zoomInBtn');
+  const zoomOutBtn  = document.getElementById('zoomOutBtn');
+
+  const optionsMenu = document.getElementById('optionsMenu');
+  const optCancel   = document.getElementById('optCancel');
+  const optReveal   = document.getElementById('optReveal');
+  const optFlag     = document.getElementById('optFlag');
+
+  const dashboard  = document.getElementById('dashboard');
+  const dashResult = document.getElementById('dashResult');
+  const dashResultIcon  = document.getElementById('dashResultIcon');
+  const dashResultTitle = document.getElementById('dashResultTitle');
+  const dashResultSub   = document.getElementById('dashResultSub');
+  const dashActions     = document.getElementById('dashActions');
+  const playBtn         = document.getElementById('playBtn');
+  const playBtnLabel    = document.getElementById('playBtnLabel');
+  const resumeBtn       = document.getElementById('resumeBtn');
+  const optSound        = document.getElementById('optSound');
+
+  const statPlayedEl   = document.getElementById('statPlayed');
+  const statWinsEl     = document.getElementById('statWins');
+  const statLossesEl   = document.getElementById('statLosses');
+  const statWinRateEl  = document.getElementById('statWinRate');
+  const bestEasyEl     = document.getElementById('bestEasy');
+  const bestMediumEl   = document.getElementById('bestMedium');
+  const bestHardEl     = document.getElementById('bestHard');
+  const historyListEl  = document.getElementById('historyList');
+
+  const customConfigEl = document.getElementById('customConfig');
+  const cfgColsEl      = document.getElementById('cfgCols');
+  const cfgRowsEl      = document.getElementById('cfgRows');
+  const cfgMinesEl     = document.getElementById('cfgMines');
+  const cfgInfiniteBtn = document.getElementById('cfgInfinite');
+
+  /* =========================================================
+     STATE
+     ========================================================= */
+  let currentKey   = 'medium';         // pending selection (from dashboard/header)
+  let activeMode   = 'medium';         // actually being played (for stats & zoom)
+  let infinite     = false;
+  let gridCols     = 12;
+  let gridRows     = 16;
+  let gridMines    = 40;
+  let bombSet      = null;
+  let seed         = 0;
+  let density      = 0.15;
+  const overrides  = new Map();
+
+  const revealedSet = new Set();
+  const flaggedSet  = new Set();
+  const adjCache    = new Map();
+  let explodedCell  = null;
+
+  let started      = false;
+  let finished     = false;
+  let flags        = 0;
+  let revealedCount= 0;
+  let timer        = 0;
+  let timerId      = null;
+  let muted        = false;
+
+  /* Camera & cell size */
+  let cameraX = 0, cameraY = 0;
+  let cellSize = 30;
+  let viewWidth = 0, viewHeight = 0;
+
+  /* Zoom state (null = auto-fit; number = user-chosen size) */
+  let zoomCellSize = null;
+
+  /* Options menu target — { r, c } or null */
+  let optionsTarget = null;
+
+  /* Double-tap state */
+  let lastTap = null;
+
+  /* Pointer / pinch state */
+  const activePointers = new Map();
+  let pointerDown = null;
+  let panPointerId = null;
+  let panning = false;
+  let pinchState = null;
+  let suppressTapUntil = 0;
+
+  /* Custom config */
+  const customConfig = {
+    cols: 16,
+    rows: 16,
+    mines: 40,
+    infinite: false
+  };
+
+  /* Statistics + history */
+  const stats = {
+    easy:   { played: 0, wins: 0, losses: 0, bestTime: null },
+    medium: { played: 0, wins: 0, losses: 0, bestTime: null },
+    hard:   { played: 0, wins: 0, losses: 0, bestTime: null },
+    custom: { played: 0, wins: 0, losses: 0, bestTime: null }
+  };
+  const history = [];
+
+  /* =========================================================
+     KEY GENERATION
+     ========================================================= */
+  const KEY_OFFSET = 1000000;
+  const KEY_STRIDE = 2000001;
+  function makeKey(r, c) {
+    return (r + KEY_OFFSET) * KEY_STRIDE + (c + KEY_OFFSET);
+  }
+
+  const NUM_COLORS = {
+    1: '#1976d2', 2: '#2e7d32', 3: '#d32f2f', 4: '#303f9f',
+    5: '#8e0000', 6: '#00838f', 7: '#212121', 8: '#616161'
+  };
+
+  /* =========================================================
+     UTIL
+     ========================================================= */
+  function pad3(n) {
+    n = Math.max(0, Math.min(999, n));
+    return String(n).padStart(3, '0');
+  }
+
+  function hashBomb(r, c, s) {
+    let h = (s | 0) ^ Math.imul(r | 0, 0x9e3779b1) ^ Math.imul(c | 0, 0x85ebca6b);
+    h = Math.imul(h ^ (h >>> 16), 0x27d4eb2f);
+    h ^= h >>> 15;
+    return (h >>> 0) / 4294967296;
+  }
+
+  function isBomb(r, c) {
+    if (infinite) {
+      const k = makeKey(r, c);
+      if (overrides.has(k)) return overrides.get(k);
+      return hashBomb(r, c, seed) < density;
+    }
+    return bombSet.has(makeKey(r, c));
+  }
+
+  const ADJ_CACHE_MAX = 200000;
+  function getAdj(r, c) {
+    const k = makeKey(r, c);
+    const cached = adjCache.get(k);
+    if (cached !== undefined) return cached;
+
+    let n = 0;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        if (isBomb(r + dr, c + dc)) n++;
+      }
+    }
+    if (adjCache.size >= ADJ_CACHE_MAX) adjCache.clear();
+    adjCache.set(k, n);
+    return n;
+  }
+
+  /* =========================================================
+     AUDIO
+     ========================================================= */
+  let actx = null;
+  function beep(freq, dur, type, vol) {
+    if (muted) return;
+    try {
+      if (!actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        actx = new AC();
+      }
+      if (actx.state === 'suspended') actx.resume();
+      const t = actx.currentTime;
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(vol || 0.05, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.03);
+    } catch (e) { /* ignore */ }
+  }
+
+  /* =========================================================
+     ZOOM HELPERS
+     ========================================================= */
+  function isZoomAvailable() {
+    return activeMode === 'hard' || activeMode === 'custom';
+  }
+
+  function getZoomLimits() {
+    /* Min ~13px (font ~7-8px, still readable) */
+    const minSize = 13;
+    /* Max = what Easy mode (9 cols) would naturally fit */
+    let maxSize = Math.floor(Math.min(viewWidth / 9, viewHeight / 9));
+    maxSize = Math.max(22, Math.min(64, maxSize));
+    return { min: minSize, max: maxSize };
+  }
+
+  /* Apply a new cell size, keeping the given screen anchor fixed */
+  function applyZoomAt(newSize, startSize, startCamX, startCamY, anchorScreenX, anchorScreenY) {
+    if (startSize <= 0) return;
+
+    const worldX = anchorScreenX + startCamX;
+    const worldY = anchorScreenY + startCamY;
+    const cellX = worldX / startSize;
+    const cellY = worldY / startSize;
+
+    cellSize = newSize;
+    cameraX = cellX * newSize - anchorScreenX;
+    cameraY = cellY * newSize - anchorScreenY;
+
+    clampCamera();
+    requestDraw();
+    updateZoomButtons();
+  }
+
+  function zoomStep(direction) {
+    if (!isZoomAvailable()) return;
+
+    const limits = getZoomLimits();
+    const factor = direction > 0 ? 1.18 : 1 / 1.18;
+    let newSize = Math.round(cellSize * factor);
+    newSize = Math.max(limits.min, Math.min(limits.max, newSize));
+    if (newSize === cellSize) return;
+
+    /* Anchor at viewport centre */
+    const ax = viewWidth / 2;
+    const ay = viewHeight / 2;
+    zoomCellSize = newSize;
+    applyZoomAt(newSize, cellSize, cameraX, cameraY, ax, ay);
+    beep(direction > 0 ? 900 : 620, 0.03, 'sine', 0.02);
+  }
+
+  function updateZoomButtons() {
+    const available = isZoomAvailable();
+    sideButtons.classList.toggle('zoom-available', available);
+    if (!available) return;
+
+    const limits = getZoomLimits();
+    zoomInBtn.classList.toggle('disabled', cellSize >= limits.max - 0.5);
+    zoomOutBtn.classList.toggle('disabled', cellSize <= limits.min + 0.5);
+  }
+
+  /* =========================================================
+     CANVAS SIZING & CAMERA
+     ========================================================= */
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(1, Math.round(rect.width * dpr));
+    const h = Math.max(1, Math.round(rect.height * dpr));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    viewWidth = rect.width;
+    viewHeight = rect.height;
+  }
+
+  function setupView() {
+    resizeCanvas();
+
+    /* Clamp saved zoom to new limits */
+    if (zoomCellSize !== null) {
+      const lim = getZoomLimits();
+      zoomCellSize = Math.max(lim.min, Math.min(lim.max, zoomCellSize));
+    }
+
+    if (infinite) {
+      cellSize = zoomCellSize || 30;
+      if (!started) {
+        cameraX = -viewWidth / 2;
+        cameraY = -viewHeight / 2;
+      }
+    } else {
+      const autoSize = Math.max(16, Math.min(46,
+        Math.floor(Math.min(viewWidth / gridCols, viewHeight / gridRows))));
+      cellSize = zoomCellSize || autoSize;
+
+      const boardW = gridCols * cellSize;
+      const boardH = gridRows * cellSize;
+      cameraX = (boardW - viewWidth) / 2;
+      cameraY = (boardH - viewHeight) / 2;
+      clampCamera();
+    }
+    updateZoomButtons();
+  }
+
+  function clampCamera() {
+    if (infinite) return;
+    const boardW = gridCols * cellSize;
+    const boardH = gridRows * cellSize;
+    if (boardW <= viewWidth) cameraX = (boardW - viewWidth) / 2;
+    else cameraX = Math.max(0, Math.min(boardW - viewWidth, cameraX));
+    if (boardH <= viewHeight) cameraY = (boardH - viewHeight) / 2;
+    else cameraY = Math.max(0, Math.min(boardH - viewHeight, cameraY));
+  }
+
+  /* =========================================================
+     RENDERING
+     ========================================================= */
+  let drawPending = false;
+  function requestDraw() {
+    if (drawPending) return;
+    drawPending = true;
+    requestAnimationFrame(() => {
+      drawPending = false;
+      draw();
+    });
+  }
+
+  function draw() {
+    if (!viewWidth || !viewHeight) return;
+
+    ctx.fillStyle = '#33501a';
+    ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+    let startC = Math.floor(cameraX / cellSize);
+    let endC   = Math.ceil((cameraX + viewWidth) / cellSize);
+    let startR = Math.floor(cameraY / cellSize);
+    let endR   = Math.ceil((cameraY + viewHeight) / cellSize);
+
+    if (!infinite) {
+      startC = Math.max(0, startC);
+      startR = Math.max(0, startR);
+      endC   = Math.min(gridCols - 1, endC);
+      endR   = Math.min(gridRows - 1, endR);
+    }
+
+    const size = cellSize;
+    ctx.font = 'bold ' + Math.round(size * 0.58) + 'px -apple-system, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 1;
+
+    for (let r = startR; r <= endR; r++) {
+      for (let c = startC; c <= endC; c++) {
+        const x = Math.round(c * size - cameraX);
+        const y = Math.round(r * size - cameraY);
+
+        const k = makeKey(r, c);
+        const isRev = revealedSet.has(k);
+        const isFlag = flaggedSet.has(k);
+        const dark = ((r + c) & 1) === 0;
+
+        let fill;
+        if (isRev) {
+          if (isBomb(r, c)) {
+            fill = (explodedCell === k) ? '#e05252' : '#f0c9c9';
+          } else {
+            fill = dark ? '#e6f2cc' : '#dbecb9';
+          }
+        } else if (isFlag) {
+          if (finished && !infinite && !isBomb(r, c)) fill = '#f2c2c2';
+          else fill = '#b7dd63';
+        } else {
+          fill = dark ? '#a3d148' : '#96c63e';
+        }
+
+        ctx.fillStyle = fill;
+        ctx.fillRect(x, y, size, size);
+
+        ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+        ctx.strokeRect(x + 0.5, y + 0.5, size - 1, size - 1);
+
+        if (isRev) {
+          if (isBomb(r, c)) {
+            drawBombIcon(x + size / 2, y + size / 2, size * 0.66);
+          } else {
+            const adj = getAdj(r, c);
+            if (adj > 0) {
+              ctx.fillStyle = NUM_COLORS[adj] || '#333';
+              ctx.fillText(String(adj), x + size / 2, y + size / 2 + 1);
+            }
+          }
+        } else if (isFlag) {
+          if (finished && !infinite && !isBomb(r, c)) {
+            ctx.strokeStyle = '#c62828';
+            ctx.lineWidth = Math.max(2, size * 0.12);
+            ctx.lineCap = 'round';
+            const m = size * 0.28;
+            ctx.beginPath();
+            ctx.moveTo(x + m, y + m);
+            ctx.lineTo(x + size - m, y + size - m);
+            ctx.moveTo(x + size - m, y + m);
+            ctx.lineTo(x + m, y + size - m);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+          } else {
+            drawFlagIcon(x + size / 2, y + size / 2, size * 0.62);
+          }
+        }
+      }
+    }
+
+    if (infinite && !started) {
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.font = 'bold 15px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Double-tap / double-click any cell to begin', viewWidth / 2, viewHeight / 2);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = 'bold ' + Math.round(size * 0.58) + 'px -apple-system, "Segoe UI", Roboto, sans-serif';
+    }
+
+    if (optionsTarget) {
+      const x = Math.round(optionsTarget.c * size - cameraX);
+      const y = Math.round(optionsTarget.r * size - cameraY);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x + 1.5, y + 1.5, size - 3, size - 3);
+      ctx.lineWidth = 1;
+    }
+  }
+
+  function drawBombIcon(cx, cy, size) {
+    const r = size / 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
+    ctx.fillStyle = '#1b1b1b';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx - r * 0.28, cy - r * 0.28, r * 0.28, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx + r * 0.55, cy - r * 0.55);
+    ctx.lineTo(cx + r * 0.95, cy - r * 0.95);
+    ctx.strokeStyle = '#1b1b1b';
+    ctx.lineWidth = Math.max(1.5, size * 0.10);
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.lineWidth = 1;
+  }
+
+  function drawFlagIcon(cx, cy, size) {
+    const w = size;
+    ctx.beginPath();
+    ctx.moveTo(cx - w * 0.15, cy - w * 0.5);
+    ctx.lineTo(cx - w * 0.15, cy + w * 0.5);
+    ctx.strokeStyle = '#4a2c0a';
+    ctx.lineWidth = Math.max(1.5, w * 0.12);
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - w * 0.15, cy - w * 0.5);
+    ctx.lineTo(cx + w * 0.45, cy - w * 0.25);
+    ctx.lineTo(cx - w * 0.15, cy);
+    ctx.closePath();
+    ctx.fillStyle = '#e53935';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx - w * 0.35, cy + w * 0.5);
+    ctx.lineTo(cx + w * 0.05, cy + w * 0.5);
+    ctx.strokeStyle = '#4a2c0a';
+    ctx.lineWidth = Math.max(1.5, w * 0.12);
+    ctx.stroke();
+    ctx.lineWidth = 1;
+  }
+
+  /* =========================================================
+     BOMB GENERATION (finite mode)
+     ========================================================= */
+  function generateFiniteBombs() {
+    bombSet = new Set();
+    const total = gridCols * gridRows;
+    const count = Math.max(1, Math.min(gridMines, total - 1));
+
+    const pool = new Array(total);
+    for (let i = 0; i < total; i++) pool[i] = i;
+    for (let i = total - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    for (let k = 0; k < count; k++) {
+      const p = pool[k];
+      bombSet.add(makeKey(Math.floor(p / gridCols), p % gridCols));
+    }
+  }
+
+  function relocateMine(r, c) {
+    const oldKey = makeKey(r, c);
+    bombSet.delete(oldKey);
+    let guard = 0;
+    const total = gridCols * gridRows;
+    while (guard++ < 10000) {
+      const rr = Math.floor(Math.random() * gridRows);
+      const cc = Math.floor(Math.random() * gridCols);
+      if (rr === r && cc === c) continue;
+      const nk = makeKey(rr, cc);
+      if (!bombSet.has(nk)) {
+        bombSet.add(nk);
+        return;
+      }
+      if (bombSet.size >= total - 1) return;
+    }
+  }
+
+  function firstClickSafeInfinite(r, c) {
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const rr = r + dr, cc = c + dc;
+        if (hashBomb(rr, cc, seed) < density) {
+          overrides.set(makeKey(rr, cc), false);
+        }
+      }
+    }
+  }
+
+  /* =========================================================
+     CELL ACTIONS
+     ========================================================= */
+  function openCell(r, c) {
+    if (finished) return;
+    const k = makeKey(r, c);
+    if (revealedSet.has(k) || flaggedSet.has(k)) return;
+
+    if (!infinite) {
+      if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) return;
+    }
+
+    if (!started) {
+      started = true;
+      if (infinite) firstClickSafeInfinite(r, c);
+      else if (isBomb(r, c)) relocateMine(r, c);
+      startTimer();
+    }
+
+    if (isBomb(r, c)) { explode(r, c); return; }
+
+    floodFill(r, c);
+    beep(560, 0.035, 'square', 0.025);
+    if (!infinite) checkWin();
+    requestDraw();
+  }
+
+  function floodFill(sr, sc) {
+    const stack = [[sr, sc]];
+    while (stack.length) {
+      const pos = stack.pop();
+      const r = pos[0], c = pos[1];
+      const k = makeKey(r, c);
+      if (revealedSet.has(k) || flaggedSet.has(k)) continue;
+      if (isBomb(r, c)) continue;
+
+      revealedSet.add(k);
+      revealedCount++;
+
+      if (getAdj(r, c) === 0) {
+        for (let dr = -1; dr <= 1; dr++) {
+          for (let dc = -1; dc <= 1; dc++) {
+            if (dr === 0 && dc === 0) continue;
+            const nr = r + dr, nc = c + dc;
+            if (infinite) {
+              stack.push([nr, nc]);
+            } else {
+              if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) {
+                const nk = makeKey(nr, nc);
+                if (!revealedSet.has(nk) && !flaggedSet.has(nk)) {
+                  stack.push([nr, nc]);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function toggleFlag(r, c) {
+    if (finished) return;
+    const k = makeKey(r, c);
+    if (revealedSet.has(k)) return;
+
+    if (!infinite) {
+      if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) return;
+    }
+
+    if (!flaggedSet.has(k)) {
+      if (!infinite && flags >= gridMines) return;
+      flaggedSet.add(k);
+      flags++;
+      beep(820, 0.05, 'triangle', 0.03);
+    } else {
+      flaggedSet.delete(k);
+      flags--;
+      beep(430, 0.05, 'triangle', 0.03);
+    }
+    updateHud();
+    requestDraw();
+  }
+
+  /* =========================================================
+     CHORDING (NEW)
+     ========================================================= */
+  function tryChord(r, c, expectedAdj) {
+    /* Count flags around */
+    let flagCount = 0;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        if (flaggedSet.has(makeKey(r + dr, c + dc))) flagCount++;
+      }
+    }
+    if (flagCount !== expectedAdj) return; /* Mismatch — ignore */
+
+    /* Reveal all non-flagged, non-revealed neighbours */
+    let anyRevealed = false;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        const nr = r + dr, nc = c + dc;
+        const nk = makeKey(nr, nc);
+        if (revealedSet.has(nk) || flaggedSet.has(nk)) continue;
+        if (!infinite && (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols)) continue;
+
+        if (isBomb(nr, nc)) {
+          explode(nr, nc);
+          return;
+        }
+        floodFill(nr, nc);
+        anyRevealed = true;
+      }
+    }
+
+    if (anyRevealed) {
+      beep(560, 0.035, 'square', 0.025);
+      if (!infinite) checkWin();
+      requestDraw();
+    }
+  }
+
+  /* =========================================================
+     EXPLODE / WIN
+     ========================================================= */
+  function explode(r, c) {
+    finished = true;
+    stopTimer();
+    closeOptionsMenu();
+
+    beep(120, 0.55, 'sawtooth', 0.14);
+    setTimeout(() => beep(70, 0.45, 'square', 0.10), 60);
+
+    explodedCell = makeKey(r, c);
+    revealedSet.add(explodedCell);
+
+    if (!infinite) {
+      for (let rr = 0; rr < gridRows; rr++) {
+        for (let cc = 0; cc < gridCols; cc++) {
+          const k = makeKey(rr, cc);
+          if (bombSet.has(k) && !flaggedSet.has(k)) {
+            revealedSet.add(k);
+          }
+        }
+      }
+    }
+
+    canvas.classList.add('shake');
+    setTimeout(() => canvas.classList.remove('shake'), 450);
+
+    requestDraw();
+    recordResult(false);
+    openDashboard(true, { win: false, title: 'Game Over', sub: 'You hit a mine!' });
+  }
+
+  function checkWin() {
+    if (infinite) return;
+    const totalNonMines = gridCols * gridRows - gridMines;
+    if (revealedCount !== totalNonMines) return;
+
+    finished = true;
+    stopTimer();
+    closeOptionsMenu();
+
+    flaggedSet.forEach((k) => {
+      if (!bombSet.has(k)) {
+        flaggedSet.delete(k);
+        flags--;
+      }
+    });
+
+    bombSet.forEach((k) => {
+      if (!flaggedSet.has(k)) {
+        flaggedSet.add(k);
+        flags++;
+      }
+    });
+
+    updateHud();
+    requestDraw();
+
+    beep(880, 0.12, 'sine', 0.07);
+    setTimeout(() => beep(1174, 0.16, 'sine', 0.07), 120);
+    setTimeout(() => beep(1568, 0.22, 'sine', 0.07), 260);
+
+    recordResult(true);
+    openDashboard(true, { win: true, title: 'You Won!', sub: 'Time: ' + pad3(timer) + 's' });
+  }
+
+  /* =========================================================
+     TIMER
+     ========================================================= */
+  function tick() {
+    timer++;
+    if (timer >= 999) { timer = 999; stopTimer(); }
+    timerEl.textContent = pad3(timer);
+  }
+  function startTimer() {
+    stopTimer();
+    timer = 0;
+    timerEl.textContent = '000';
+    timerId = setInterval(tick, 1000);
+  }
+  function pauseTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+  function resumeTimer() { if (timerId || finished || !started) return; timerId = setInterval(tick, 1000); }
+  function stopTimer() { pauseTimer(); }
+
+  /* =========================================================
+     HUD
+     ========================================================= */
+  function updateHud() {
+    if (infinite) {
+      mineCountEl.textContent = '∞';
+    } else {
+      mineCountEl.textContent = Math.max(0, gridMines - flags);
+    }
+  }
+
+  /* =========================================================
+     STATS / HISTORY
+     ========================================================= */
+  function recordResult(won) {
+    const key = activeMode;
+    const s = stats[key] || stats.custom;
+    s.played++;
+    if (won) {
+      s.wins++;
+      if (key !== 'custom' && (s.bestTime === null || timer < s.bestTime)) {
+        s.bestTime = timer;
+      }
+    } else {
+      s.losses++;
+    }
+
+    let label = CONFIG[key] ? CONFIG[key].label : 'Custom';
+    if (infinite) label = 'Custom ∞';
+
+    history.unshift({
+      diff: label,
+      result: won ? 'Won' : 'Lost',
+      time: timer
+    });
+    if (history.length > 30) history.length = 30;
+  }
+
+  function updateStatsUI() {
+    let totalPlayed = 0, totalWins = 0, totalLosses = 0;
+    for (const k in stats) {
+      totalPlayed += stats[k].played;
+      totalWins += stats[k].wins;
+      totalLosses += stats[k].losses;
+    }
+    const winRate = totalPlayed ? Math.round((totalWins / totalPlayed) * 100) : 0;
+
+    statPlayedEl.textContent  = totalPlayed;
+    statWinsEl.textContent    = totalWins;
+    statLossesEl.textContent  = totalLosses;
+    statWinRateEl.textContent = winRate + '%';
+
+    bestEasyEl.textContent   = stats.easy.bestTime   !== null ? pad3(stats.easy.bestTime)   + 's' : '—';
+    bestMediumEl.textContent = stats.medium.bestTime !== null ? pad3(stats.medium.bestTime) + 's' : '—';
+    bestHardEl.textContent   = stats.hard.bestTime   !== null ? pad3(stats.hard.bestTime)   + 's' : '—';
+  }
+
+  function updateHistoryUI() {
+    if (!history.length) {
+      historyListEl.innerHTML = '<div class="hist-empty">No games played yet.</div>';
+      return;
+    }
+    let html = '';
+    for (let i = 0; i < history.length; i++) {
+      const h = history[i];
+      html += '<div class="hist-item">' +
+                '<span class="hist-diff">' + h.diff + '</span>' +
+                '<span class="hist-res ' + (h.result === 'Won' ? 'win' : 'lose') + '">' + h.result + '</span>' +
+                '<span class="hist-time">' + pad3(h.time) + 's</span>' +
+              '</div>';
+    }
+    historyListEl.innerHTML = html;
+  }
+
+  /* =========================================================
+     DASHBOARD
+     ========================================================= */
+  function syncDiffButtons() {
+    const btns = dashboard.querySelectorAll('.diff-btn');
+    for (let i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].dataset.diff === currentKey);
+    }
+    updateCustomConfigVisibility();
+  }
+
+  function updateCustomConfigVisibility() {
+    customConfigEl.classList.toggle('show', currentKey === 'custom');
+  }
+
+  function syncSoundSwitch() { optSound.classList.toggle('on', !muted); }
+
+  function syncDashboardActions() {
+    const inProgress = started && !finished;
+    if (inProgress) {
+      playBtnLabel.textContent = 'Restart';
+      dashActions.classList.add('has-resume');
+    } else {
+      playBtnLabel.textContent = 'Play';
+      dashActions.classList.remove('has-resume');
+    }
+  }
+
+  function openDashboard(showResult, resultInfo) {
+    closeOptionsMenu();
+
+    if (showResult && resultInfo) {
+      dashResult.classList.add('show');
+      dashResult.classList.toggle('lose', !resultInfo.win);
+      dashResultIcon.textContent  = resultInfo.win ? '🏆' : '💥';
+      dashResultTitle.textContent = resultInfo.title;
+      dashResultSub.textContent   = resultInfo.sub;
+    } else {
+      dashResult.classList.remove('show');
+    }
+
+    if (started && !finished) pauseTimer();
+
+    cfgColsEl.value  = customConfig.cols;
+    cfgRowsEl.value  = customConfig.rows;
+    cfgMinesEl.value = customConfig.mines;
+    cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
+    const dis = customConfig.infinite;
+    cfgColsEl.disabled = dis;
+    cfgRowsEl.disabled = dis;
+    cfgMinesEl.disabled = dis;
+    cfgColsEl.style.opacity = dis ? '0.4' : '1';
+    cfgRowsEl.style.opacity = dis ? '0.4' : '1';
+    cfgMinesEl.style.opacity = dis ? '0.4' : '1';
+
+    updateStatsUI();
+    updateHistoryUI();
+    syncDiffButtons();
+    syncSoundSwitch();
+    syncDashboardActions();
+
+    dashboard.classList.add('show');
+  }
+
+  function closeDashboard() {
+    dashboard.classList.remove('show');
+    dashResult.classList.remove('show');
+    if (started && !finished) resumeTimer();
+  }
+
+  function switchDashboardTab(name) {
+    dashboard.querySelectorAll('.dash-tab').forEach((t) => {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+    dashboard.querySelectorAll('.dash-pane').forEach((p) => {
+      p.classList.toggle('active', p.dataset.pane === name);
+    });
+  }
+
+  /* =========================================================
+     OPTIONS MENU (popup)
+     ========================================================= */
+  function closeOptionsMenu() {
+    optionsMenu.classList.remove('show');
+    optionsTarget = null;
+    requestDraw();
+  }
+
+  function showMenuForTarget(r, c, clientX, clientY) {
+    optionsTarget = { r: r, c: c };
+    optionsMenu.classList.add('show');
+
+    const appRect = appEl.getBoundingClientRect();
+    const popupW = optionsMenu.offsetWidth;
+    const popupH = optionsMenu.offsetHeight;
+
+    let x = (clientX - appRect.left) - popupW / 2;
+    let y = (clientY - appRect.top) - popupH - 12;
+
+    if (y < 8) y = (clientY - appRect.top) + cellSize + 12;
+
+    x = Math.max(8, Math.min(appRect.width - popupW - 8, x));
+    y = Math.max(8, Math.min(appRect.height - popupH - 8, y));
+
+    optionsMenu.style.left = x + 'px';
+    optionsMenu.style.top  = y + 'px';
+    requestDraw();
+  }
+
+  optCancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeOptionsMenu();
+  });
+  optReveal.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const t = optionsTarget;
+    closeOptionsMenu();
+    if (!t) return;
+    openCell(t.r, t.c);
+  });
+  optFlag.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const t = optionsTarget;
+    closeOptionsMenu();
+    if (!t) return;
+    toggleFlag(t.r, t.c);
+  });
+
+  document.addEventListener('pointerdown', (e) => {
+    if (!optionsMenu.classList.contains('show')) return;
+    if (optionsMenu.contains(e.target)) return;
+
+    if (optionsTarget && e.target === canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const worldX = (e.clientX - rect.left) + cameraX;
+      const worldY = (e.clientY - rect.top) + cameraY;
+      const r = Math.floor(worldY / cellSize);
+      const c = Math.floor(worldX / cellSize);
+      if (r === optionsTarget.r && c === optionsTarget.c) return;
+    }
+    closeOptionsMenu();
+  }, true);
+
+  /* =========================================================
+     POINTER INTERACTION (pan / pinch / tap / double-tap)
+     ========================================================= */
+  canvas.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    /* Second pointer + zoom available → pinch */
+    if (activePointers.size === 2 && isZoomAvailable()) {
+      startPinch();
+      return;
+    }
+
+    /* First pointer → prepare pan */
+    if (activePointers.size === 1) {
+      panPointerId = e.pointerId;
+      pointerDown = {
+        id: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+        cameraX: cameraX,
+        cameraY: cameraY,
+        moved: false
+      };
+      panning = false;
+    }
+  });
+
+  function startPinch() {
+    const pts = Array.from(activePointers.values());
+    if (pts.length < 2) return;
+    const dx = pts[0].x - pts[1].x;
+    const dy = pts[0].y - pts[1].y;
+    const dist = Math.hypot(dx, dy);
+    const cx = (pts[0].x + pts[1].x) / 2;
+    const cy = (pts[0].y + pts[1].y) / 2;
+
+    pinchState = {
+      startDist: Math.max(1, dist),
+      startSize: cellSize,
+      startCamX: cameraX,
+      startCamY: cameraY,
+      anchorX: cx,
+      anchorY: cy
+    };
+
+    pointerDown = null;
+    panPointerId = null;
+    panning = false;
+    closeOptionsMenu();
+    if (lastTap) { clearTimeout(lastTap.timer); lastTap = null; }
+  }
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    /* Pinch zoom */
+    if (pinchState && activePointers.size >= 2) {
+      const pts = Array.from(activePointers.values());
+      const dx = pts[0].x - pts[1].x;
+      const dy = pts[0].y - pts[1].y;
+      const dist = Math.hypot(dx, dy);
+
+      const scale = dist / pinchState.startDist;
+      const limits = getZoomLimits();
+      let newSize = Math.round(pinchState.startSize * scale);
+      newSize = Math.max(limits.min, Math.min(limits.max, newSize));
+
+      if (newSize !== cellSize) {
+        const rect = canvas.getBoundingClientRect();
+        const ax = pinchState.anchorX - rect.left;
+        const ay = pinchState.anchorY - rect.top;
+        zoomCellSize = newSize;
+        applyZoomAt(newSize, pinchState.startSize, pinchState.startCamX, pinchState.startCamY, ax, ay);
+      }
+      return;
+    }
+
+    /* Pan */
+    if (!pointerDown || e.pointerId !== panPointerId) return;
+    const dx = e.clientX - pointerDown.x;
+    const dy = e.clientY - pointerDown.y;
+
+    if (!pointerDown.moved && Math.abs(dx) + Math.abs(dy) > 8) {
+      pointerDown.moved = true;
+      panning = true;
+      closeOptionsMenu();
+    }
+    if (panning) {
+      cameraX = pointerDown.cameraX - dx;
+      cameraY = pointerDown.cameraY - dy;
+      clampCamera();
+      requestDraw();
+    }
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
+    activePointers.delete(e.pointerId);
+
+    /* End of pinch */
+    if (pinchState) {
+      if (activePointers.size < 2) {
+        pinchState = null;
+        suppressTapUntil = Date.now() + 350;
+
+        if (activePointers.size === 1) {
+          /* Continue with single-finger pan */
+          const pid = activePointers.keys().next().value;
+          const pt = activePointers.get(pid);
+          panPointerId = pid;
+          pointerDown = {
+            id: pid,
+            x: pt.x,
+            y: pt.y,
+            cameraX: cameraX,
+            cameraY: cameraY,
+            moved: true /* prevent tap */
+          };
+          panning = false;
+        } else {
+          panPointerId = null;
+          pointerDown = null;
+        }
+      }
+      return;
+    }
+
+    if (!pointerDown || e.pointerId !== panPointerId) return;
+
+    const p = pointerDown;
+    const wasPanning = panning;
+    pointerDown = null;
+    panPointerId = null;
+    panning = false;
+
+    if (wasPanning || p.moved) return;
+    if (Date.now() < suppressTapUntil) return;
+
+    /* Determine cell */
+    const rect = canvas.getBoundingClientRect();
+    const localX = e.clientX - rect.left;
+    const localY = e.clientY - rect.top;
+    const worldX = localX + cameraX;
+    const worldY = localY + cameraY;
+    const r = Math.floor(worldY / cellSize);
+    const c = Math.floor(worldX / cellSize);
+
+    if (!infinite) {
+      if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) return;
+    }
+    if (finished) return;
+
+    handleTap(r, c, e.clientX, e.clientY);
+  });
+
+  canvas.addEventListener('pointercancel', (e) => {
+    activePointers.delete(e.pointerId);
+    if (pinchState && activePointers.size < 2) {
+      pinchState = null;
+      suppressTapUntil = Date.now() + 350;
+    }
+    if (e.pointerId === panPointerId) {
+      pointerDown = null;
+      panPointerId = null;
+      panning = false;
+    }
+  });
+
+  /* =========================================================
+     TAP / DOUBLE-TAP / CHORD LOGIC
+     ========================================================= */
+  const DOUBLE_TAP_MS = 260;
+
+  function handleTap(r, c, clientX, clientY) {
+    const k = makeKey(r, c);
+
+    /* --- Revealed cell → try chording --- */
+    if (revealedSet.has(k)) {
+      closeOptionsMenu();
+      if (!isBomb(r, c)) {
+        const adj = getAdj(r, c);
+        if (adj > 0) tryChord(r, c, adj);
+      }
+      return;
+    }
+
+    const now = Date.now();
+
+    /* --- Double-tap detection → reveal directly --- */
+    if (lastTap && lastTap.r === r && lastTap.c === c && (now - lastTap.time) < DOUBLE_TAP_MS) {
+      clearTimeout(lastTap.timer);
+      lastTap = null;
+      optionsTarget = null;
+      optionsMenu.classList.remove('show');
+      openCell(r, c);
+      requestDraw();
+      return;
+    }
+
+    /* Cancel any pending tap on a different cell */
+    if (lastTap) {
+      clearTimeout(lastTap.timer);
+      lastTap = null;
+    }
+
+    /* If menu already open for this cell, keep it */
+    if (optionsMenu.classList.contains('show') && optionsTarget &&
+        optionsTarget.r === r && optionsTarget.c === c) {
+      return;
+    }
+
+    /* Highlight pressed cell immediately */
+    optionsTarget = { r: r, c: c };
+    requestDraw();
+
+    /* Delay showing menu (allows double-tap to cancel it) */
+    const timer = setTimeout(() => {
+      lastTap = null;
+      showMenuForTarget(r, c, clientX, clientY);
+    }, DOUBLE_TAP_MS);
+
+    lastTap = { r: r, c: c, time: now, timer: timer };
+  }
+
+  /* =========================================================
+     NEW GAME
+     ========================================================= */
+  function newGame(key) {
+    if (key && (CONFIG[key] || key === 'custom')) currentKey = key;
+
+    /* Snapshot the mode for this game */
+    activeMode = currentKey;
+
+    /* Reset zoom on new game */
+    zoomCellSize = null;
+
+    if (currentKey === 'custom') {
+      if (customConfig.infinite) {
+        infinite = true;
+        gridCols = 0;
+        gridRows = 0;
+        gridMines = 0;
+        density = 0.15;
+        seed = Math.floor(Math.random() * 2147483647);
+        overrides.clear();
+        bombSet = null;
+      } else {
+        infinite = false;
+        gridCols = Math.max(5, Math.min(500, customConfig.cols | 0));
+        gridRows = Math.max(5, Math.min(500, customConfig.rows | 0));
+        gridMines = Math.max(1, Math.min(gridCols * gridRows - 1, customConfig.mines | 0));
+        generateFiniteBombs();
+      }
+      ddLabel.textContent = 'Custom';
+    } else {
+      const cc = CONFIG[currentKey];
+      infinite = false;
+      gridCols = cc.cols;
+      gridRows = cc.rows;
+      gridMines = cc.mines;
+      generateFiniteBombs();
+      ddLabel.textContent = cc.label;
+    }
+
+    Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
+      b.classList.toggle('active', b.dataset.key === currentKey);
+    });
+
+    closeOptionsMenu();
+    closeDashboard();
+
+    stopTimer();
+    timer = 0;
+    timerEl.textContent = '000';
+    flags = 0;
+    revealedCount = 0;
+    started = false;
+    finished = false;
+    explodedCell = null;
+    revealedSet.clear();
+    flaggedSet.clear();
+    adjCache.clear();
+    lastTap = null;
+    pointerDown = null;
+    panPointerId = null;
+    panning = false;
+    pinchState = null;
+    activePointers.clear();
+
+    updateHud();
+
+    requestAnimationFrame(() => {
+      setupView();
+      requestDraw();
+    });
+  }
+
+  /* =========================================================
+     ZOOM BUTTON EVENTS
+     ========================================================= */
+  zoomInBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    zoomStep(+1);
+  });
+  zoomOutBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    zoomStep(-1);
+  });
+
+  /* Mouse wheel zoom (desktop) */
+  canvas.addEventListener('wheel', (e) => {
+    if (!isZoomAvailable()) return;
+    e.preventDefault();
+
+    const limits = getZoomLimits();
+    const factor = e.deltaY > 0 ? 1 / 1.15 : 1.15;
+    let newSize = Math.round(cellSize * factor);
+    newSize = Math.max(limits.min, Math.min(limits.max, newSize));
+    if (newSize === cellSize) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const ax = e.clientX - rect.left;
+    const ay = e.clientY - rect.top;
+
+    zoomCellSize = newSize;
+    applyZoomAt(newSize, cellSize, cameraX, cameraY, ax, ay);
+  }, { passive: false });
+
+  /* =========================================================
+     GLOBAL EVENTS
+     ========================================================= */
+  ddBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = menuEl.classList.toggle('show');
+    ddBtn.classList.toggle('open', open);
+  });
+
+  menuEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-key]');
+    if (!btn) return;
+    menuEl.classList.remove('show');
+    ddBtn.classList.remove('open');
+
+    const key = btn.dataset.key;
+
+    if (key === 'custom') {
+      currentKey = 'custom';
+      ddLabel.textContent = 'Custom';
+      Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
+        b.classList.toggle('active', b.dataset.key === currentKey);
+      });
+      syncDiffButtons();
+      openDashboard(false);
+      switchDashboardTab('options');
+      return;
+    }
+
+    newGame(key);
+  });
+
+  document.addEventListener('click', () => {
+    menuEl.classList.remove('show');
+    ddBtn.classList.remove('open');
+  });
+
+  fabBtn.addEventListener('click', () => openDashboard(false));
+
+  dashboard.addEventListener('click', (e) => {
+    if (e.target === dashboard) closeDashboard();
+  });
+
+  dashboard.addEventListener('click', (e) => {
+    const tab = e.target.closest('.dash-tab');
+    if (tab) switchDashboardTab(tab.dataset.tab);
+  });
+
+  dashboard.addEventListener('click', (e) => {
+    const dbtn = e.target.closest('.diff-btn');
+    if (!dbtn) return;
+    const key = dbtn.dataset.diff;
+    if (!CONFIG[key] && key !== 'custom') return;
+
+    currentKey = key;
+    if (key === 'custom') ddLabel.textContent = 'Custom';
+    else ddLabel.textContent = CONFIG[key].label;
+
+    Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
+      b.classList.toggle('active', b.dataset.key === currentKey);
+    });
+    syncDiffButtons();
+    beep(700, 0.05, 'sine', 0.04);
+  });
+
+  cfgColsEl.addEventListener('change', () => {
+    const v = parseInt(cfgColsEl.value, 10);
+    customConfig.cols = isNaN(v) ? 16 : Math.max(5, Math.min(500, v));
+    cfgColsEl.value = customConfig.cols;
+  });
+  cfgRowsEl.addEventListener('change', () => {
+    const v = parseInt(cfgRowsEl.value, 10);
+    customConfig.rows = isNaN(v) ? 16 : Math.max(5, Math.min(500, v));
+    cfgRowsEl.value = customConfig.rows;
+  });
+  cfgMinesEl.addEventListener('change', () => {
+    const v = parseInt(cfgMinesEl.value, 10);
+    const total = customConfig.cols * customConfig.rows;
+    customConfig.mines = isNaN(v) ? 40 : Math.max(1, Math.min(total - 1, v));
+    cfgMinesEl.value = customConfig.mines;
+  });
+
+  cfgInfiniteBtn.addEventListener('click', () => {
+    customConfig.infinite = !customConfig.infinite;
+    cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
+    const dis = customConfig.infinite;
+    cfgColsEl.disabled = dis;
+    cfgRowsEl.disabled = dis;
+    cfgMinesEl.disabled = dis;
+    cfgColsEl.style.opacity = dis ? '0.4' : '1';
+    cfgRowsEl.style.opacity = dis ? '0.4' : '1';
+    cfgMinesEl.style.opacity = dis ? '0.4' : '1';
+    beep(700, 0.05, 'sine', 0.04);
+  });
+
+  optSound.addEventListener('click', () => {
+    muted = !muted;
+    soundBtn.classList.toggle('muted', muted);
+    syncSoundSwitch();
+    if (!muted) beep(700, 0.06, 'sine', 0.05);
+  });
+  soundBtn.addEventListener('click', () => {
+    muted = !muted;
+    soundBtn.classList.toggle('muted', muted);
+    syncSoundSwitch();
+    if (!muted) beep(700, 0.06, 'sine', 0.05);
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (currentKey === 'custom') {
+      const v1 = parseInt(cfgColsEl.value, 10);
+      const v2 = parseInt(cfgRowsEl.value, 10);
+      const v3 = parseInt(cfgMinesEl.value, 10);
+      customConfig.cols  = isNaN(v1) ? customConfig.cols : Math.max(5, Math.min(500, v1));
+      customConfig.rows  = isNaN(v2) ? customConfig.rows : Math.max(5, Math.min(500, v2));
+      const maxMines = customConfig.cols * customConfig.rows - 1;
+      customConfig.mines = isNaN(v3) ? customConfig.mines : Math.max(1, Math.min(maxMines, v3));
+    }
+    newGame(currentKey);
+  });
+
+  resumeBtn.addEventListener('click', () => closeDashboard());
+
+  /* Right-click shortcut → direct flag */
+  canvas.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    if (finished) return;
+    const rect = canvas.getBoundingClientRect();
+    const worldX = (e.clientX - rect.left) + cameraX;
+    const worldY = (e.clientY - rect.top) + cameraY;
+    const r = Math.floor(worldY / cellSize);
+    const c = Math.floor(worldX / cellSize);
+    if (!infinite) {
+      if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) return;
+    }
+    closeOptionsMenu();
+    toggleFlag(r, c);
+  });
+
+  /* Resize / orientation */
+  let resizeRaf = null;
+  window.addEventListener('resize', () => {
+    closeOptionsMenu();
+    if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      setupView();
+      requestDraw();
+    });
+  });
+  window.addEventListener('orientationchange', () => {
+    closeOptionsMenu();
+    setTimeout(() => {
+      setupView();
+      requestDraw();
+    }, 220);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (optionsMenu.classList.contains('show')) closeOptionsMenu();
+      else if (dashboard.classList.contains('show')) closeDashboard();
+    }
+  });
+
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
+
+  /* =========================================================
+     START
+     ========================================================= */
+  syncSoundSwitch();
+  newGame('medium');
+
+})();
+</script>
+</body>
+</html>

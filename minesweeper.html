@@ -191,7 +191,6 @@
   .fab:active { transform: scale(.9); background: #b7e05e; }
   .fab svg { width: 24px; height: 24px; }
 
-  /* Zoom buttons — hidden by default, shown only when zoom is available */
   .zoom-btn {
     display: none;
     width: 44px; height: 44px;
@@ -235,28 +234,6 @@
     overflow: hidden;
   }
   .dashboard.show .dash-card { transform: scale(1); }
-
-  .dash-result {
-    display: none;
-    align-items: center; gap: 12px;
-    padding: 12px 14px;
-    margin-bottom: 14px;
-    border-radius: 14px;
-    background: #e3f0c4;
-    border: 2px solid #c5e08a;
-  }
-  .dash-result.show { display: flex; animation: popIn .35s cubic-bezier(.2, 1.4, .5, 1); }
-  .dash-result.lose { background: #fbe4e4; border-color: #f0baba; }
-  .dash-result .ri { font-size: 32px; line-height: 1; }
-  .dash-result-info { display: flex; flex-direction: column; min-width: 0; }
-  .dash-result-title { font-size: 15px; font-weight: 800; color: #2b4112; }
-  .dash-result-sub   { font-size: 12px; font-weight: 600; color: #6b8248; margin-top: 2px; }
-  .dash-result.lose .dash-result-title { color: #7a2020; }
-  .dash-result.lose .dash-result-sub   { color: #9b5252; }
-  @keyframes popIn {
-    0% { transform: scale(.85); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
 
   .dash-tabs {
     display: grid; grid-template-columns: repeat(3, 1fr);
@@ -451,6 +428,317 @@
   }
   .resume-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c5d6a3; }
   .play-btn svg, .resume-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+
+  /* ============ TUTORIAL BUTTON (in Options) ============ */
+  .tutorial-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 14px;
+    border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #a3d148 0%, #7cb518 100%);
+    color: #ffffff;
+    font-size: 13px; font-weight: 800; letter-spacing: .3px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #5d8a10;
+    transition: transform .1s, box-shadow .1s;
+    margin-bottom: 10px;
+  }
+  .tutorial-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10; }
+  .tutorial-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+
+  /* ============ OPTION WARNING TEXT ============ */
+  .opt-warning {
+    display: flex; gap: 6px; align-items: flex-start;
+    font-size: 11px; font-weight: 700;
+    color: #b8721e;
+    padding: 0 6px 12px;
+    line-height: 1.4;
+  }
+  .opt-warning::before { content: '⚠'; font-size: 12px; flex: 0 0 auto; }
+
+  /* ============ RESULT OVERLAY (Win / Lose) ============ */
+  .result-overlay {
+    position: absolute; inset: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(8, 16, 3, .72);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s, visibility .3s;
+  }
+  .result-overlay.show { opacity: 1; visibility: visible; }
+
+  .result-card {
+    width: 100%; max-width: 300px;
+    padding: 28px 24px 22px;
+    border-radius: 24px;
+    text-align: center;
+    transform: scale(.85);
+    transition: transform .35s cubic-bezier(.2, 1.4, .5, 1);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+  }
+  .result-overlay.show .result-card { transform: scale(1); }
+
+  .result-overlay.win .result-card {
+    background: linear-gradient(160deg, #f6fbe8 0%, #dcefc0 100%);
+    border: 2px solid #a3d148;
+  }
+  .result-overlay.lose .result-card {
+    background: linear-gradient(160deg, #fbe9e9 0%, #f2c9c9 100%);
+    border: 2px solid #e05252;
+  }
+
+  .result-icon {
+    font-size: 60px; line-height: 1;
+    margin-bottom: 10px;
+    display: block;
+    animation: popIcon .5s cubic-bezier(.2, 1.4, .5, 1);
+  }
+  @keyframes popIcon {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
+  .result-title {
+    font-size: 24px; font-weight: 800;
+    margin: 0 0 6px;
+    letter-spacing: -.3px;
+  }
+  .result-overlay.win .result-title { color: #2b4112; }
+  .result-overlay.lose .result-title { color: #7a2020; }
+
+  .result-sub {
+    font-size: 14px; font-weight: 600;
+    margin: 0 0 22px;
+  }
+  .result-overlay.win .result-sub { color: #5c7233; }
+  .result-overlay.lose .result-sub { color: #9b5252; }
+
+  .result-btn {
+    width: 100%; padding: 14px;
+    border: none; border-radius: 14px;
+    font-size: 15px; font-weight: 800;
+    letter-spacing: .5px; cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+    font-family: inherit;
+  }
+  .result-overlay.win .result-btn {
+    background: #7cb518; color: #fff;
+    box-shadow: 0 4px 0 #5d8a10;
+  }
+  .result-overlay.win .result-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #5d8a10;
+  }
+  .result-overlay.lose .result-btn {
+    background: #e05252; color: #fff;
+    box-shadow: 0 4px 0 #b03838;
+  }
+  .result-overlay.lose .result-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #b03838;
+  }
+
+  .result-btn-secondary {
+    width: 100%; padding: 11px;
+    margin-top: 8px;
+    border: none; border-radius: 12px;
+    background: transparent;
+    font-size: 13px; font-weight: 800;
+    letter-spacing: .3px; cursor: pointer;
+    transition: background .15s;
+    font-family: inherit;
+  }
+  .result-overlay.win .result-btn-secondary { color: #5c7233; }
+  .result-overlay.win .result-btn-secondary:active { background: rgba(124, 181, 24, .12); }
+  .result-overlay.lose .result-btn-secondary { color: #9b5252; }
+  .result-overlay.lose .result-btn-secondary:active { background: rgba(224, 82, 82, .12); }
+
+  /* ============ TUTORIAL OVERLAY ============ */
+  .tutorial-overlay {
+    position: absolute; inset: 0; z-index: 90;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    background: rgba(8, 16, 3, .82);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+  }
+  .tutorial-overlay.show { opacity: 1; visibility: visible; }
+
+  .tutorial-card {
+    width: 100%; max-width: 340px;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    display: flex; flex-direction: column;
+    padding: 18px 18px 16px;
+    border-radius: 22px;
+    background: #f3f9e6;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .6);
+    transform: scale(.9);
+    transition: transform .3s cubic-bezier(.2, 1.4, .5, 1);
+    overflow: hidden;
+  }
+  .tutorial-overlay.show .tutorial-card { transform: scale(1); }
+
+  .tutorial-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+  }
+  .tutorial-step-indicator {
+    font-size: 11px; font-weight: 800;
+    color: #7c9256; letter-spacing: .8px; text-transform: uppercase;
+  }
+  .tutorial-close {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; border-radius: 50%;
+    background: #e0ecc3; color: #5c7233;
+    font-size: 20px; font-weight: 700;
+    cursor: pointer; line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s;
+  }
+  .tutorial-close:active { background: #d0dca8; }
+
+  .tutorial-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tutorial-visual {
+    min-height: 150px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 14px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+    background: #e0ecc3;
+  }
+
+  .tutorial-title {
+    margin: 0 0 6px;
+    font-size: 17px; font-weight: 800; color: #2b4112;
+  }
+  .tutorial-text {
+    margin: 0 0 8px;
+    font-size: 13px; font-weight: 600; color: #5c7233;
+    line-height: 1.55;
+  }
+
+  .tutorial-nav {
+    display: flex; gap: 8px;
+    margin-top: 14px;
+    flex: 0 0 auto;
+  }
+  .tutorial-prev, .tutorial-next {
+    flex: 1;
+    padding: 12px;
+    border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 800;
+    letter-spacing: .3px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform .1s, box-shadow .1s, background .15s;
+  }
+  .tutorial-prev {
+    background: #e0ecc3; color: #5c7233;
+  }
+  .tutorial-prev:active { background: #d0dca8; }
+  .tutorial-prev:disabled {
+    opacity: 0.35; pointer-events: none;
+  }
+  .tutorial-next {
+    background: #7cb518; color: #fff;
+    box-shadow: 0 3px 0 #5d8a10;
+  }
+  .tutorial-next:active { transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10; }
+  .tutorial-next.finish {
+    background: #2b4112;
+    box-shadow: 0 3px 0 #16250a;
+  }
+
+  /* Mini board visuals for tutorial */
+  .mini-board {
+    display: grid;
+    grid-template-columns: repeat(3, 38px);
+    gap: 2px;
+    padding: 4px;
+    border-radius: 8px;
+    background: #16250a;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  }
+  .mini-cell {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800;
+    border-radius: 3px;
+    background: #a3d148;
+    color: #1976d2;
+    line-height: 1;
+    position: relative;
+  }
+  .mini-cell.dark { background: #96c63e; }
+  .mini-cell.revealed { background: #e6f2cc; }
+  .mini-cell.revealed.dark { background: #dbecb9; }
+  .mini-cell.flagged { background: #b7dd63; }
+  .mini-cell.flagged::before {
+    content: '🚩';
+    font-size: 17px;
+    line-height: 1;
+  }
+  .mini-cell.highlight {
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #7cb518;
+    z-index: 1;
+  }
+  .mini-cell .n1 { color: #1976d2; }
+  .mini-cell .n2 { color: #2e7d32; }
+  .mini-cell .n3 { color: #d32f2f; }
+  .mini-cell .n4 { color: #303f9f; }
+  .mini-cell .n5 { color: #8e0000; }
+  .mini-cell .n6 { color: #00838f; }
+  .mini-cell .n7 { color: #212121; }
+  .mini-cell .n8 { color: #616161; }
+
+  /* Tutorial popup menu preview */
+  .mini-popup {
+    display: flex; gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+    background: #16250a;
+    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+  }
+  .mini-popup-btn {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+  }
+  .mini-popup-btn.cancel { background: rgba(255,255,255,.10); color: #ff9d9d; }
+  .mini-popup-btn.reveal { background: rgba(163, 209, 72, .25); color: #c9e86a; }
+  .mini-popup-btn.flag   { background: rgba(229, 57, 53, .25);  color: #ff6b6b; }
+  .mini-popup-btn svg { width: 18px; height: 18px; display: block; }
+
+  /* Numbers preview row */
+  .num-row {
+    display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center;
+    padding: 4px;
+  }
+  .num-chip {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: #e6f2cc;
+    font-size: 20px; font-weight: 800;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+  }
 </style>
 </head>
 <body>
@@ -507,7 +795,7 @@
   <div class="menu" id="menu">
     <button data-key="easy">Easy <small>9 × 9 · 10</small></button>
     <button data-key="medium" class="active">Medium <small>12 × 16 · 40</small></button>
-    <button data-key="hard">Hard <small>16 × 24 · 75</small></button>
+    <button data-key="hard">Hard <small>16 × 24 · 100</small></button>
     <button data-key="custom">Custom <small>Configure…</small></button>
   </div>
 
@@ -544,7 +832,6 @@
 
   <!-- ================= SIDE BUTTONS (Zoom In / Zoom Out / FAB) ================= -->
   <div class="side-buttons" id="sideButtons">
-    <!-- Zoom In (top) -->
     <button class="zoom-btn" id="zoomInBtn" aria-label="Zoom in">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
@@ -553,8 +840,6 @@
         <path d="M11 8v6M8 11h6"/>
       </svg>
     </button>
-
-    <!-- Zoom Out (middle) -->
     <button class="zoom-btn" id="zoomOutBtn" aria-label="Zoom out">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
@@ -563,8 +848,6 @@
         <path d="M8 11h6"/>
       </svg>
     </button>
-
-    <!-- FAB / Menu (bottom) -->
     <button class="fab" id="fabBtn" aria-label="Open menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -573,17 +856,20 @@
     </button>
   </div>
 
+  <!-- ================= RESULT OVERLAY (Win / Lose) ================= -->
+  <div class="result-overlay" id="resultOverlay">
+    <div class="result-card">
+      <span class="result-icon" id="resultIcon">🏆</span>
+      <h2 class="result-title" id="resultTitle">You Won!</h2>
+      <p class="result-sub" id="resultSub">Time: 000s</p>
+      <button class="result-btn" id="resultBtn">Play Again</button>
+      <button class="result-btn-secondary" id="resultSecondary">View Stats</button>
+    </div>
+  </div>
+
   <!-- ================= DASHBOARD ================= -->
   <div class="dashboard" id="dashboard">
     <div class="dash-card">
-
-      <div class="dash-result" id="dashResult">
-        <span class="ri" id="dashResultIcon">💥</span>
-        <div class="dash-result-info">
-          <div class="dash-result-title" id="dashResultTitle">Game Over</div>
-          <div class="dash-result-sub" id="dashResultSub">You hit a mine!</div>
-        </div>
-      </div>
 
       <div class="dash-tabs">
         <button class="dash-tab active" data-tab="stats">Statistics</button>
@@ -623,12 +909,32 @@
 
         <!-- Options -->
         <div class="dash-pane" data-pane="options">
+          <button class="tutorial-btn" id="playTutorialBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            Play Tutorial
+          </button>
+
           <div class="opt-row">
             <span>Sound</span>
             <button class="switch on" id="optSound" aria-label="Toggle sound">
               <span class="switch-knob"></span>
             </button>
           </div>
+
+          <div class="opt-row">
+            <span>Unlimited Zoom Out</span>
+            <button class="switch" id="optUnlimitedZoom" aria-label="Toggle unlimited zoom out">
+              <span class="switch-knob"></span>
+            </button>
+          </div>
+          <div class="opt-warning">
+            Warning: Enabling this may cause performance issues on low-end devices.
+          </div>
+
           <div class="opt-row opt-diff">
             <span>Difficulty</span>
             <div class="diff-group diff-group-4">
@@ -692,6 +998,29 @@
     </div>
   </div>
 
+  <!-- ================= TUTORIAL OVERLAY ================= -->
+  <div class="tutorial-overlay" id="tutorialOverlay">
+    <div class="tutorial-card">
+      <div class="tutorial-header">
+        <div class="tutorial-step-indicator" id="tutorialStep">Step 1 of 5</div>
+        <button class="tutorial-close" id="tutorialClose" aria-label="Close tutorial">×</button>
+      </div>
+
+      <div class="tutorial-body">
+        <div class="tutorial-visual" id="tutorialVisual"></div>
+        <h3 class="tutorial-title" id="tutorialTitle">Reveal Cells</h3>
+        <p class="tutorial-text" id="tutorialText">
+          Tap any unrevealed cell to open the options menu...
+        </p>
+      </div>
+
+      <div class="tutorial-nav">
+        <button class="tutorial-prev" id="tutorialPrev">Back</button>
+        <button class="tutorial-next" id="tutorialNext">Next</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -699,12 +1028,12 @@
   'use strict';
 
   /* =========================================================
-     CONFIG — preset difficulties
+     CONFIG — preset difficulties  (Hard now 16×24 · 100 bombs ≈ 26%)
      ========================================================= */
   const CONFIG = {
-    easy:   { cols: 9,  rows: 9,  mines: 10, label: 'Easy'   },
-    medium: { cols: 12, rows: 16, mines: 40, label: 'Medium' },
-    hard:   { cols: 16, rows: 24, mines: 75, label: 'Hard'   }
+    easy:   { cols: 9,  rows: 9,  mines: 10,  label: 'Easy'   },
+    medium: { cols: 12, rows: 16, mines: 40,  label: 'Medium' },
+    hard:   { cols: 16, rows: 24, mines: 100, label: 'Hard'   }
   };
 
   /* =========================================================
@@ -731,16 +1060,21 @@
   const optReveal   = document.getElementById('optReveal');
   const optFlag     = document.getElementById('optFlag');
 
+  const resultOverlay   = document.getElementById('resultOverlay');
+  const resultIcon      = document.getElementById('resultIcon');
+  const resultTitle     = document.getElementById('resultTitle');
+  const resultSub       = document.getElementById('resultSub');
+  const resultBtn       = document.getElementById('resultBtn');
+  const resultSecondary = document.getElementById('resultSecondary');
+
   const dashboard  = document.getElementById('dashboard');
-  const dashResult = document.getElementById('dashResult');
-  const dashResultIcon  = document.getElementById('dashResultIcon');
-  const dashResultTitle = document.getElementById('dashResultTitle');
-  const dashResultSub   = document.getElementById('dashResultSub');
   const dashActions     = document.getElementById('dashActions');
   const playBtn         = document.getElementById('playBtn');
   const playBtnLabel    = document.getElementById('playBtnLabel');
   const resumeBtn       = document.getElementById('resumeBtn');
   const optSound        = document.getElementById('optSound');
+  const optUnlimitedZoom= document.getElementById('optUnlimitedZoom');
+  const playTutorialBtn = document.getElementById('playTutorialBtn');
 
   const statPlayedEl   = document.getElementById('statPlayed');
   const statWinsEl     = document.getElementById('statWins');
@@ -757,11 +1091,21 @@
   const cfgMinesEl     = document.getElementById('cfgMines');
   const cfgInfiniteBtn = document.getElementById('cfgInfinite');
 
+  /* Tutorial */
+  const tutorialOverlay = document.getElementById('tutorialOverlay');
+  const tutorialStep    = document.getElementById('tutorialStep');
+  const tutorialVisual  = document.getElementById('tutorialVisual');
+  const tutorialTitle   = document.getElementById('tutorialTitle');
+  const tutorialText    = document.getElementById('tutorialText');
+  const tutorialPrev    = document.getElementById('tutorialPrev');
+  const tutorialNext    = document.getElementById('tutorialNext');
+  const tutorialClose   = document.getElementById('tutorialClose');
+
   /* =========================================================
      STATE
      ========================================================= */
-  let currentKey   = 'medium';         // pending selection (from dashboard/header)
-  let activeMode   = 'medium';         // actually being played (for stats & zoom)
+  let currentKey   = 'medium';
+  let activeMode   = 'medium';
   let infinite     = false;
   let gridCols     = 12;
   let gridRows     = 16;
@@ -784,18 +1128,16 @@
   let timerId      = null;
   let muted        = false;
 
+  /* NEW: unlimited zoom out flag */
+  let unlimitedZoomOut = false;
+
   /* Camera & cell size */
   let cameraX = 0, cameraY = 0;
   let cellSize = 30;
   let viewWidth = 0, viewHeight = 0;
 
-  /* Zoom state (null = auto-fit; number = user-chosen size) */
   let zoomCellSize = null;
-
-  /* Options menu target — { r, c } or null */
   let optionsTarget = null;
-
-  /* Double-tap state */
   let lastTap = null;
 
   /* Pointer / pinch state */
@@ -806,13 +1148,11 @@
   let pinchState = null;
   let suppressTapUntil = 0;
 
+  /* Tutorial state */
+  let tutorialIndex = 0;
+
   /* Custom config */
-  const customConfig = {
-    cols: 16,
-    rows: 16,
-    mines: 40,
-    infinite: false
-  };
+  const customConfig = { cols: 16, rows: 16, mines: 40, infinite: false };
 
   /* Statistics + history */
   const stats = {
@@ -828,9 +1168,7 @@
      ========================================================= */
   const KEY_OFFSET = 1000000;
   const KEY_STRIDE = 2000001;
-  function makeKey(r, c) {
-    return (r + KEY_OFFSET) * KEY_STRIDE + (c + KEY_OFFSET);
-  }
+  function makeKey(r, c) { return (r + KEY_OFFSET) * KEY_STRIDE + (c + KEY_OFFSET); }
 
   const NUM_COLORS = {
     1: '#1976d2', 2: '#2e7d32', 3: '#d32f2f', 4: '#303f9f',
@@ -880,9 +1218,11 @@
   }
 
   /* =========================================================
-     AUDIO
+     AUDIO — volume boosted 2.5× (capped at 0.9 to avoid clipping)
      ========================================================= */
   let actx = null;
+  const VOLUME_MULTIPLIER = 2.5;
+
   function beep(freq, dur, type, vol) {
     if (muted) return;
     try {
@@ -892,12 +1232,16 @@
         actx = new AC();
       }
       if (actx.state === 'suspended') actx.resume();
+
       const t = actx.currentTime;
       const osc = actx.createOscillator();
       const gain = actx.createGain();
+
+      const boostedVol = Math.min(0.9, (vol || 0.05) * VOLUME_MULTIPLIER);
+
       osc.type = type || 'sine';
       osc.frequency.setValueAtTime(freq, t);
-      gain.gain.setValueAtTime(vol || 0.05, t);
+      gain.gain.setValueAtTime(boostedVol, t);
       gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       osc.connect(gain);
       gain.connect(actx.destination);
@@ -914,15 +1258,13 @@
   }
 
   function getZoomLimits() {
-    /* Min ~13px (font ~7-8px, still readable) */
-    const minSize = 13;
-    /* Max = what Easy mode (9 cols) would naturally fit */
+    /* Min ~13px normally; ~5px when Unlimited Zoom Out is enabled */
+    const minSize = unlimitedZoomOut ? 5 : 13;
     let maxSize = Math.floor(Math.min(viewWidth / 9, viewHeight / 9));
     maxSize = Math.max(22, Math.min(64, maxSize));
     return { min: minSize, max: maxSize };
   }
 
-  /* Apply a new cell size, keeping the given screen anchor fixed */
   function applyZoomAt(newSize, startSize, startCamX, startCamY, anchorScreenX, anchorScreenY) {
     if (startSize <= 0) return;
 
@@ -949,7 +1291,6 @@
     newSize = Math.max(limits.min, Math.min(limits.max, newSize));
     if (newSize === cellSize) return;
 
-    /* Anchor at viewport centre */
     const ax = viewWidth / 2;
     const ay = viewHeight / 2;
     zoomCellSize = newSize;
@@ -987,7 +1328,6 @@
   function setupView() {
     resizeCanvas();
 
-    /* Clamp saved zoom to new limits */
     if (zoomCellSize !== null) {
       const lim = getZoomLimits();
       zoomCellSize = Math.max(lim.min, Math.min(lim.max, zoomCellSize));
@@ -1215,10 +1555,7 @@
       const cc = Math.floor(Math.random() * gridCols);
       if (rr === r && cc === c) continue;
       const nk = makeKey(rr, cc);
-      if (!bombSet.has(nk)) {
-        bombSet.add(nk);
-        return;
-      }
+      if (!bombSet.has(nk)) { bombSet.add(nk); return; }
       if (bombSet.size >= total - 1) return;
     }
   }
@@ -1227,9 +1564,7 @@
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
         const rr = r + dr, cc = c + dc;
-        if (hashBomb(rr, cc, seed) < density) {
-          overrides.set(makeKey(rr, cc), false);
-        }
+        if (hashBomb(rr, cc, seed) < density) overrides.set(makeKey(rr, cc), false);
       }
     }
   }
@@ -1241,7 +1576,6 @@
     if (finished) return;
     const k = makeKey(r, c);
     if (revealedSet.has(k) || flaggedSet.has(k)) return;
-
     if (!infinite) {
       if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) return;
     }
@@ -1283,9 +1617,7 @@
             } else {
               if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) {
                 const nk = makeKey(nr, nc);
-                if (!revealedSet.has(nk) && !flaggedSet.has(nk)) {
-                  stack.push([nr, nc]);
-                }
+                if (!revealedSet.has(nk) && !flaggedSet.has(nk)) stack.push([nr, nc]);
               }
             }
           }
@@ -1298,7 +1630,6 @@
     if (finished) return;
     const k = makeKey(r, c);
     if (revealedSet.has(k)) return;
-
     if (!infinite) {
       if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) return;
     }
@@ -1317,11 +1648,7 @@
     requestDraw();
   }
 
-  /* =========================================================
-     CHORDING (NEW)
-     ========================================================= */
   function tryChord(r, c, expectedAdj) {
-    /* Count flags around */
     let flagCount = 0;
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
@@ -1329,9 +1656,8 @@
         if (flaggedSet.has(makeKey(r + dr, c + dc))) flagCount++;
       }
     }
-    if (flagCount !== expectedAdj) return; /* Mismatch — ignore */
+    if (flagCount !== expectedAdj) return;
 
-    /* Reveal all non-flagged, non-revealed neighbours */
     let anyRevealed = false;
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
@@ -1341,10 +1667,7 @@
         if (revealedSet.has(nk) || flaggedSet.has(nk)) continue;
         if (!infinite && (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols)) continue;
 
-        if (isBomb(nr, nc)) {
-          explode(nr, nc);
-          return;
-        }
+        if (isBomb(nr, nc)) { explode(nr, nc); return; }
         floodFill(nr, nc);
         anyRevealed = true;
       }
@@ -1358,7 +1681,7 @@
   }
 
   /* =========================================================
-     EXPLODE / WIN
+     EXPLODE / WIN  →  result overlays
      ========================================================= */
   function explode(r, c) {
     finished = true;
@@ -1375,9 +1698,7 @@
       for (let rr = 0; rr < gridRows; rr++) {
         for (let cc = 0; cc < gridCols; cc++) {
           const k = makeKey(rr, cc);
-          if (bombSet.has(k) && !flaggedSet.has(k)) {
-            revealedSet.add(k);
-          }
+          if (bombSet.has(k) && !flaggedSet.has(k)) revealedSet.add(k);
         }
       }
     }
@@ -1387,7 +1708,7 @@
 
     requestDraw();
     recordResult(false);
-    openDashboard(true, { win: false, title: 'Game Over', sub: 'You hit a mine!' });
+    showResultOverlay(false, 'Game Over', 'You hit a mine!');
   }
 
   function checkWin() {
@@ -1400,17 +1721,10 @@
     closeOptionsMenu();
 
     flaggedSet.forEach((k) => {
-      if (!bombSet.has(k)) {
-        flaggedSet.delete(k);
-        flags--;
-      }
+      if (!bombSet.has(k)) { flaggedSet.delete(k); flags--; }
     });
-
     bombSet.forEach((k) => {
-      if (!flaggedSet.has(k)) {
-        flaggedSet.add(k);
-        flags++;
-      }
+      if (!flaggedSet.has(k)) { flaggedSet.add(k); flags++; }
     });
 
     updateHud();
@@ -1421,8 +1735,39 @@
     setTimeout(() => beep(1568, 0.22, 'sine', 0.07), 260);
 
     recordResult(true);
-    openDashboard(true, { win: true, title: 'You Won!', sub: 'Time: ' + pad3(timer) + 's' });
+    showResultOverlay(true, 'You Won!', 'Time: ' + pad3(timer) + 's');
   }
+
+  /* =========================================================
+     RESULT OVERLAY
+     ========================================================= */
+  function showResultOverlay(isWin, title, sub) {
+    resultOverlay.classList.toggle('win', isWin);
+    resultOverlay.classList.toggle('lose', !isWin);
+    resultIcon.textContent = isWin ? '🏆' : '💥';
+    resultTitle.textContent = title;
+    resultSub.textContent = sub;
+    resultBtn.textContent = isWin ? 'Play Again' : 'Try Again';
+    resultSecondary.textContent = isWin ? 'View Stats' : 'View Board';
+    resultOverlay.classList.add('show');
+  }
+
+  function hideResultOverlay() {
+    resultOverlay.classList.remove('show');
+  }
+
+  resultBtn.addEventListener('click', () => {
+    hideResultOverlay();
+    newGame(activeMode);
+  });
+
+  resultSecondary.addEventListener('click', () => {
+    hideResultOverlay();
+    if (resultOverlay.classList.contains('win')) {
+      openDashboard();
+    }
+    /* On lose: just close — board stays visible for review */
+  });
 
   /* =========================================================
      TIMER
@@ -1446,11 +1791,8 @@
      HUD
      ========================================================= */
   function updateHud() {
-    if (infinite) {
-      mineCountEl.textContent = '∞';
-    } else {
-      mineCountEl.textContent = Math.max(0, gridMines - flags);
-    }
+    if (infinite) mineCountEl.textContent = '∞';
+    else mineCountEl.textContent = Math.max(0, gridMines - flags);
   }
 
   /* =========================================================
@@ -1462,9 +1804,7 @@
     s.played++;
     if (won) {
       s.wins++;
-      if (key !== 'custom' && (s.bestTime === null || timer < s.bestTime)) {
-        s.bestTime = timer;
-      }
+      if (key !== 'custom' && (s.bestTime === null || timer < s.bestTime)) s.bestTime = timer;
     } else {
       s.losses++;
     }
@@ -1472,11 +1812,7 @@
     let label = CONFIG[key] ? CONFIG[key].label : 'Custom';
     if (infinite) label = 'Custom ∞';
 
-    history.unshift({
-      diff: label,
-      result: won ? 'Won' : 'Lost',
-      time: timer
-    });
+    history.unshift({ diff: label, result: won ? 'Won' : 'Lost', time: timer });
     if (history.length > 30) history.length = 30;
   }
 
@@ -1532,6 +1868,7 @@
   }
 
   function syncSoundSwitch() { optSound.classList.toggle('on', !muted); }
+  function syncUnlimitedZoomSwitch() { optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut); }
 
   function syncDashboardActions() {
     const inProgress = started && !finished;
@@ -1544,18 +1881,8 @@
     }
   }
 
-  function openDashboard(showResult, resultInfo) {
+  function openDashboard() {
     closeOptionsMenu();
-
-    if (showResult && resultInfo) {
-      dashResult.classList.add('show');
-      dashResult.classList.toggle('lose', !resultInfo.win);
-      dashResultIcon.textContent  = resultInfo.win ? '🏆' : '💥';
-      dashResultTitle.textContent = resultInfo.title;
-      dashResultSub.textContent   = resultInfo.sub;
-    } else {
-      dashResult.classList.remove('show');
-    }
 
     if (started && !finished) pauseTimer();
 
@@ -1575,6 +1902,7 @@
     updateHistoryUI();
     syncDiffButtons();
     syncSoundSwitch();
+    syncUnlimitedZoomSwitch();
     syncDashboardActions();
 
     dashboard.classList.add('show');
@@ -1582,7 +1910,6 @@
 
   function closeDashboard() {
     dashboard.classList.remove('show');
-    dashResult.classList.remove('show');
     if (started && !finished) resumeTimer();
   }
 
@@ -1614,7 +1941,6 @@
 
     let x = (clientX - appRect.left) - popupW / 2;
     let y = (clientY - appRect.top) - popupH - 12;
-
     if (y < 8) y = (clientY - appRect.top) + cellSize + 12;
 
     x = Math.max(8, Math.min(appRect.width - popupW - 8, x));
@@ -1625,23 +1951,16 @@
     requestDraw();
   }
 
-  optCancel.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeOptionsMenu();
-  });
+  optCancel.addEventListener('click', (e) => { e.stopPropagation(); closeOptionsMenu(); });
   optReveal.addEventListener('click', (e) => {
     e.stopPropagation();
-    const t = optionsTarget;
-    closeOptionsMenu();
-    if (!t) return;
-    openCell(t.r, t.c);
+    const t = optionsTarget; closeOptionsMenu();
+    if (t) openCell(t.r, t.c);
   });
   optFlag.addEventListener('click', (e) => {
     e.stopPropagation();
-    const t = optionsTarget;
-    closeOptionsMenu();
-    if (!t) return;
-    toggleFlag(t.r, t.c);
+    const t = optionsTarget; closeOptionsMenu();
+    if (t) toggleFlag(t.r, t.c);
   });
 
   document.addEventListener('pointerdown', (e) => {
@@ -1664,26 +1983,17 @@
      ========================================================= */
   canvas.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
 
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-    /* Second pointer + zoom available → pinch */
-    if (activePointers.size === 2 && isZoomAvailable()) {
-      startPinch();
-      return;
-    }
+    if (activePointers.size === 2 && isZoomAvailable()) { startPinch(); return; }
 
-    /* First pointer → prepare pan */
     if (activePointers.size === 1) {
       panPointerId = e.pointerId;
       pointerDown = {
-        id: e.pointerId,
-        x: e.clientX,
-        y: e.clientY,
-        cameraX: cameraX,
-        cameraY: cameraY,
-        moved: false
+        id: e.pointerId, x: e.clientX, y: e.clientY,
+        cameraX: cameraX, cameraY: cameraY, moved: false
       };
       panning = false;
     }
@@ -1703,8 +2013,7 @@
       startSize: cellSize,
       startCamX: cameraX,
       startCamY: cameraY,
-      anchorX: cx,
-      anchorY: cy
+      anchorX: cx, anchorY: cy
     };
 
     pointerDown = null;
@@ -1718,7 +2027,6 @@
     if (!activePointers.has(e.pointerId)) return;
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-    /* Pinch zoom */
     if (pinchState && activePointers.size >= 2) {
       const pts = Array.from(activePointers.values());
       const dx = pts[0].x - pts[1].x;
@@ -1740,7 +2048,6 @@
       return;
     }
 
-    /* Pan */
     if (!pointerDown || e.pointerId !== panPointerId) return;
     const dx = e.clientX - pointerDown.x;
     const dy = e.clientY - pointerDown.y;
@@ -1761,25 +2068,17 @@
   canvas.addEventListener('pointerup', (e) => {
     activePointers.delete(e.pointerId);
 
-    /* End of pinch */
     if (pinchState) {
       if (activePointers.size < 2) {
         pinchState = null;
         suppressTapUntil = Date.now() + 350;
 
         if (activePointers.size === 1) {
-          /* Continue with single-finger pan */
           const pid = activePointers.keys().next().value;
           const pt = activePointers.get(pid);
           panPointerId = pid;
-          pointerDown = {
-            id: pid,
-            x: pt.x,
-            y: pt.y,
-            cameraX: cameraX,
-            cameraY: cameraY,
-            moved: true /* prevent tap */
-          };
+          pointerDown = { id: pid, x: pt.x, y: pt.y,
+            cameraX: cameraX, cameraY: cameraY, moved: true };
           panning = false;
         } else {
           panPointerId = null;
@@ -1800,7 +2099,6 @@
     if (wasPanning || p.moved) return;
     if (Date.now() < suppressTapUntil) return;
 
-    /* Determine cell */
     const rect = canvas.getBoundingClientRect();
     const localX = e.clientX - rect.left;
     const localY = e.clientY - rect.top;
@@ -1838,7 +2136,6 @@
   function handleTap(r, c, clientX, clientY) {
     const k = makeKey(r, c);
 
-    /* --- Revealed cell → try chording --- */
     if (revealedSet.has(k)) {
       closeOptionsMenu();
       if (!isBomb(r, c)) {
@@ -1850,7 +2147,6 @@
 
     const now = Date.now();
 
-    /* --- Double-tap detection → reveal directly --- */
     if (lastTap && lastTap.r === r && lastTap.c === c && (now - lastTap.time) < DOUBLE_TAP_MS) {
       clearTimeout(lastTap.timer);
       lastTap = null;
@@ -1861,23 +2157,16 @@
       return;
     }
 
-    /* Cancel any pending tap on a different cell */
-    if (lastTap) {
-      clearTimeout(lastTap.timer);
-      lastTap = null;
-    }
+    if (lastTap) { clearTimeout(lastTap.timer); lastTap = null; }
 
-    /* If menu already open for this cell, keep it */
     if (optionsMenu.classList.contains('show') && optionsTarget &&
         optionsTarget.r === r && optionsTarget.c === c) {
       return;
     }
 
-    /* Highlight pressed cell immediately */
     optionsTarget = { r: r, c: c };
     requestDraw();
 
-    /* Delay showing menu (allows double-tap to cancel it) */
     const timer = setTimeout(() => {
       lastTap = null;
       showMenuForTarget(r, c, clientX, clientY);
@@ -1891,19 +2180,13 @@
      ========================================================= */
   function newGame(key) {
     if (key && (CONFIG[key] || key === 'custom')) currentKey = key;
-
-    /* Snapshot the mode for this game */
     activeMode = currentKey;
-
-    /* Reset zoom on new game */
     zoomCellSize = null;
 
     if (currentKey === 'custom') {
       if (customConfig.infinite) {
         infinite = true;
-        gridCols = 0;
-        gridRows = 0;
-        gridMines = 0;
+        gridCols = 0; gridRows = 0; gridMines = 0;
         density = 0.15;
         seed = Math.floor(Math.random() * 2147483647);
         overrides.clear();
@@ -1932,6 +2215,7 @@
 
     closeOptionsMenu();
     closeDashboard();
+    hideResultOverlay();
 
     stopTimer();
     timer = 0;
@@ -1962,16 +2246,9 @@
   /* =========================================================
      ZOOM BUTTON EVENTS
      ========================================================= */
-  zoomInBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    zoomStep(+1);
-  });
-  zoomOutBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    zoomStep(-1);
-  });
+  zoomInBtn.addEventListener('click', (e) => { e.stopPropagation(); zoomStep(+1); });
+  zoomOutBtn.addEventListener('click', (e) => { e.stopPropagation(); zoomStep(-1); });
 
-  /* Mouse wheel zoom (desktop) */
   canvas.addEventListener('wheel', (e) => {
     if (!isZoomAvailable()) return;
     e.preventDefault();
@@ -1989,6 +2266,149 @@
     zoomCellSize = newSize;
     applyZoomAt(newSize, cellSize, cameraX, cameraY, ax, ay);
   }, { passive: false });
+
+  /* =========================================================
+     TUTORIAL
+     ========================================================= */
+  const TUTORIAL_STEPS = [
+    {
+      title: 'Reveal Cells',
+      text: 'Tap any unrevealed cell to open the options menu. Choose "Reveal" (shovel icon) to dig. Double-tap directly on a cell also reveals it instantly.',
+      visual: '' +
+        '<div class="mini-board">' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark revealed highlight"><span class="n1">1</span></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+        '</div>'
+    },
+    {
+      title: 'Flag Mines',
+      text: 'Suspect a cell contains a mine? Tap it and choose "Flag" (flag icon). You can also long-press on mobile, or right-click on desktop.',
+      visual: '' +
+        '<div class="mini-board">' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark flagged highlight"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+        '</div>'
+    },
+    {
+      title: 'The Options Menu',
+      text: 'Every tap on an unrevealed cell opens a small menu with three buttons: Cancel (close), Reveal (dig), and Flag (mark as mine).',
+      visual: '' +
+        '<div class="mini-popup">' +
+          '<div class="mini-popup-btn cancel">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+          '</div>' +
+          '<div class="mini-popup-btn reveal">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M9 3h6"/><path d="M8 12h8v3a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-3z" fill="currentColor" stroke="none"/></svg>' +
+          '</div>' +
+          '<div class="mini-popup-btn flag">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V4"/><path d="M7.6 5l9 2.6-9 2.6z" fill="currentColor" stroke="none"/><path d="M4 21h6"/></svg>' +
+          '</div>' +
+        '</div>'
+    },
+    {
+      title: 'Chording',
+      text: 'Tap a revealed number when the correct number of flags surrounds it — all other neighbours will be revealed at once. A quick way to speed up your game!',
+      visual: '' +
+        '<div class="mini-board">' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell flagged"></div>' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell flagged"></div>' +
+          '<div class="mini-cell dark revealed highlight"><span class="n2">2</span></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+          '<div class="mini-cell"></div>' +
+          '<div class="mini-cell dark"></div>' +
+        '</div>'
+    },
+    {
+      title: 'Reading Numbers',
+      text: 'Numbers tell you how many mines are hiding in the 8 cells around that number. Use them to deduce where the mines are.',
+      visual: '' +
+        '<div class="num-row">' +
+          '<div class="num-chip" style="color:#1976d2">1</div>' +
+          '<div class="num-chip" style="color:#2e7d32">2</div>' +
+          '<div class="num-chip" style="color:#d32f2f">3</div>' +
+          '<div class="num-chip" style="color:#303f9f">4</div>' +
+          '<div class="num-chip" style="color:#8e0000">5</div>' +
+          '<div class="num-chip" style="color:#00838f">6</div>' +
+          '<div class="num-chip" style="color:#212121">7</div>' +
+          '<div class="num-chip" style="color:#616161">8</div>' +
+        '</div>'
+    }
+  ];
+
+  function renderTutorialStep() {
+    const step = TUTORIAL_STEPS[tutorialIndex];
+    if (!step) return;
+
+    tutorialStep.textContent = 'Step ' + (tutorialIndex + 1) + ' of ' + TUTORIAL_STEPS.length;
+    tutorialVisual.innerHTML = step.visual;
+    tutorialTitle.textContent = step.title;
+    tutorialText.textContent = step.text;
+
+    tutorialPrev.disabled = (tutorialIndex === 0);
+
+    if (tutorialIndex === TUTORIAL_STEPS.length - 1) {
+      tutorialNext.textContent = 'Finish';
+      tutorialNext.classList.add('finish');
+    } else {
+      tutorialNext.textContent = 'Next';
+      tutorialNext.classList.remove('finish');
+    }
+  }
+
+  function openTutorial() {
+    tutorialIndex = 0;
+    renderTutorialStep();
+    tutorialOverlay.classList.add('show');
+  }
+
+  function closeTutorial() {
+    tutorialOverlay.classList.remove('show');
+  }
+
+  tutorialPrev.addEventListener('click', () => {
+    if (tutorialIndex > 0) {
+      tutorialIndex--;
+      renderTutorialStep();
+      beep(700, 0.04, 'sine', 0.04);
+    }
+  });
+
+  tutorialNext.addEventListener('click', () => {
+    if (tutorialIndex < TUTORIAL_STEPS.length - 1) {
+      tutorialIndex++;
+      renderTutorialStep();
+      beep(800, 0.04, 'sine', 0.04);
+    } else {
+      closeTutorial();
+      beep(900, 0.08, 'sine', 0.06);
+    }
+  });
+
+  tutorialClose.addEventListener('click', () => {
+    closeTutorial();
+    beep(600, 0.04, 'sine', 0.04);
+  });
+
+  tutorialOverlay.addEventListener('click', (e) => {
+    if (e.target === tutorialOverlay) closeTutorial();
+  });
 
   /* =========================================================
      GLOBAL EVENTS
@@ -2014,7 +2434,7 @@
         b.classList.toggle('active', b.dataset.key === currentKey);
       });
       syncDiffButtons();
-      openDashboard(false);
+      openDashboard();
       switchDashboardTab('options');
       return;
     }
@@ -2027,7 +2447,7 @@
     ddBtn.classList.remove('open');
   });
 
-  fabBtn.addEventListener('click', () => openDashboard(false));
+  fabBtn.addEventListener('click', () => openDashboard());
 
   dashboard.addEventListener('click', (e) => {
     if (e.target === dashboard) closeDashboard();
@@ -2085,6 +2505,19 @@
     beep(700, 0.05, 'sine', 0.04);
   });
 
+  /* NEW: Unlimited Zoom Out toggle */
+  optUnlimitedZoom.addEventListener('click', () => {
+    unlimitedZoomOut = !unlimitedZoomOut;
+    optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut);
+    updateZoomButtons();
+    beep(700, 0.05, 'sine', 0.04);
+  });
+
+  /* Tutorial button */
+  playTutorialBtn.addEventListener('click', () => {
+    openTutorial();
+  });
+
   optSound.addEventListener('click', () => {
     muted = !muted;
     soundBtn.classList.toggle('muted', muted);
@@ -2113,7 +2546,6 @@
 
   resumeBtn.addEventListener('click', () => closeDashboard());
 
-  /* Right-click shortcut → direct flag */
   canvas.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     if (finished) return;
@@ -2129,7 +2561,6 @@
     toggleFlag(r, c);
   });
 
-  /* Resize / orientation */
   let resizeRaf = null;
   window.addEventListener('resize', () => {
     closeOptionsMenu();
@@ -2149,7 +2580,9 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (optionsMenu.classList.contains('show')) closeOptionsMenu();
+      if (tutorialOverlay.classList.contains('show')) closeTutorial();
+      else if (resultOverlay.classList.contains('show')) hideResultOverlay();
+      else if (optionsMenu.classList.contains('show')) closeOptionsMenu();
       else if (dashboard.classList.contains('show')) closeDashboard();
     }
   });
@@ -2160,6 +2593,7 @@
      START
      ========================================================= */
   syncSoundSwitch();
+  syncUnlimitedZoomSwitch();
   newGame('medium');
 
 })();

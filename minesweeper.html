@@ -18,7 +18,6 @@
   }
   body { display: flex; justify-content: center; }
 
-  /* ============ APP SHELL ============ */
   .app {
     position: relative; width: 100%; max-width: 540px;
     height: 100vh; height: 100dvh;
@@ -28,7 +27,7 @@
 
   /* ============ HEADER ============ */
   .topbar {
-    display: grid; grid-template-columns: 1fr auto 1fr;
+    display: grid; grid-template-columns: auto 1fr auto;
     align-items: center; gap: 8px;
     padding: 10px 14px;
     padding-top: calc(10px + env(safe-area-inset-top));
@@ -43,18 +42,31 @@
     background: rgba(255, 255, 255, .12);
     color: #eaf5d8; font-size: 15px; font-weight: 700;
     letter-spacing: .2px; cursor: pointer; transition: background .15s;
+    flex: 0 0 auto;
   }
   .dropdown:active { background: rgba(255, 255, 255, .22); }
   .dropdown .chev { transition: transform .2s; }
   .dropdown.open .chev { transform: rotate(180deg); }
 
-  .stats { justify-self: center; display: flex; align-items: center; gap: 18px; }
-  .stat {
-    display: inline-flex; align-items: center; gap: 6px;
-    color: #ffffff; font-size: 15px; font-weight: 800;
-    font-variant-numeric: tabular-nums; letter-spacing: .5px;
+  .stats {
+    justify-self: center;
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px;
+    min-width: 0;
+    flex-wrap: nowrap;
   }
-  .stat .ico { width: 19px; height: 19px; display: block; }
+  .stat {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #ffffff; font-size: 14px; font-weight: 800;
+    font-variant-numeric: tabular-nums; letter-spacing: .3px;
+    white-space: nowrap;
+  }
+  .stat .ico { width: 18px; height: 18px; display: block; flex: 0 0 auto; }
+
+  /* NEW: Hearts indicator — hidden unless active */
+  .stat-hearts { display: none; }
+  .stat-hearts.show { display: inline-flex; }
+  .stat-hearts .ico { fill: #ff4d4d; }
 
   .sound {
     justify-self: end;
@@ -62,6 +74,7 @@
     width: 38px; height: 38px; padding: 0; border: none; border-radius: 50%;
     background: rgba(255, 255, 255, .10); cursor: pointer;
     transition: background .15s;
+    flex: 0 0 auto;
   }
   .sound:active { background: rgba(255, 255, 255, .22); }
   .sound svg { width: 21px; height: 21px; display: block; }
@@ -122,38 +135,28 @@
     position: absolute;
     top: 0; left: 0;
     z-index: 55;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px;
-    border-radius: 999px;
+    display: flex; align-items: center; gap: 4px;
+    padding: 5px; border-radius: 999px;
     background: #16250a;
     box-shadow:
       0 12px 28px rgba(0, 0, 0, .55),
       0 0 0 1px rgba(163, 209, 72, .30),
       inset 0 1px 0 rgba(255, 255, 255, .06);
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(.72);
-    transform-origin: center bottom;
+    opacity: 0; visibility: hidden;
+    transform: scale(.72); transform-origin: center bottom;
     transition: opacity .16s ease, transform .18s cubic-bezier(.2, 1.4, .5, 1), visibility .16s;
     pointer-events: none;
   }
   .options-menu.show {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
-    pointer-events: auto;
+    opacity: 1; visibility: visible;
+    transform: scale(1); pointer-events: auto;
   }
   .opt-btn {
     width: 42px; height: 42px;
     display: flex; align-items: center; justify-content: center;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
+    padding: 0; border: none; border-radius: 50%;
     background: rgba(255, 255, 255, .06);
-    color: #eaf5d8;
-    cursor: pointer;
+    color: #eaf5d8; cursor: pointer;
     transition: background .15s, transform .1s;
     -webkit-tap-highlight-color: transparent;
   }
@@ -166,17 +169,13 @@
   .opt-btn.opt-flag { background: rgba(229, 57, 53, .18); color: #ff6b6b; }
   .opt-btn.opt-flag:active { background: rgba(229, 57, 53, .30); }
 
-  /* ============ SIDE BUTTONS (zoom + FAB) ============ */
+  /* ============ SIDE BUTTONS ============ */
   .side-buttons {
     position: absolute;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
+    right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 30;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    pointer-events: none;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px; pointer-events: none;
   }
   .side-buttons > * { pointer-events: auto; }
 
@@ -197,8 +196,7 @@
     align-items: center; justify-content: center;
     padding: 0; border: none; border-radius: 50%;
     background: rgba(36, 57, 14, .88);
-    color: #eaf5d8;
-    cursor: pointer;
+    color: #eaf5d8; cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .4), inset 0 -2px 0 rgba(0, 0, 0, .18);
     transition: transform .12s, background .15s, opacity .15s;
     -webkit-tap-highlight-color: transparent;
@@ -225,8 +223,7 @@
     max-height: calc(100vh - 40px);
     max-height: calc(100dvh - 40px);
     display: flex; flex-direction: column;
-    padding: 18px;
-    border-radius: 22px;
+    padding: 18px; border-radius: 22px;
     background: #f3f9e6;
     box-shadow: 0 22px 50px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255,255,255,.05);
     transform: scale(.9);
@@ -250,17 +247,14 @@
     cursor: pointer; transition: background .15s, color .15s;
   }
   .dash-tab.active {
-    background: #ffffff;
-    color: #2b4112;
+    background: #ffffff; color: #2b4112;
     box-shadow: 0 2px 6px rgba(0,0,0,.08);
   }
   .dash-tab:active { transform: scale(.97); }
 
   .dash-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto; min-height: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
     padding: 2px;
   }
   .dash-pane { display: none; }
@@ -276,8 +270,7 @@
   }
   .stat-box {
     padding: 12px 10px; border-radius: 12px;
-    background: #ffffff;
-    border: 1px solid #dbe8c0;
+    background: #ffffff; border: 1px solid #dbe8c0;
     text-align: center;
   }
   .stat-val {
@@ -297,20 +290,16 @@
   .best-list { display: flex; flex-direction: column; gap: 6px; }
   .best-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: #ffffff;
-    border: 1px solid #dbe8c0;
+    padding: 10px 12px; border-radius: 10px;
+    background: #ffffff; border: 1px solid #dbe8c0;
     font-size: 13px; font-weight: 700; color: #3f5720;
   }
   .best-row span:last-child { color: #2b4112; font-variant-numeric: tabular-nums; }
 
   .opt-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: #ffffff;
-    border: 1px solid #dbe8c0;
+    padding: 12px 14px; border-radius: 12px;
+    background: #ffffff; border: 1px solid #dbe8c0;
     margin-bottom: 10px;
     font-size: 13px; font-weight: 700; color: #3f5720;
   }
@@ -335,22 +324,20 @@
   .custom-config { display: none; }
   .custom-config.show { display: block; animation: fadeIn .2s ease; }
   .cfg-input {
-    width: 100px;
-    padding: 8px 10px;
-    border: 1.5px solid #dbe8c0;
-    border-radius: 8px;
-    background: #f7fbe8;
-    color: #2b4112;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    text-align: right;
-    outline: none;
+    width: 100px; padding: 8px 10px;
+    border: 1.5px solid #dbe8c0; border-radius: 8px;
+    background: #f7fbe8; color: #2b4112;
+    font-size: 13px; font-weight: 700; font-family: inherit;
+    text-align: right; outline: none;
     -moz-appearance: textfield;
   }
   .cfg-input::-webkit-outer-spin-button,
   .cfg-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .cfg-input:focus { border-color: #7cb518; background: #ffffff; }
+
+  /* NEW: Hearts row hidden by default, shown when infinite is ON */
+  .hearts-row { display: none; }
+  .hearts-row.show { display: flex; }
 
   .switch {
     position: relative;
@@ -398,10 +385,8 @@
   }
 
   .dash-actions {
-    flex: 0 0 auto;
-    margin-top: 14px;
-    display: flex;
-    gap: 10px;
+    flex: 0 0 auto; margin-top: 14px;
+    display: flex; gap: 10px;
   }
   .dash-actions .play-btn,
   .dash-actions .resume-btn { flex: 1 1 0; min-width: 0; }
@@ -429,12 +414,10 @@
   .resume-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c5d6a3; }
   .play-btn svg, .resume-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
 
-  /* ============ TUTORIAL BUTTON (in Options) ============ */
   .tutorial-btn {
     width: 100%;
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 14px;
-    border: none; border-radius: 12px;
+    padding: 12px 14px; border: none; border-radius: 12px;
     background: linear-gradient(135deg, #a3d148 0%, #7cb518 100%);
     color: #ffffff;
     font-size: 13px; font-weight: 800; letter-spacing: .3px;
@@ -446,7 +429,6 @@
   .tutorial-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10; }
   .tutorial-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
 
-  /* ============ OPTION WARNING TEXT ============ */
   .opt-warning {
     display: flex; gap: 6px; align-items: flex-start;
     font-size: 11px; font-weight: 700;
@@ -468,18 +450,15 @@
     transition: opacity .3s, visibility .3s;
   }
   .result-overlay.show { opacity: 1; visibility: visible; }
-
   .result-card {
     width: 100%; max-width: 300px;
     padding: 28px 24px 22px;
-    border-radius: 24px;
-    text-align: center;
+    border-radius: 24px; text-align: center;
     transform: scale(.85);
     transition: transform .35s cubic-bezier(.2, 1.4, .5, 1);
     box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
   }
   .result-overlay.show .result-card { transform: scale(1); }
-
   .result-overlay.win .result-card {
     background: linear-gradient(160deg, #f6fbe8 0%, #dcefc0 100%);
     border: 2px solid #a3d148;
@@ -488,11 +467,9 @@
     background: linear-gradient(160deg, #fbe9e9 0%, #f2c9c9 100%);
     border: 2px solid #e05252;
   }
-
   .result-icon {
     font-size: 60px; line-height: 1;
-    margin-bottom: 10px;
-    display: block;
+    margin-bottom: 10px; display: block;
     animation: popIcon .5s cubic-bezier(.2, 1.4, .5, 1);
   }
   @keyframes popIcon {
@@ -500,22 +477,18 @@
     60% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(1); }
   }
-
   .result-title {
     font-size: 24px; font-weight: 800;
-    margin: 0 0 6px;
-    letter-spacing: -.3px;
+    margin: 0 0 6px; letter-spacing: -.3px;
   }
   .result-overlay.win .result-title { color: #2b4112; }
   .result-overlay.lose .result-title { color: #7a2020; }
-
   .result-sub {
     font-size: 14px; font-weight: 600;
     margin: 0 0 22px;
   }
   .result-overlay.win .result-sub { color: #5c7233; }
   .result-overlay.lose .result-sub { color: #9b5252; }
-
   .result-btn {
     width: 100%; padding: 14px;
     border: none; border-radius: 14px;
@@ -529,21 +502,17 @@
     box-shadow: 0 4px 0 #5d8a10;
   }
   .result-overlay.win .result-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #5d8a10;
+    transform: translateY(3px); box-shadow: 0 1px 0 #5d8a10;
   }
   .result-overlay.lose .result-btn {
     background: #e05252; color: #fff;
     box-shadow: 0 4px 0 #b03838;
   }
   .result-overlay.lose .result-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #b03838;
+    transform: translateY(3px); box-shadow: 0 1px 0 #b03838;
   }
-
   .result-btn-secondary {
-    width: 100%; padding: 11px;
-    margin-top: 8px;
+    width: 100%; padding: 11px; margin-top: 8px;
     border: none; border-radius: 12px;
     background: transparent;
     font-size: 13px; font-weight: 800;
@@ -568,14 +537,12 @@
     transition: opacity .25s, visibility .25s;
   }
   .tutorial-overlay.show { opacity: 1; visibility: visible; }
-
   .tutorial-card {
     width: 100%; max-width: 340px;
     max-height: calc(100vh - 40px);
     max-height: calc(100dvh - 40px);
     display: flex; flex-direction: column;
-    padding: 18px 18px 16px;
-    border-radius: 22px;
+    padding: 18px 18px 16px; border-radius: 22px;
     background: #f3f9e6;
     box-shadow: 0 24px 60px rgba(0, 0, 0, .6);
     transform: scale(.9);
@@ -583,11 +550,9 @@
     overflow: hidden;
   }
   .tutorial-overlay.show .tutorial-card { transform: scale(1); }
-
   .tutorial-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
-    flex: 0 0 auto;
+    margin-bottom: 12px; flex: 0 0 auto;
   }
   .tutorial-step-indicator {
     font-size: 11px; font-weight: 800;
@@ -599,29 +564,21 @@
     border: none; border-radius: 50%;
     background: #e0ecc3; color: #5c7233;
     font-size: 20px; font-weight: 700;
-    cursor: pointer; line-height: 1;
-    padding: 0;
+    cursor: pointer; line-height: 1; padding: 0;
     font-family: inherit;
     transition: background .15s;
   }
   .tutorial-close:active { background: #d0dca8; }
-
   .tutorial-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto; min-height: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
-
   .tutorial-visual {
     min-height: 150px;
     display: flex; align-items: center; justify-content: center;
-    padding: 14px;
-    margin-bottom: 16px;
-    border-radius: 14px;
-    background: #e0ecc3;
+    padding: 14px; margin-bottom: 16px;
+    border-radius: 14px; background: #e0ecc3;
   }
-
   .tutorial-title {
     margin: 0 0 6px;
     font-size: 17px; font-weight: 800; color: #2b4112;
@@ -631,47 +588,34 @@
     font-size: 13px; font-weight: 600; color: #5c7233;
     line-height: 1.55;
   }
-
   .tutorial-nav {
     display: flex; gap: 8px;
-    margin-top: 14px;
-    flex: 0 0 auto;
+    margin-top: 14px; flex: 0 0 auto;
   }
   .tutorial-prev, .tutorial-next {
-    flex: 1;
-    padding: 12px;
+    flex: 1; padding: 12px;
     border: none; border-radius: 12px;
     font-size: 14px; font-weight: 800;
-    letter-spacing: .3px;
-    cursor: pointer;
+    letter-spacing: .3px; cursor: pointer;
     font-family: inherit;
     transition: transform .1s, box-shadow .1s, background .15s;
   }
-  .tutorial-prev {
-    background: #e0ecc3; color: #5c7233;
-  }
+  .tutorial-prev { background: #e0ecc3; color: #5c7233; }
   .tutorial-prev:active { background: #d0dca8; }
-  .tutorial-prev:disabled {
-    opacity: 0.35; pointer-events: none;
-  }
+  .tutorial-prev:disabled { opacity: 0.35; pointer-events: none; }
   .tutorial-next {
     background: #7cb518; color: #fff;
     box-shadow: 0 3px 0 #5d8a10;
   }
   .tutorial-next:active { transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10; }
   .tutorial-next.finish {
-    background: #2b4112;
-    box-shadow: 0 3px 0 #16250a;
+    background: #2b4112; box-shadow: 0 3px 0 #16250a;
   }
 
-  /* Mini board visuals for tutorial */
   .mini-board {
-    display: grid;
-    grid-template-columns: repeat(3, 38px);
-    gap: 2px;
-    padding: 4px;
-    border-radius: 8px;
-    background: #16250a;
+    display: grid; grid-template-columns: repeat(3, 38px);
+    gap: 2px; padding: 4px;
+    border-radius: 8px; background: #16250a;
     box-shadow: 0 4px 12px rgba(0,0,0,.2);
   }
   .mini-cell {
@@ -679,19 +623,15 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 16px; font-weight: 800;
     border-radius: 3px;
-    background: #a3d148;
-    color: #1976d2;
-    line-height: 1;
-    position: relative;
+    background: #a3d148; color: #1976d2;
+    line-height: 1; position: relative;
   }
   .mini-cell.dark { background: #96c63e; }
   .mini-cell.revealed { background: #e6f2cc; }
   .mini-cell.revealed.dark { background: #dbecb9; }
   .mini-cell.flagged { background: #b7dd63; }
   .mini-cell.flagged::before {
-    content: '🚩';
-    font-size: 17px;
-    line-height: 1;
+    content: '🚩'; font-size: 17px; line-height: 1;
   }
   .mini-cell.highlight {
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #7cb518;
@@ -706,26 +646,22 @@
   .mini-cell .n7 { color: #212121; }
   .mini-cell .n8 { color: #616161; }
 
-  /* Tutorial popup menu preview */
   .mini-popup {
     display: flex; gap: 6px;
-    padding: 6px;
-    border-radius: 999px;
+    padding: 6px; border-radius: 999px;
     background: #16250a;
     box-shadow: 0 6px 16px rgba(0,0,0,.35);
   }
   .mini-popup-btn {
     width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 50%;
-    color: #fff;
+    border-radius: 50%; color: #fff;
   }
   .mini-popup-btn.cancel { background: rgba(255,255,255,.10); color: #ff9d9d; }
   .mini-popup-btn.reveal { background: rgba(163, 209, 72, .25); color: #c9e86a; }
   .mini-popup-btn.flag   { background: rgba(229, 57, 53, .25);  color: #ff6b6b; }
   .mini-popup-btn svg { width: 18px; height: 18px; display: block; }
 
-  /* Numbers preview row */
   .num-row {
     display: flex; flex-wrap: wrap;
     gap: 8px; justify-content: center;
@@ -734,8 +670,7 @@
   .num-chip {
     width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 8px;
-    background: #e6f2cc;
+    border-radius: 8px; background: #e6f2cc;
     font-size: 20px; font-weight: 800;
     box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
   }
@@ -756,15 +691,25 @@
     </button>
 
     <div class="stats">
+      <!-- Flag counter -->
       <div class="stat">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M7 21V3.8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
           <path d="M7.8 4.6l10.4 3.2-10.4 3.2z" fill="#ff4d4d"/>
           <path d="M4 21h6.4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
         </svg>
-        <span id="mineCount">40</span>
+        <span id="mineCount">0 / 40</span>
       </div>
 
+      <!-- NEW: Hearts indicator (hidden unless active) -->
+      <div class="stat stat-hearts" id="heartsStat">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span id="heartsCount">3</span>
+      </div>
+
+      <!-- Timer -->
       <div class="stat">
         <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"
              stroke="#ffd23f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -830,7 +775,7 @@
     </button>
   </div>
 
-  <!-- ================= SIDE BUTTONS (Zoom In / Zoom Out / FAB) ================= -->
+  <!-- ================= SIDE BUTTONS ================= -->
   <div class="side-buttons" id="sideButtons">
     <button class="zoom-btn" id="zoomInBtn" aria-label="Zoom in">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -861,7 +806,7 @@
     <div class="result-card">
       <span class="result-icon" id="resultIcon">🏆</span>
       <h2 class="result-title" id="resultTitle">You Won!</h2>
-      <p class="result-sub" id="resultSub">Time: 000s</p>
+      <p class="result-sub" id="resultSub">Time: 000</p>
       <button class="result-btn" id="resultBtn">Play Again</button>
       <button class="result-btn-secondary" id="resultSecondary">View Stats</button>
     </div>
@@ -925,9 +870,10 @@
             </button>
           </div>
 
+          <!-- CHANGED: Renamed to "Maks Zoom" -->
           <div class="opt-row">
-            <span>Unlimited Zoom Out</span>
-            <button class="switch" id="optUnlimitedZoom" aria-label="Toggle unlimited zoom out">
+            <span>Maks Zoom</span>
+            <button class="switch" id="optUnlimitedZoom" aria-label="Toggle maximum zoom out">
               <span class="switch-knob"></span>
             </button>
           </div>
@@ -964,6 +910,13 @@
                 <span class="switch-knob"></span>
               </button>
             </div>
+
+            <!-- NEW: Hearts row — visible only when Infinite Mode is ON -->
+            <div class="opt-row hearts-row" id="heartsRow">
+              <span>Hearts</span>
+              <input type="number" class="cfg-input" id="cfgHearts" value="3" min="1" max="99">
+            </div>
+
             <div style="font-size:11px;color:#7c9256;font-weight:700;padding:0 4px 4px;line-height:1.4;">
               Infinite mode uses hash-based lazy bomb generation — pan the board to explore endlessly. No win condition.
             </div>
@@ -1028,7 +981,7 @@
   'use strict';
 
   /* =========================================================
-     CONFIG — preset difficulties  (Hard now 16×24 · 100 bombs ≈ 26%)
+     CONFIG — preset difficulties (Hard = 16×24 · 100 bombs ≈ 26%)
      ========================================================= */
   const CONFIG = {
     easy:   { cols: 9,  rows: 9,  mines: 10,  label: 'Easy'   },
@@ -1037,7 +990,7 @@
   };
 
   /* =========================================================
-     DOM
+     DOM REFERENCES
      ========================================================= */
   const appEl      = document.getElementById('app');
   const canvas     = document.getElementById('board');
@@ -1045,6 +998,8 @@
   const boardWrap  = document.getElementById('boardWrap');
   const mineCountEl= document.getElementById('mineCount');
   const timerEl    = document.getElementById('timer');
+  const heartsStat = document.getElementById('heartsStat');
+  const heartsCountEl = document.getElementById('heartsCount');
   const ddBtn      = document.getElementById('ddBtn');
   const ddLabel    = document.getElementById('ddLabel');
   const menuEl     = document.getElementById('menu');
@@ -1090,6 +1045,8 @@
   const cfgRowsEl      = document.getElementById('cfgRows');
   const cfgMinesEl     = document.getElementById('cfgMines');
   const cfgInfiniteBtn = document.getElementById('cfgInfinite');
+  const heartsRowEl    = document.getElementById('heartsRow');
+  const cfgHeartsEl    = document.getElementById('cfgHearts');
 
   /* Tutorial */
   const tutorialOverlay = document.getElementById('tutorialOverlay');
@@ -1118,7 +1075,9 @@
   const revealedSet = new Set();
   const flaggedSet  = new Set();
   const adjCache    = new Map();
-  let explodedCell  = null;
+
+  /* NEW: explodedMines Set replaces single explodedCell */
+  const explodedMines = new Set();
 
   let started      = false;
   let finished     = false;
@@ -1128,7 +1087,13 @@
   let timerId      = null;
   let muted        = false;
 
-  /* NEW: unlimited zoom out flag */
+  /* NEW: Hearts state */
+  let maxHearts     = 1;
+  let currentHearts = 1;
+
+  /* NEW: Active explosion animation state */
+  let activeExplosion = null;
+
   let unlimitedZoomOut = false;
 
   /* Camera & cell size */
@@ -1151,8 +1116,8 @@
   /* Tutorial state */
   let tutorialIndex = 0;
 
-  /* Custom config */
-  const customConfig = { cols: 16, rows: 16, mines: 40, infinite: false };
+  /* Custom config — NEW: added hearts */
+  const customConfig = { cols: 16, rows: 16, mines: 40, infinite: false, hearts: 3 };
 
   /* Statistics + history */
   const stats = {
@@ -1178,10 +1143,21 @@
   /* =========================================================
      UTIL
      ========================================================= */
-  function pad3(n) {
-    n = Math.max(0, Math.min(999, n));
-    return String(n).padStart(3, '0');
+  /* NEW: formatTime for dynamic timer display (handles >999s) */
+  function formatTime(seconds) {
+    seconds = Math.max(0, Math.floor(seconds));
+    if (seconds < 1000) return String(seconds).padStart(3, '0');
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) {
+      return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   }
+
+  /* Legacy pad3 kept for compatibility but no clamp */
+  function pad3(n) { return formatTime(n); }
 
   function hashBomb(r, c, s) {
     let h = (s | 0) ^ Math.imul(r | 0, 0x9e3779b1) ^ Math.imul(c | 0, 0x85ebca6b);
@@ -1218,36 +1194,112 @@
   }
 
   /* =========================================================
-     AUDIO — volume boosted 2.5× (capped at 0.9 to avoid clipping)
+     AUDIO
      ========================================================= */
   let actx = null;
   const VOLUME_MULTIPLIER = 2.5;
 
+  function ensureAudio() {
+    if (!actx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      actx = new AC();
+    }
+    if (actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+
   function beep(freq, dur, type, vol) {
     if (muted) return;
     try {
-      if (!actx) {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
-        actx = new AC();
-      }
-      if (actx.state === 'suspended') actx.resume();
-
-      const t = actx.currentTime;
-      const osc = actx.createOscillator();
-      const gain = actx.createGain();
-
+      const ac = ensureAudio();
+      if (!ac) return;
+      const t = ac.currentTime;
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
       const boostedVol = Math.min(0.9, (vol || 0.05) * VOLUME_MULTIPLIER);
-
       osc.type = type || 'sine';
       osc.frequency.setValueAtTime(freq, t);
       gain.gain.setValueAtTime(boostedVol, t);
       gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(ac.destination);
       osc.start(t);
       osc.stop(t + dur + 0.03);
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
+  }
+
+  /* NEW: Dramatic explosion sound (deep sawtooth + noise burst) */
+  function playExplosionSound() {
+    if (muted) return;
+    try {
+      const ac = ensureAudio();
+      if (!ac) return;
+      const t = ac.currentTime;
+
+      /* Deep low-frequency "boom" — sawtooth sweep 90→30 Hz */
+      const osc1 = ac.createOscillator();
+      const gain1 = ac.createGain();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(90, t);
+      osc1.frequency.exponentialRampToValueAtTime(28, t + 0.55);
+      gain1.gain.setValueAtTime(0.55, t);
+      gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.75);
+      osc1.connect(gain1); gain1.connect(ac.destination);
+      osc1.start(t); osc1.stop(t + 0.8);
+
+      /* Mid punch */
+      const osc2 = ac.createOscillator();
+      const gain2 = ac.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(140, t);
+      osc2.frequency.exponentialRampToValueAtTime(45, t + 0.35);
+      gain2.gain.setValueAtTime(0.35, t);
+      gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc2.connect(gain2); gain2.connect(ac.destination);
+      osc2.start(t); osc2.stop(t + 0.45);
+
+      /* Noise burst (crunch) */
+      const bufferSize = Math.floor(ac.sampleRate * 0.55);
+      const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const decay = Math.pow(1 - i / bufferSize, 2.2);
+        data[i] = (Math.random() * 2 - 1) * decay;
+      }
+      const noise = ac.createBufferSource();
+      noise.buffer = buffer;
+      const noiseGain = ac.createGain();
+      noiseGain.gain.setValueAtTime(0.42, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+      noise.connect(noiseGain); noiseGain.connect(ac.destination);
+      noise.start(t); noise.stop(t + 0.55);
+    } catch (e) {}
+  }
+
+  /* =========================================================
+     EXPLOSION ANIMATION (flash + shockwave + particles)
+     ========================================================= */
+  function startExplosion(r, c) {
+    const particles = [];
+    const count = 10;
+    for (let i = 0; i < count; i++) {
+      /* Particles evenly distributed with slight randomness */
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.6;
+      const speed = 0.7 + Math.random() * 1.1;
+      particles.push({
+        angle: angle,
+        speed: speed,
+        size: 2 + Math.random() * 2.5
+      });
+    }
+    activeExplosion = {
+      r: r, c: c,
+      startTime: performance.now(),
+      duration: 750,
+      particles: particles
+    };
+    requestDraw();
   }
 
   /* =========================================================
@@ -1258,7 +1310,6 @@
   }
 
   function getZoomLimits() {
-    /* Min ~13px normally; ~5px when Unlimited Zoom Out is enabled */
     const minSize = unlimitedZoomOut ? 5 : 13;
     let maxSize = Math.floor(Math.min(viewWidth / 9, viewHeight / 9));
     maxSize = Math.max(22, Math.min(64, maxSize));
@@ -1267,16 +1318,13 @@
 
   function applyZoomAt(newSize, startSize, startCamX, startCamY, anchorScreenX, anchorScreenY) {
     if (startSize <= 0) return;
-
     const worldX = anchorScreenX + startCamX;
     const worldY = anchorScreenY + startCamY;
     const cellX = worldX / startSize;
     const cellY = worldY / startSize;
-
     cellSize = newSize;
     cameraX = cellX * newSize - anchorScreenX;
     cameraY = cellY * newSize - anchorScreenY;
-
     clampCamera();
     requestDraw();
     updateZoomButtons();
@@ -1284,13 +1332,11 @@
 
   function zoomStep(direction) {
     if (!isZoomAvailable()) return;
-
     const limits = getZoomLimits();
     const factor = direction > 0 ? 1.18 : 1 / 1.18;
     let newSize = Math.round(cellSize * factor);
     newSize = Math.max(limits.min, Math.min(limits.max, newSize));
     if (newSize === cellSize) return;
-
     const ax = viewWidth / 2;
     const ay = viewHeight / 2;
     zoomCellSize = newSize;
@@ -1302,7 +1348,6 @@
     const available = isZoomAvailable();
     sideButtons.classList.toggle('zoom-available', available);
     if (!available) return;
-
     const limits = getZoomLimits();
     zoomInBtn.classList.toggle('disabled', cellSize >= limits.max - 0.5);
     zoomOutBtn.classList.toggle('disabled', cellSize <= limits.min + 0.5);
@@ -1327,12 +1372,10 @@
 
   function setupView() {
     resizeCanvas();
-
     if (zoomCellSize !== null) {
       const lim = getZoomLimits();
       zoomCellSize = Math.max(lim.min, Math.min(lim.max, zoomCellSize));
     }
-
     if (infinite) {
       cellSize = zoomCellSize || 30;
       if (!started) {
@@ -1343,7 +1386,6 @@
       const autoSize = Math.max(16, Math.min(46,
         Math.floor(Math.min(viewWidth / gridCols, viewHeight / gridRows))));
       cellSize = zoomCellSize || autoSize;
-
       const boardW = gridCols * cellSize;
       const boardH = gridRows * cellSize;
       cameraX = (boardW - viewWidth) / 2;
@@ -1378,7 +1420,6 @@
 
   function draw() {
     if (!viewWidth || !viewHeight) return;
-
     ctx.fillStyle = '#33501a';
     ctx.fillRect(0, 0, viewWidth, viewHeight);
 
@@ -1404,7 +1445,6 @@
       for (let c = startC; c <= endC; c++) {
         const x = Math.round(c * size - cameraX);
         const y = Math.round(r * size - cameraY);
-
         const k = makeKey(r, c);
         const isRev = revealedSet.has(k);
         const isFlag = flaggedSet.has(k);
@@ -1413,7 +1453,8 @@
         let fill;
         if (isRev) {
           if (isBomb(r, c)) {
-            fill = (explodedCell === k) ? '#e05252' : '#f0c9c9';
+            /* NEW: Use explodedMines Set */
+            fill = explodedMines.has(k) ? '#e05252' : '#f0c9c9';
           } else {
             fill = dark ? '#e6f2cc' : '#dbecb9';
           }
@@ -1426,7 +1467,6 @@
 
         ctx.fillStyle = fill;
         ctx.fillRect(x, y, size, size);
-
         ctx.strokeStyle = 'rgba(0,0,0,0.10)';
         ctx.strokeRect(x + 0.5, y + 0.5, size - 1, size - 1);
 
@@ -1460,6 +1500,81 @@
       }
     }
 
+    /* =============================================
+       NEW: Explosion animation overlay
+       ============================================= */
+    if (activeExplosion) {
+      const elapsed = performance.now() - activeExplosion.startTime;
+      const duration = activeExplosion.duration;
+      const progress = Math.min(1, elapsed / duration);
+
+      const cellPx = activeExplosion.c * size - cameraX;
+      const cellPy = activeExplosion.r * size - cameraY;
+      const cx = cellPx + size / 2;
+      const cy = cellPy + size / 2;
+
+      /* Flash on the cell — first 250ms */
+      if (elapsed < 250) {
+        const flashAlpha = (1 - elapsed / 250) * 0.9;
+        ctx.fillStyle = 'rgba(255, 220, 80, ' + flashAlpha.toFixed(3) + ')';
+        ctx.fillRect(cellPx, cellPy, size, size);
+        /* White-hot core */
+        const coreAlpha = (1 - elapsed / 150) * 0.85;
+        if (coreAlpha > 0) {
+          ctx.fillStyle = 'rgba(255, 255, 255, ' + coreAlpha.toFixed(3) + ')';
+          const inset = size * 0.15;
+          ctx.fillRect(cellPx + inset, cellPy + inset, size - inset * 2, size - inset * 2);
+        }
+      }
+
+      /* Outer shockwave ring */
+      const waveRadius = size * 0.4 + progress * size * 3.2;
+      const waveAlpha = Math.max(0, (1 - progress) * 0.85);
+      ctx.strokeStyle = 'rgba(255, 130, 30, ' + waveAlpha.toFixed(3) + ')';
+      ctx.lineWidth = Math.max(1, 3.5 * (1 - progress * 0.6));
+      ctx.beginPath();
+      ctx.arc(cx, cy, waveRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      /* Inner shockwave ring */
+      const innerRadius = size * 0.35 + progress * size * 1.8;
+      const innerAlpha = Math.max(0, (1 - progress * 1.3) * 0.75);
+      if (innerAlpha > 0) {
+        ctx.strokeStyle = 'rgba(255, 210, 80, ' + innerAlpha.toFixed(3) + ')';
+        ctx.lineWidth = Math.max(1, 2.5 * (1 - progress * 0.5));
+        ctx.beginPath();
+        ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      /* Particles */
+      for (let i = 0; i < activeExplosion.particles.length; i++) {
+        const p = activeExplosion.particles[i];
+        const dist = progress * p.speed * size * 2.8;
+        const px = cx + Math.cos(p.angle) * dist;
+        const py = cy + Math.sin(p.angle) * dist;
+        const alpha = Math.max(0, 1 - progress * 1.25);
+        const pSize = p.size * (1 - progress * 0.7);
+        if (alpha > 0.01 && pSize > 0.2) {
+          const g = Math.floor(140 + 100 * (1 - progress));
+          ctx.fillStyle = 'rgba(255, ' + g + ', 40, ' + alpha.toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.arc(px, py, pSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.lineWidth = 1;
+
+      if (progress >= 1) {
+        activeExplosion = null;
+      } else {
+        /* Keep animating */
+        requestDraw();
+      }
+    }
+
+    /* Infinite empty-state hint */
     if (infinite && !started) {
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.font = 'bold 15px -apple-system, sans-serif';
@@ -1470,6 +1585,7 @@
       ctx.font = 'bold ' + Math.round(size * 0.58) + 'px -apple-system, "Segoe UI", Roboto, sans-serif';
     }
 
+    /* Highlight of the current options-menu target */
     if (optionsTarget) {
       const x = Math.round(optionsTarget.c * size - cameraX);
       const y = Math.round(optionsTarget.r * size - cameraY);
@@ -1526,13 +1642,12 @@
   }
 
   /* =========================================================
-     BOMB GENERATION (finite mode)
+     BOMB GENERATION
      ========================================================= */
   function generateFiniteBombs() {
     bombSet = new Set();
     const total = gridCols * gridRows;
     const count = Math.max(1, Math.min(gridMines, total - 1));
-
     const pool = new Array(total);
     for (let i = 0; i < total; i++) pool[i] = i;
     for (let i = total - 1; i > 0; i--) {
@@ -1681,24 +1796,53 @@
   }
 
   /* =========================================================
-     EXPLODE / WIN  →  result overlays
+     EXPLODE (with hearts support) & WIN
      ========================================================= */
   function explode(r, c) {
+    if (finished) return;
+    const k = makeKey(r, c);
+
+    /* Skip already-exploded mines */
+    if (explodedMines.has(k)) return;
+
+    /* Visual + sound effects */
+    startExplosion(r, c);
+    playExplosionSound();
+    if (navigator.vibrate) navigator.vibrate([60, 40, 100]);
+
+    /* Deduct a heart */
+    currentHearts--;
+
+    /* Mark the cell as exploded */
+    explodedMines.add(k);
+    revealedSet.add(k);
+    if (flaggedSet.has(k)) {
+      flaggedSet.delete(k);
+      flags--;
+    }
+
+    /* Update HUD (flags + hearts) */
+    updateHud();
+
+    /* If still have hearts, continue playing */
+    if (currentHearts > 0) {
+      requestDraw();
+      return;
+    }
+
+    /* OUT OF HEARTS → GAME OVER */
     finished = true;
     stopTimer();
     closeOptionsMenu();
 
-    beep(120, 0.55, 'sawtooth', 0.14);
-    setTimeout(() => beep(70, 0.45, 'square', 0.10), 60);
-
-    explodedCell = makeKey(r, c);
-    revealedSet.add(explodedCell);
-
+    /* Reveal all remaining bombs (finite only) */
     if (!infinite) {
       for (let rr = 0; rr < gridRows; rr++) {
         for (let cc = 0; cc < gridCols; cc++) {
-          const k = makeKey(rr, cc);
-          if (bombSet.has(k) && !flaggedSet.has(k)) revealedSet.add(k);
+          const kk = makeKey(rr, cc);
+          if (bombSet.has(kk) && !flaggedSet.has(kk) && !revealedSet.has(kk)) {
+            revealedSet.add(kk);
+          }
         }
       }
     }
@@ -1735,7 +1879,7 @@
     setTimeout(() => beep(1568, 0.22, 'sine', 0.07), 260);
 
     recordResult(true);
-    showResultOverlay(true, 'You Won!', 'Time: ' + pad3(timer) + 's');
+    showResultOverlay(true, 'You Won!', 'Time: ' + formatTime(timer));
   }
 
   /* =========================================================
@@ -1763,19 +1907,15 @@
 
   resultSecondary.addEventListener('click', () => {
     hideResultOverlay();
-    if (resultOverlay.classList.contains('win')) {
-      openDashboard();
-    }
-    /* On lose: just close — board stays visible for review */
+    if (resultOverlay.classList.contains('win')) openDashboard();
   });
 
   /* =========================================================
-     TIMER
+     TIMER — NEW: dynamic format, no clamp
      ========================================================= */
   function tick() {
     timer++;
-    if (timer >= 999) { timer = 999; stopTimer(); }
-    timerEl.textContent = pad3(timer);
+    timerEl.textContent = formatTime(timer);
   }
   function startTimer() {
     stopTimer();
@@ -1788,11 +1928,27 @@
   function stopTimer() { pauseTimer(); }
 
   /* =========================================================
-     HUD
+     HUD — NEW: flag indicator "N / M" and hearts
      ========================================================= */
   function updateHud() {
-    if (infinite) mineCountEl.textContent = '∞';
-    else mineCountEl.textContent = Math.max(0, gridMines - flags);
+    /* Flag indicator */
+    if (infinite) {
+      mineCountEl.textContent = String(flags);
+    } else {
+      mineCountEl.textContent = flags + ' / ' + gridMines;
+    }
+
+    /* Hearts indicator — show only when hearts feature is active */
+    const showHearts = (activeMode === 'custom' && maxHearts > 1) || (infinite && maxHearts > 0);
+    if (showHearts && !finished) {
+      heartsStat.classList.add('show');
+      heartsCountEl.textContent = String(currentHearts);
+    } else if (showHearts && finished) {
+      heartsStat.classList.add('show');
+      heartsCountEl.textContent = String(currentHearts);
+    } else {
+      heartsStat.classList.remove('show');
+    }
   }
 
   /* =========================================================
@@ -1830,9 +1986,9 @@
     statLossesEl.textContent  = totalLosses;
     statWinRateEl.textContent = winRate + '%';
 
-    bestEasyEl.textContent   = stats.easy.bestTime   !== null ? pad3(stats.easy.bestTime)   + 's' : '—';
-    bestMediumEl.textContent = stats.medium.bestTime !== null ? pad3(stats.medium.bestTime) + 's' : '—';
-    bestHardEl.textContent   = stats.hard.bestTime   !== null ? pad3(stats.hard.bestTime)   + 's' : '—';
+    bestEasyEl.textContent   = stats.easy.bestTime   !== null ? formatTime(stats.easy.bestTime)   : '—';
+    bestMediumEl.textContent = stats.medium.bestTime !== null ? formatTime(stats.medium.bestTime) : '—';
+    bestHardEl.textContent   = stats.hard.bestTime   !== null ? formatTime(stats.hard.bestTime)   : '—';
   }
 
   function updateHistoryUI() {
@@ -1846,7 +2002,7 @@
       html += '<div class="hist-item">' +
                 '<span class="hist-diff">' + h.diff + '</span>' +
                 '<span class="hist-res ' + (h.result === 'Won' ? 'win' : 'lose') + '">' + h.result + '</span>' +
-                '<span class="hist-time">' + pad3(h.time) + 's</span>' +
+                '<span class="hist-time">' + formatTime(h.time) + '</span>' +
               '</div>';
     }
     historyListEl.innerHTML = html;
@@ -1870,6 +2026,11 @@
   function syncSoundSwitch() { optSound.classList.toggle('on', !muted); }
   function syncUnlimitedZoomSwitch() { optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut); }
 
+  /* NEW: sync hearts row visibility based on Infinite toggle */
+  function syncHeartsRow() {
+    heartsRowEl.classList.toggle('show', customConfig.infinite);
+  }
+
   function syncDashboardActions() {
     const inProgress = started && !finished;
     if (inProgress) {
@@ -1883,12 +2044,12 @@
 
   function openDashboard() {
     closeOptionsMenu();
-
     if (started && !finished) pauseTimer();
 
     cfgColsEl.value  = customConfig.cols;
     cfgRowsEl.value  = customConfig.rows;
     cfgMinesEl.value = customConfig.mines;
+    cfgHeartsEl.value = customConfig.hearts;
     cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
     const dis = customConfig.infinite;
     cfgColsEl.disabled = dis;
@@ -1897,6 +2058,7 @@
     cfgColsEl.style.opacity = dis ? '0.4' : '1';
     cfgRowsEl.style.opacity = dis ? '0.4' : '1';
     cfgMinesEl.style.opacity = dis ? '0.4' : '1';
+    syncHeartsRow();
 
     updateStatsUI();
     updateHistoryUI();
@@ -1966,7 +2128,6 @@
   document.addEventListener('pointerdown', (e) => {
     if (!optionsMenu.classList.contains('show')) return;
     if (optionsMenu.contains(e.target)) return;
-
     if (optionsTarget && e.target === canvas) {
       const rect = canvas.getBoundingClientRect();
       const worldX = (e.clientX - rect.left) + cameraX;
@@ -1979,7 +2140,7 @@
   }, true);
 
   /* =========================================================
-     POINTER INTERACTION (pan / pinch / tap / double-tap)
+     POINTER INTERACTION
      ========================================================= */
   canvas.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -2032,12 +2193,10 @@
       const dx = pts[0].x - pts[1].x;
       const dy = pts[0].y - pts[1].y;
       const dist = Math.hypot(dx, dy);
-
       const scale = dist / pinchState.startDist;
       const limits = getZoomLimits();
       let newSize = Math.round(pinchState.startSize * scale);
       newSize = Math.max(limits.min, Math.min(limits.max, newSize));
-
       if (newSize !== cellSize) {
         const rect = canvas.getBoundingClientRect();
         const ax = pinchState.anchorX - rect.left;
@@ -2072,7 +2231,6 @@
       if (activePointers.size < 2) {
         pinchState = null;
         suppressTapUntil = Date.now() + 350;
-
         if (activePointers.size === 1) {
           const pid = activePointers.keys().next().value;
           const pt = activePointers.get(pid);
@@ -2089,7 +2247,6 @@
     }
 
     if (!pointerDown || e.pointerId !== panPointerId) return;
-
     const p = pointerDown;
     const wasPanning = panning;
     pointerDown = null;
@@ -2160,9 +2317,7 @@
     if (lastTap) { clearTimeout(lastTap.timer); lastTap = null; }
 
     if (optionsMenu.classList.contains('show') && optionsTarget &&
-        optionsTarget.r === r && optionsTarget.c === c) {
-      return;
-    }
+        optionsTarget.r === r && optionsTarget.c === c) return;
 
     optionsTarget = { r: r, c: c };
     requestDraw();
@@ -2191,12 +2346,16 @@
         seed = Math.floor(Math.random() * 2147483647);
         overrides.clear();
         bombSet = null;
+        /* NEW: hearts in infinite mode */
+        maxHearts = Math.max(1, Math.min(99, customConfig.hearts | 0 || 3));
       } else {
         infinite = false;
         gridCols = Math.max(5, Math.min(500, customConfig.cols | 0));
         gridRows = Math.max(5, Math.min(500, customConfig.rows | 0));
         gridMines = Math.max(1, Math.min(gridCols * gridRows - 1, customConfig.mines | 0));
         generateFiniteBombs();
+        /* Custom non-infinite: hearts not shown in UI, always 1 */
+        maxHearts = 1;
       }
       ddLabel.textContent = 'Custom';
     } else {
@@ -2207,7 +2366,10 @@
       gridMines = cc.mines;
       generateFiniteBombs();
       ddLabel.textContent = cc.label;
+      maxHearts = 1;
     }
+
+    currentHearts = maxHearts;
 
     Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
       b.classList.toggle('active', b.dataset.key === currentKey);
@@ -2224,7 +2386,8 @@
     revealedCount = 0;
     started = false;
     finished = false;
-    explodedCell = null;
+    explodedMines.clear();
+    activeExplosion = null;
     revealedSet.clear();
     flaggedSet.clear();
     adjCache.clear();
@@ -2252,17 +2415,14 @@
   canvas.addEventListener('wheel', (e) => {
     if (!isZoomAvailable()) return;
     e.preventDefault();
-
     const limits = getZoomLimits();
     const factor = e.deltaY > 0 ? 1 / 1.15 : 1.15;
     let newSize = Math.round(cellSize * factor);
     newSize = Math.max(limits.min, Math.min(limits.max, newSize));
     if (newSize === cellSize) return;
-
     const rect = canvas.getBoundingClientRect();
     const ax = e.clientX - rect.left;
     const ay = e.clientY - rect.top;
-
     zoomCellSize = newSize;
     applyZoomAt(newSize, cellSize, cameraX, cameraY, ax, ay);
   }, { passive: false });
@@ -2274,95 +2434,58 @@
     {
       title: 'Reveal Cells',
       text: 'Tap any unrevealed cell to open the options menu. Choose "Reveal" (shovel icon) to dig. Double-tap directly on a cell also reveals it instantly.',
-      visual: '' +
-        '<div class="mini-board">' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark revealed highlight"><span class="n1">1</span></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-        '</div>'
+      visual: '<div class="mini-board">' +
+        '<div class="mini-cell dark"></div><div class="mini-cell"></div><div class="mini-cell dark"></div>' +
+        '<div class="mini-cell"></div><div class="mini-cell dark revealed highlight"><span class="n1">1</span></div><div class="mini-cell"></div>' +
+        '<div class="mini-cell dark"></div><div class="mini-cell"></div><div class="mini-cell dark"></div></div>'
     },
     {
       title: 'Flag Mines',
       text: 'Suspect a cell contains a mine? Tap it and choose "Flag" (flag icon). You can also long-press on mobile, or right-click on desktop.',
-      visual: '' +
-        '<div class="mini-board">' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark flagged highlight"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-        '</div>'
+      visual: '<div class="mini-board">' +
+        '<div class="mini-cell dark"></div><div class="mini-cell"></div><div class="mini-cell dark"></div>' +
+        '<div class="mini-cell"></div><div class="mini-cell dark flagged highlight"></div><div class="mini-cell"></div>' +
+        '<div class="mini-cell dark"></div><div class="mini-cell"></div><div class="mini-cell dark"></div></div>'
     },
     {
       title: 'The Options Menu',
       text: 'Every tap on an unrevealed cell opens a small menu with three buttons: Cancel (close), Reveal (dig), and Flag (mark as mine).',
-      visual: '' +
-        '<div class="mini-popup">' +
-          '<div class="mini-popup-btn cancel">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
-          '</div>' +
-          '<div class="mini-popup-btn reveal">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M9 3h6"/><path d="M8 12h8v3a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-3z" fill="currentColor" stroke="none"/></svg>' +
-          '</div>' +
-          '<div class="mini-popup-btn flag">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V4"/><path d="M7.6 5l9 2.6-9 2.6z" fill="currentColor" stroke="none"/><path d="M4 21h6"/></svg>' +
-          '</div>' +
-        '</div>'
+      visual: '<div class="mini-popup">' +
+        '<div class="mini-popup-btn cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>' +
+        '<div class="mini-popup-btn reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M9 3h6"/><path d="M8 12h8v3a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-3z" fill="currentColor" stroke="none"/></svg></div>' +
+        '<div class="mini-popup-btn flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V4"/><path d="M7.6 5l9 2.6-9 2.6z" fill="currentColor" stroke="none"/><path d="M4 21h6"/></svg></div></div>'
     },
     {
       title: 'Chording',
-      text: 'Tap a revealed number when the correct number of flags surrounds it — all other neighbours will be revealed at once. A quick way to speed up your game!',
-      visual: '' +
-        '<div class="mini-board">' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell flagged"></div>' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell flagged"></div>' +
-          '<div class="mini-cell dark revealed highlight"><span class="n2">2</span></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-          '<div class="mini-cell"></div>' +
-          '<div class="mini-cell dark"></div>' +
-        '</div>'
+      text: 'Tap a revealed number when the correct number of flags surrounds it — all other neighbours will be revealed at once.',
+      visual: '<div class="mini-board">' +
+        '<div class="mini-cell dark"></div><div class="mini-cell flagged"></div><div class="mini-cell dark"></div>' +
+        '<div class="mini-cell flagged"></div><div class="mini-cell dark revealed highlight"><span class="n2">2</span></div><div class="mini-cell"></div>' +
+        '<div class="mini-cell dark"></div><div class="mini-cell"></div><div class="mini-cell dark"></div></div>'
     },
     {
       title: 'Reading Numbers',
       text: 'Numbers tell you how many mines are hiding in the 8 cells around that number. Use them to deduce where the mines are.',
-      visual: '' +
-        '<div class="num-row">' +
-          '<div class="num-chip" style="color:#1976d2">1</div>' +
-          '<div class="num-chip" style="color:#2e7d32">2</div>' +
-          '<div class="num-chip" style="color:#d32f2f">3</div>' +
-          '<div class="num-chip" style="color:#303f9f">4</div>' +
-          '<div class="num-chip" style="color:#8e0000">5</div>' +
-          '<div class="num-chip" style="color:#00838f">6</div>' +
-          '<div class="num-chip" style="color:#212121">7</div>' +
-          '<div class="num-chip" style="color:#616161">8</div>' +
-        '</div>'
+      visual: '<div class="num-row">' +
+        '<div class="num-chip" style="color:#1976d2">1</div>' +
+        '<div class="num-chip" style="color:#2e7d32">2</div>' +
+        '<div class="num-chip" style="color:#d32f2f">3</div>' +
+        '<div class="num-chip" style="color:#303f9f">4</div>' +
+        '<div class="num-chip" style="color:#8e0000">5</div>' +
+        '<div class="num-chip" style="color:#00838f">6</div>' +
+        '<div class="num-chip" style="color:#212121">7</div>' +
+        '<div class="num-chip" style="color:#616161">8</div></div>'
     }
   ];
 
   function renderTutorialStep() {
     const step = TUTORIAL_STEPS[tutorialIndex];
     if (!step) return;
-
     tutorialStep.textContent = 'Step ' + (tutorialIndex + 1) + ' of ' + TUTORIAL_STEPS.length;
     tutorialVisual.innerHTML = step.visual;
     tutorialTitle.textContent = step.title;
     tutorialText.textContent = step.text;
-
     tutorialPrev.disabled = (tutorialIndex === 0);
-
     if (tutorialIndex === TUTORIAL_STEPS.length - 1) {
       tutorialNext.textContent = 'Finish';
       tutorialNext.classList.add('finish');
@@ -2377,38 +2500,18 @@
     renderTutorialStep();
     tutorialOverlay.classList.add('show');
   }
-
-  function closeTutorial() {
-    tutorialOverlay.classList.remove('show');
-  }
+  function closeTutorial() { tutorialOverlay.classList.remove('show'); }
 
   tutorialPrev.addEventListener('click', () => {
-    if (tutorialIndex > 0) {
-      tutorialIndex--;
-      renderTutorialStep();
-      beep(700, 0.04, 'sine', 0.04);
-    }
+    if (tutorialIndex > 0) { tutorialIndex--; renderTutorialStep(); beep(700, 0.04, 'sine', 0.04); }
   });
-
   tutorialNext.addEventListener('click', () => {
     if (tutorialIndex < TUTORIAL_STEPS.length - 1) {
-      tutorialIndex++;
-      renderTutorialStep();
-      beep(800, 0.04, 'sine', 0.04);
-    } else {
-      closeTutorial();
-      beep(900, 0.08, 'sine', 0.06);
-    }
+      tutorialIndex++; renderTutorialStep(); beep(800, 0.04, 'sine', 0.04);
+    } else { closeTutorial(); beep(900, 0.08, 'sine', 0.06); }
   });
-
-  tutorialClose.addEventListener('click', () => {
-    closeTutorial();
-    beep(600, 0.04, 'sine', 0.04);
-  });
-
-  tutorialOverlay.addEventListener('click', (e) => {
-    if (e.target === tutorialOverlay) closeTutorial();
-  });
+  tutorialClose.addEventListener('click', () => { closeTutorial(); beep(600, 0.04, 'sine', 0.04); });
+  tutorialOverlay.addEventListener('click', (e) => { if (e.target === tutorialOverlay) closeTutorial(); });
 
   /* =========================================================
      GLOBAL EVENTS
@@ -2424,7 +2527,6 @@
     if (!btn) return;
     menuEl.classList.remove('show');
     ddBtn.classList.remove('open');
-
     const key = btn.dataset.key;
 
     if (key === 'custom') {
@@ -2475,6 +2577,7 @@
     beep(700, 0.05, 'sine', 0.04);
   });
 
+  /* Custom config input handlers */
   cfgColsEl.addEventListener('change', () => {
     const v = parseInt(cfgColsEl.value, 10);
     customConfig.cols = isNaN(v) ? 16 : Math.max(5, Math.min(500, v));
@@ -2492,6 +2595,13 @@
     cfgMinesEl.value = customConfig.mines;
   });
 
+  /* NEW: Hearts input handler */
+  cfgHeartsEl.addEventListener('change', () => {
+    const v = parseInt(cfgHeartsEl.value, 10);
+    customConfig.hearts = isNaN(v) ? 3 : Math.max(1, Math.min(99, v));
+    cfgHeartsEl.value = customConfig.hearts;
+  });
+
   cfgInfiniteBtn.addEventListener('click', () => {
     customConfig.infinite = !customConfig.infinite;
     cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
@@ -2502,10 +2612,13 @@
     cfgColsEl.style.opacity = dis ? '0.4' : '1';
     cfgRowsEl.style.opacity = dis ? '0.4' : '1';
     cfgMinesEl.style.opacity = dis ? '0.4' : '1';
+
+    /* NEW: show/hide hearts row */
+    syncHeartsRow();
+
     beep(700, 0.05, 'sine', 0.04);
   });
 
-  /* NEW: Unlimited Zoom Out toggle */
   optUnlimitedZoom.addEventListener('click', () => {
     unlimitedZoomOut = !unlimitedZoomOut;
     optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut);
@@ -2513,10 +2626,7 @@
     beep(700, 0.05, 'sine', 0.04);
   });
 
-  /* Tutorial button */
-  playTutorialBtn.addEventListener('click', () => {
-    openTutorial();
-  });
+  playTutorialBtn.addEventListener('click', () => { openTutorial(); });
 
   optSound.addEventListener('click', () => {
     muted = !muted;
@@ -2536,10 +2646,12 @@
       const v1 = parseInt(cfgColsEl.value, 10);
       const v2 = parseInt(cfgRowsEl.value, 10);
       const v3 = parseInt(cfgMinesEl.value, 10);
+      const v4 = parseInt(cfgHeartsEl.value, 10);
       customConfig.cols  = isNaN(v1) ? customConfig.cols : Math.max(5, Math.min(500, v1));
       customConfig.rows  = isNaN(v2) ? customConfig.rows : Math.max(5, Math.min(500, v2));
       const maxMines = customConfig.cols * customConfig.rows - 1;
       customConfig.mines = isNaN(v3) ? customConfig.mines : Math.max(1, Math.min(maxMines, v3));
+      customConfig.hearts = isNaN(v4) ? customConfig.hearts : Math.max(1, Math.min(99, v4));
     }
     newGame(currentKey);
   });
@@ -2565,17 +2677,11 @@
   window.addEventListener('resize', () => {
     closeOptionsMenu();
     if (resizeRaf) cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(() => {
-      setupView();
-      requestDraw();
-    });
+    resizeRaf = requestAnimationFrame(() => { setupView(); requestDraw(); });
   });
   window.addEventListener('orientationchange', () => {
     closeOptionsMenu();
-    setTimeout(() => {
-      setupView();
-      requestDraw();
-    }, 220);
+    setTimeout(() => { setupView(); requestDraw(); }, 220);
   });
 
   document.addEventListener('keydown', (e) => {

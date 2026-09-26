@@ -43,6 +43,10 @@
     color: #eaf5d8; font-size: 15px; font-weight: 700;
     letter-spacing: .2px; cursor: pointer; transition: background .15s;
     flex: 0 0 auto;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .dropdown:active { background: rgba(255, 255, 255, .22); }
   .dropdown .chev { transition: transform .2s; }
@@ -78,7 +82,6 @@
   .sound.muted .waves { display: none; }
   .sound.muted .slash { display: block; }
 
-  /* ============ NEW: Disabled state for header/FAB ============ */
   .disabled { pointer-events: none; opacity: 0.4; }
 
   /* ============ DROPDOWN MENU ============ */
@@ -86,7 +89,7 @@
     position: absolute;
     top: calc(58px + env(safe-area-inset-top));
     left: 14px; z-index: 50;
-    min-width: 170px; padding: 6px; border-radius: 14px;
+    min-width: 190px; padding: 6px; border-radius: 14px;
     background: #1a2b09;
     box-shadow: 0 14px 30px rgba(0, 0, 0, .5);
     opacity: 0; visibility: hidden; transform: translateY(-8px);
@@ -135,11 +138,12 @@
   .options-menu {
     position: absolute; top: 0; left: 0; z-index: 55;
     display: flex; align-items: center; gap: 4px;
-    padding: 5px; border-radius: 999px;
-    background: #16250a;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, .55),
-                0 0 0 1px rgba(163, 209, 72, .30),
-                inset 0 1px 0 rgba(255, 255, 255, .06);
+    padding: 6px; border-radius: 999px;
+    background: #2a4a12;
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, .55),
+      0 0 0 2px rgba(163, 209, 72, .55),
+      inset 0 1px 0 rgba(255, 255, 255, .10);
     opacity: 0; visibility: hidden;
     transform: scale(.72); transform-origin: center bottom;
     transition: opacity .16s ease, transform .18s cubic-bezier(.2, 1.4, .5, 1), visibility .16s;
@@ -150,22 +154,23 @@
     transform: scale(1); pointer-events: auto;
   }
   .opt-btn {
-    width: 42px; height: 42px;
+    width: var(--opt-btn-size, 42px);
+    height: var(--opt-btn-size, 42px);
     display: flex; align-items: center; justify-content: center;
     padding: 0; border: none; border-radius: 50%;
-    background: rgba(255, 255, 255, .06);
+    background: rgba(163, 209, 72, .12);
     color: #eaf5d8; cursor: pointer;
     transition: background .15s, transform .1s;
     -webkit-tap-highlight-color: transparent;
   }
   .opt-btn svg { width: 21px; height: 21px; display: block; }
   .opt-btn:active { transform: scale(.9); }
-  .opt-btn.opt-cancel { background: rgba(255, 255, 255, .08); color: #ff9d9d; }
-  .opt-btn.opt-cancel:active { background: rgba(255, 255, 255, .16); }
-  .opt-btn.opt-reveal { background: rgba(163, 209, 72, .20); color: #c9e86a; }
-  .opt-btn.opt-reveal:active { background: rgba(163, 209, 72, .35); }
-  .opt-btn.opt-flag { background: rgba(229, 57, 53, .18); color: #ff6b6b; }
-  .opt-btn.opt-flag:active { background: rgba(229, 57, 53, .30); }
+  .opt-btn.opt-cancel { background: rgba(229, 82, 82, .20); color: #ffb8b8; }
+  .opt-btn.opt-cancel:active { background: rgba(229, 82, 82, .35); }
+  .opt-btn.opt-reveal { background: rgba(163, 209, 72, .35); color: #e6f7b8; }
+  .opt-btn.opt-reveal:active { background: rgba(163, 209, 72, .55); }
+  .opt-btn.opt-flag { background: rgba(229, 82, 82, .22); color: #ff9d9d; }
+  .opt-btn.opt-flag:active { background: rgba(229, 82, 82, .40); }
 
   /* ============ SIDE BUTTONS ============ */
   .side-buttons {
@@ -264,12 +269,20 @@
     margin-top: 3px; font-size: 10px; font-weight: 700;
     color: #7c9256; letter-spacing: .6px; text-transform: uppercase;
   }
+
   .best-title {
     font-size: 11px; font-weight: 800; color: #7c9256;
     letter-spacing: .8px; text-transform: uppercase;
     margin: 4px 0 8px;
+    text-align: center;
   }
-  .best-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .best-list {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 12px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .best-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 12px; border-radius: 10px;
@@ -277,6 +290,35 @@
     font-size: 13px; font-weight: 700; color: #3f5720;
   }
   .best-row span:last-child { color: #2b4112; font-variant-numeric: tabular-nums; }
+
+  /* Counters grid */
+  .counter-title {
+    font-size: 11px; font-weight: 800; color: #7c9256;
+    letter-spacing: .8px; text-transform: uppercase;
+    margin: 4px 0 8px;
+    text-align: center;
+  }
+  .counter-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 14px;
+  }
+  .counter-box {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 12px 10px; border-radius: 12px;
+    background: #ffffff; border: 1px solid #dbe8c0;
+    text-align: center;
+  }
+  .counter-box svg {
+    width: 22px; height: 22px; display: block;
+  }
+  .counter-val {
+    font-size: 20px; font-weight: 800; color: #2b4112;
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .counter-lbl {
+    font-size: 10px; font-weight: 700;
+    color: #7c9256; letter-spacing: .5px; text-transform: uppercase;
+  }
 
   .opt-row {
     display: flex; justify-content: space-between; align-items: center;
@@ -287,11 +329,16 @@
   }
   .opt-diff { flex-direction: column; align-items: stretch; gap: 10px; }
 
-  /* ============ NEW: Difficulty buttons (2 columns, 2-line) ============ */
+  .opt-diff > span:first-child {
+    text-align: center;
+    display: block;
+  }
+
   .diff-group {
     display: grid; grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
+  .diff-group-special { margin-top: 20px; }
   .diff-btn {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -316,23 +363,70 @@
   .diff-btn.active .diff-desc { opacity: 0.95; }
   .diff-btn:active { transform: scale(.96); }
 
+  /* ============ NEW: Config group (merged custom-config) ============ */
   .custom-config { display: none; }
   .custom-config.show { display: block; animation: fadeIn .2s ease; }
+
+  .config-group {
+    background: #ffffff;
+    border: 1px solid #dbe8c0;
+    border-radius: 12px;
+    padding: 0 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .config-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e6eccb;
+    font-size: 13px; font-weight: 700; color: #3f5720;
+  }
+  .config-row:last-of-type { border-bottom: none; }
+  .config-row.hidden { display: none; }
+
+  .config-row-left {
+    display: flex; flex-direction: column; gap: 2px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .config-row-label {
+    font-size: 13px; font-weight: 700; color: #3f5720;
+  }
+  .config-default-hint {
+    font-size: 10px;
+    font-style: italic;
+    font-weight: 600;
+    color: #7c9256;
+    letter-spacing: .2px;
+  }
+  .config-hint {
+    font-size: 11px;
+    font-weight: 700;
+    color: #7c9256;
+    padding: 0 0 10px;
+    line-height: 1.45;
+    border-bottom: 1px solid #e6eccb;
+  }
+  .config-hint:last-of-type { border-bottom: none; }
+
   .cfg-input {
-    width: 100px; padding: 8px 10px;
+    width: 90px; padding: 8px 10px;
     border: 1.5px solid #dbe8c0; border-radius: 8px;
     background: #f7fbe8; color: #2b4112;
     font-size: 13px; font-weight: 700; font-family: inherit;
     text-align: right; outline: none; -moz-appearance: textfield;
+    flex: 0 0 auto;
   }
   .cfg-input::-webkit-outer-spin-button,
   .cfg-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .cfg-input:focus { border-color: #7cb518; background: #ffffff; }
 
+  /* Legacy helpers for toggling visibility of rows */
   .opt-row.hearts-row,
   .opt-row.density-row { display: none; }
   .opt-row.hearts-row.show,
   .opt-row.density-row.show { display: flex; }
+
   .opt-hint {
     display: none;
     font-size: 11px; font-weight: 700;
@@ -340,6 +434,12 @@
     line-height: 1.4;
   }
   .opt-hint.show { display: block; }
+
+  /* Include Custom / Custom Only rows (only when Random selected) */
+  .opt-row.include-custom-row,
+  .opt-row.custom-only-row { display: none; }
+  .opt-row.include-custom-row.show,
+  .opt-row.custom-only-row.show { display: flex; margin-top: 4px; }
 
   .switch {
     position: relative; width: 46px; height: 26px;
@@ -357,7 +457,50 @@
   .switch.on { background: #7cb518; }
   .switch.on .switch-knob { transform: translateX(20px); }
 
-  /* ============ History modal list ============ */
+  .opt-col {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px 14px; border-radius: 12px;
+    background: #ffffff; border: 1px solid #dbe8c0;
+    margin-bottom: 10px;
+  }
+  .opt-col-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 700; color: #3f5720;
+  }
+  .opt-col-val {
+    font-size: 12px; font-weight: 800; color: #7cb518;
+    font-variant-numeric: tabular-nums;
+  }
+  .opt-col-default {
+    font-size: 10px;
+    font-style: italic;
+    font-weight: 600;
+    color: #7c9256;
+    letter-spacing: .2px;
+    margin-top: 1px;
+  }
+  .theme-slider {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 6px; border-radius: 3px;
+    background: #dbe8c0; outline: none;
+    margin: 8px 0 4px;
+    cursor: pointer;
+  }
+  .theme-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #7cb518; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    border: 2px solid #ffffff;
+  }
+  .theme-slider::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #7cb518; cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  }
+
+  /* History modal list */
   .history-list {
     display: flex; flex-direction: column; gap: 6px;
     max-height: 60vh; overflow-y: auto;
@@ -386,8 +529,12 @@
     color: #9aae7c; font-size: 12px; font-weight: 700;
   }
 
+  /* NEW: Divider above dash-actions */
   .dash-actions {
-    flex: 0 0 auto; margin-top: 14px;
+    flex: 0 0 auto;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #dbe8c0;
     display: flex; gap: 10px;
   }
   .dash-actions .play-btn,
@@ -571,7 +718,7 @@
     transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10;
   }
 
-  /* ============ NEW: History modal ============ */
+  /* ============ History modal ============ */
   .history-overlay {
     position: absolute; inset: 0; z-index: 96;
     display: flex; align-items: center; justify-content: center;
@@ -838,7 +985,9 @@
     <button data-key="easy">Easy <small>9 × 9 · 10</small></button>
     <button data-key="medium" class="active">Medium <small>12 × 16 · 40</small></button>
     <button data-key="hard">Hard <small>16 × 24 · 100</small></button>
+    <button data-key="expert">Expert <small>20 × 30 · 160</small></button>
     <button data-key="custom">Custom <small>Configure…</small></button>
+    <button data-key="random">Random <small>Surprise!</small></button>
   </div>
 
   <main class="board-wrap" id="boardWrap">
@@ -920,7 +1069,7 @@
     </div>
   </div>
 
-  <!-- ================= NEW: HISTORY MODAL ================= -->
+  <!-- ================= HISTORY MODAL ================= -->
   <div class="history-overlay" id="historyOverlay">
     <div class="history-card">
       <div class="history-header">
@@ -938,7 +1087,6 @@
   <div class="dashboard" id="dashboard">
     <div class="dash-card">
 
-      <!-- NEW: 3 tabs: Statistics, Difficulty, Settings -->
       <div class="dash-tabs">
         <button class="dash-tab active" data-tab="stats">Statistics</button>
         <button class="dash-tab" data-tab="difficulty">Difficulty</button>
@@ -949,6 +1097,31 @@
 
         <!-- ===== Statistics tab ===== -->
         <div class="dash-pane active" data-pane="stats">
+          <!-- CHANGED: Session Stats now at the top -->
+          <div class="counter-title">Session Stats</div>
+          <div class="counter-grid">
+            <div class="counter-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7cb518" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
+              <div class="counter-val" id="statCellsRevealed">0</div>
+              <div class="counter-lbl">Cells Revealed</div>
+            </div>
+            <div class="counter-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 21V4"/>
+                <path d="M6.6 5l10 3-10 3z" fill="#e53935" stroke="none"/>
+                <path d="M4 21h5"/>
+              </svg>
+              <div class="counter-val" id="statBombsFlagged">0</div>
+              <div class="counter-lbl">Bombs Flagged</div>
+            </div>
+          </div>
+
+          <!-- Stat grid -->
           <div class="stat-grid">
             <div class="stat-box">
               <div class="stat-val" id="statPlayed">0</div>
@@ -967,13 +1140,15 @@
               <div class="stat-lbl">Win Rate</div>
             </div>
           </div>
+
           <div class="best-title">Best Times</div>
           <div class="best-list">
             <div class="best-row"><span>Easy</span><span id="bestEasy">—</span></div>
             <div class="best-row"><span>Medium</span><span id="bestMedium">—</span></div>
             <div class="best-row"><span>Hard</span><span id="bestHard">—</span></div>
+            <div class="best-row"><span>Expert</span><span id="bestExpert">—</span></div>
           </div>
-          <!-- NEW: View History button -->
+
           <button class="tutorial-btn" id="viewHistoryBtn" style="margin-top: 4px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -984,11 +1159,11 @@
           </button>
         </div>
 
-        <!-- ===== NEW: Difficulty tab (replaces old Options position) ===== -->
+        <!-- ===== Difficulty tab ===== -->
         <div class="dash-pane" data-pane="difficulty">
           <div class="opt-row opt-diff">
-            <span>Difficulty</span>
-            <!-- NEW: 2 columns with 2-line buttons -->
+            <span>Select Difficulty</span>
+
             <div class="diff-group">
               <button class="diff-btn" data-diff="easy">
                 <span class="diff-name">Easy</span>
@@ -1002,65 +1177,121 @@
                 <span class="diff-name">Hard</span>
                 <span class="diff-desc">16 × 24 · 100 bombs</span>
               </button>
+              <button class="diff-btn" data-diff="expert">
+                <span class="diff-name">Expert</span>
+                <span class="diff-desc">20 × 30 · 160 bombs</span>
+              </button>
+            </div>
+
+            <div class="diff-group diff-group-special">
+              <button class="diff-btn" data-diff="random">
+                <span class="diff-name">Random</span>
+                <span class="diff-desc">Surprise me!</span>
+              </button>
               <button class="diff-btn" data-diff="custom">
                 <span class="diff-name">Custom</span>
                 <span class="diff-desc">Configure below</span>
               </button>
             </div>
-          </div>
 
-          <!-- Custom config block (visible only when Custom selected) -->
-          <div class="custom-config" id="customConfig">
-            <div class="opt-row">
-              <span>Width (cols)</span>
-              <input type="number" class="cfg-input" id="cfgCols" value="16" min="5" max="500">
-            </div>
-            <div class="opt-row">
-              <span>Height (rows)</span>
-              <input type="number" class="cfg-input" id="cfgRows" value="16" min="5" max="500">
-            </div>
-            <div class="opt-row">
-              <span>Bombs</span>
-              <input type="number" class="cfg-input" id="cfgMines" value="40" min="1" max="100000">
-            </div>
-            <div class="opt-row">
-              <span>Infinite Mode</span>
-              <button class="switch" id="cfgInfinite" aria-label="Toggle infinite mode">
+            <!-- Include Custom toggle (only when Random selected) -->
+            <div class="opt-row include-custom-row" id="includeCustomRow">
+              <span>Include Custom</span>
+              <button class="switch" id="optIncludeCustom" aria-label="Include custom in random">
                 <span class="switch-knob"></span>
               </button>
             </div>
 
-            <div class="opt-row hearts-row show" id="heartsRow">
-              <span>Hearts</span>
-              <input type="number" class="cfg-input" id="cfgHearts" value="1" min="1" max="99">
-            </div>
-
-            <div class="opt-row density-row" id="densityRow">
-              <span>Bomb Density (%)</span>
-              <!-- NEW: min is now 10 -->
-              <input type="number" class="cfg-input" id="cfgDensity" value="15" min="10" max="35" step="1">
-            </div>
-            <div class="opt-hint" id="densityHint">
-              Higher density = more mines, harder to clear.
-            </div>
-
-            <div style="font-size:11px;color:#7c9256;font-weight:700;padding:0 4px 8px;line-height:1.4;">
-              Infinite mode uses hash-based lazy bomb generation — pan the board to explore endlessly. No win condition.
+            <!-- NEW: Custom Only toggle -->
+            <div class="opt-row custom-only-row" id="customOnlyRow">
+              <span>Custom Only (Random Params)</span>
+              <button class="switch" id="optCustomOnly" aria-label="Randomize custom parameters">
+                <span class="switch-knob"></span>
+              </button>
             </div>
           </div>
 
-          <!-- Play Tutorial moved here (same ID) -->
+          <!-- Custom config block (only when Custom selected) — NEW: merged group -->
+          <div class="custom-config" id="customConfig">
+            <div class="config-group">
+              <!-- Infinite toggle (always visible) -->
+              <div class="config-row">
+                <div class="config-row-left">
+                  <span class="config-row-label">Infinite Mode</span>
+                </div>
+                <button class="switch" id="cfgInfinite" aria-label="Toggle infinite mode">
+                  <span class="switch-knob"></span>
+                </button>
+              </div>
+
+              <!-- Infinite explanation — now right below toggle -->
+              <div class="config-hint">
+                Infinite mode uses hash-based lazy bomb generation — pan the board to explore endlessly. No win condition.
+              </div>
+
+              <!-- Density row (only when Infinite ON) -->
+              <div class="config-row density-row" id="densityRow">
+                <div class="config-row-left">
+                  <span class="config-row-label">Bomb Density (%)</span>
+                  <span class="config-default-hint">Default: 15%</span>
+                </div>
+                <input type="number" class="cfg-input" id="cfgDensity" value="15" min="10" max="35" step="1">
+              </div>
+              <div class="config-hint density-hint" id="densityHint" style="display:none;">
+                Higher density = more mines, harder to clear.
+              </div>
+
+              <!-- Width (hidden when Infinite ON) -->
+              <div class="config-row" id="cfgColsRow">
+                <div class="config-row-left">
+                  <span class="config-row-label">Width (cols)</span>
+                </div>
+                <input type="number" class="cfg-input" id="cfgCols" value="16" min="5" max="500">
+              </div>
+
+              <!-- Height (hidden when Infinite ON) -->
+              <div class="config-row" id="cfgRowsRow">
+                <div class="config-row-left">
+                  <span class="config-row-label">Height (rows)</span>
+                </div>
+                <input type="number" class="cfg-input" id="cfgRows" value="16" min="5" max="500">
+              </div>
+
+              <!-- Bombs (hidden when Infinite ON) -->
+              <div class="config-row" id="cfgMinesRow">
+                <div class="config-row-left">
+                  <span class="config-row-label">Bombs</span>
+                </div>
+                <input type="number" class="cfg-input" id="cfgMines" value="40" min="1" max="100000">
+              </div>
+
+              <!-- Hearts -->
+              <div class="config-row" id="heartsRow">
+                <div class="config-row-left">
+                  <span class="config-row-label">Hearts</span>
+                </div>
+                <input type="number" class="cfg-input" id="cfgHearts" value="1" min="1" max="99">
+              </div>
+
+              <!-- Hearts explanation -->
+              <div class="config-hint">
+                Each heart lets you survive one mine hit. Set to 1 for classic rules.
+              </div>
+            </div>
+          </div>
+
+          <!-- Play Tutorial / View Tutorial -->
           <button class="tutorial-btn" id="playTutorialBtn" style="margin-top: 10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9"/>
               <path d="M12 16v-4M12 8h.01"/>
             </svg>
-            Play Tutorial
+            View Tutorial
           </button>
         </div>
 
-        <!-- ===== NEW: Settings tab (replaces old History) ===== -->
+        <!-- ===== Settings tab ===== -->
         <div class="dash-pane" data-pane="settings">
           <div class="opt-row">
             <span>Sound</span>
@@ -1077,6 +1308,28 @@
           </div>
           <div class="opt-warning">
             Warning: Enabling this may cause performance issues on low-end devices.
+          </div>
+
+          <!-- Menu vertical offset slider with default hint -->
+          <div class="opt-col">
+            <div class="opt-col-header">
+              <span>Menu Vertical Offset</span>
+              <span class="opt-col-val" id="menuOffsetVal">-12px</span>
+            </div>
+            <div class="opt-col-default">Default: -12px</div>
+            <input type="range" class="theme-slider" id="menuOffsetSlider"
+                   min="-80" max="80" value="-12" step="1">
+          </div>
+
+          <!-- Menu size slider with default hint -->
+          <div class="opt-col">
+            <div class="opt-col-header">
+              <span>Menu Size</span>
+              <span class="opt-col-val" id="menuSizeVal">42px</span>
+            </div>
+            <div class="opt-col-default">Default: 42px</div>
+            <input type="range" class="theme-slider" id="menuSizeSlider"
+                   min="30" max="60" value="42" step="1">
           </div>
         </div>
 
@@ -1134,7 +1387,8 @@
   const CONFIG = {
     easy:   { cols: 9,  rows: 9,  mines: 10,  label: 'Easy'   },
     medium: { cols: 12, rows: 16, mines: 40,  label: 'Medium' },
-    hard:   { cols: 16, rows: 24, mines: 100, label: 'Hard'   }
+    hard:   { cols: 16, rows: 24, mines: 100, label: 'Hard'   },
+    expert: { cols: 20, rows: 30, mines: 160, label: 'Expert' }
   };
 
   /* =========================================================
@@ -1174,7 +1428,6 @@
   const confirmCancel  = document.getElementById('confirmCancel');
   const confirmYes     = document.getElementById('confirmYes');
 
-  /* NEW: History modal refs */
   const historyOverlay  = document.getElementById('historyOverlay');
   const historyListEl   = document.getElementById('historyList');
   const historyCloseX   = document.getElementById('historyCloseX');
@@ -1190,6 +1443,17 @@
   const optUnlimitedZoom= document.getElementById('optUnlimitedZoom');
   const playTutorialBtn = document.getElementById('playTutorialBtn');
 
+  const menuOffsetSlider = document.getElementById('menuOffsetSlider');
+  const menuOffsetVal    = document.getElementById('menuOffsetVal');
+  const menuSizeSlider   = document.getElementById('menuSizeSlider');
+  const menuSizeVal      = document.getElementById('menuSizeVal');
+
+  const includeCustomRow = document.getElementById('includeCustomRow');
+  const optIncludeCustom = document.getElementById('optIncludeCustom');
+  /* NEW: Custom Only toggle */
+  const customOnlyRow    = document.getElementById('customOnlyRow');
+  const optCustomOnly    = document.getElementById('optCustomOnly');
+
   const statPlayedEl   = document.getElementById('statPlayed');
   const statWinsEl     = document.getElementById('statWins');
   const statLossesEl   = document.getElementById('statLosses');
@@ -1197,19 +1461,26 @@
   const bestEasyEl     = document.getElementById('bestEasy');
   const bestMediumEl   = document.getElementById('bestMedium');
   const bestHardEl     = document.getElementById('bestHard');
+  const bestExpertEl   = document.getElementById('bestExpert');
+
+  const statCellsRevealedEl    = document.getElementById('statCellsRevealed');
+  const statBombsFlaggedEl     = document.getElementById('statBombsFlagged');
 
   const customConfigEl = document.getElementById('customConfig');
   const cfgColsEl      = document.getElementById('cfgCols');
   const cfgRowsEl      = document.getElementById('cfgRows');
   const cfgMinesEl     = document.getElementById('cfgMines');
   const cfgInfiniteBtn = document.getElementById('cfgInfinite');
-  const heartsRowEl    = document.getElementById('heartsRow');
   const cfgHeartsEl    = document.getElementById('cfgHearts');
-  const densityRowEl   = document.getElementById('densityRow');
   const cfgDensityEl   = document.getElementById('cfgDensity');
+  const densityRowEl   = document.getElementById('densityRow');
   const densityHintEl  = document.getElementById('densityHint');
+  /* NEW: rows to hide when Infinite is ON */
+  const cfgColsRowEl   = document.getElementById('cfgColsRow');
+  const cfgRowsRowEl   = document.getElementById('cfgRowsRow');
+  const cfgMinesRowEl  = document.getElementById('cfgMinesRow');
+  const heartsRowEl    = document.getElementById('heartsRow');
 
-  /* Tutorial */
   const tutorialOverlay = document.getElementById('tutorialOverlay');
   const tutorialStep    = document.getElementById('tutorialStep');
   const tutorialVisual  = document.getElementById('tutorialVisual');
@@ -1254,6 +1525,17 @@
 
   let unlimitedZoomOut = false;
 
+  let menuVerticalOffset = -12;
+  let menuSize = 42;
+
+  let totalCellsRevealed = 0;
+  let totalBombsCorrectlyFlagged = 0;
+
+  /* Random mode state */
+  let randomIncludeCustom = false;
+  /* NEW: Custom Only state */
+  let randomCustomOnly = false;
+
   let cameraX = 0, cameraY = 0;
   let cellSize = 30;
   let viewWidth = 0, viewHeight = 0;
@@ -1273,7 +1555,6 @@
 
   let tutorialIndex = 0;
 
-  /* Custom config — mapPreset REMOVED */
   const customConfig = {
     cols: 16,
     rows: 16,
@@ -1283,11 +1564,11 @@
     density: 0.15
   };
 
-  /* Statistics + history */
   const stats = {
     easy:   { played: 0, wins: 0, losses: 0, bestTime: null },
     medium: { played: 0, wins: 0, losses: 0, bestTime: null },
     hard:   { played: 0, wins: 0, losses: 0, bestTime: null },
+    expert: { played: 0, wins: 0, losses: 0, bestTime: null },
     custom: { played: 0, wins: 0, losses: 0, bestTime: null }
   };
   const history = [];
@@ -1325,9 +1606,6 @@
     return (h >>> 0) / 4294967296;
   }
 
-  /* =========================================================
-     BOMB LOOKUP — simplified, no map preset
-     ========================================================= */
   function isBomb(r, c) {
     if (infinite) {
       const k = makeKey(r, c);
@@ -1490,11 +1768,7 @@
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.6;
       const speed = 0.7 + Math.random() * 1.3;
-      particles.push({
-        angle: angle,
-        speed: speed,
-        size: 2.2 + Math.random() * 3.0
-      });
+      particles.push({ angle: angle, speed: speed, size: 2.2 + Math.random() * 3.0 });
     }
     activeExplosion = {
       r: r, c: c,
@@ -1503,10 +1777,7 @@
       particles: particles,
       pulseDuration: 500
     };
-    canvasFlash = {
-      startTime: performance.now(),
-      duration: 120
-    };
+    canvasFlash = { startTime: performance.now(), duration: 120 };
     requestDraw();
   }
 
@@ -1514,7 +1785,7 @@
      ZOOM HELPERS
      ========================================================= */
   function isZoomAvailable() {
-    return activeMode === 'hard' || activeMode === 'custom';
+    return activeMode === 'hard' || activeMode === 'expert' || activeMode === 'custom';
   }
 
   function getZoomLimits() {
@@ -1721,7 +1992,6 @@
       }
     }
 
-    /* Explosion overlay */
     if (activeExplosion) {
       const elapsed = now - activeExplosion.startTime;
       const duration = activeExplosion.duration;
@@ -1779,15 +2049,10 @@
       }
 
       ctx.lineWidth = 1;
-
-      if (progress >= 1) {
-        activeExplosion = null;
-      } else {
-        requestDraw();
-      }
+      if (progress >= 1) activeExplosion = null;
+      else requestDraw();
     }
 
-    /* Canvas white flash */
     if (canvasFlash) {
       const elapsed = now - canvasFlash.startTime;
       if (elapsed < canvasFlash.duration) {
@@ -1866,13 +2131,12 @@
   }
 
   /* =========================================================
-     BOMB GENERATION — simplified, no map preset
+     BOMB GENERATION
      ========================================================= */
   function generateFiniteBombs() {
     bombSet = new Set();
     const total = gridCols * gridRows;
     const count = Math.max(1, Math.min(gridMines, total - 1));
-
     const pool = new Array(total);
     for (let i = 0; i < total; i++) pool[i] = i;
     for (let i = total - 1; i > 0; i--) {
@@ -1933,9 +2197,7 @@
     beep(560, 0.035, 'square', 0.025);
 
     const adj = getAdj(r, c);
-    if (adj >= 5 && adj <= 8) {
-      playRareNumberSound(adj);
-    }
+    if (adj >= 5 && adj <= 8) playRareNumberSound(adj);
 
     if (!infinite) checkWin();
     requestDraw();
@@ -1952,6 +2214,8 @@
 
       revealedSet.add(k);
       revealedCount++;
+      totalCellsRevealed++;
+      statCellsRevealedEl.textContent = totalCellsRevealed;
 
       if (getAdj(r, c) === 0) {
         for (let dr = -1; dr <= 1; dr++) {
@@ -1984,6 +2248,10 @@
       if (!infinite && flags >= gridMines) return;
       flaggedSet.add(k);
       flags++;
+      if (isBomb(r, c)) {
+        totalBombsCorrectlyFlagged++;
+        statBombsFlaggedEl.textContent = totalBombsCorrectlyFlagged;
+      }
       beep(820, 0.05, 'triangle', 0.03);
     } else {
       flaggedSet.delete(k);
@@ -2027,7 +2295,7 @@
   }
 
   /* =========================================================
-     EXPLODE — with disabled buttons + delayed overlay
+     EXPLODE
      ========================================================= */
   function explode(r, c) {
     if (finished) return;
@@ -2054,12 +2322,11 @@
       return;
     }
 
-    /* OUT OF HEARTS → GAME OVER */
     finished = true;
     stopTimer();
     closeOptionsMenu();
 
-    /* NEW: Disable dropdown and FAB during the lose UI delay */
+    /* Disable FAB and dropdown during overlay delay */
     ddBtn.classList.add('disabled');
     fabBtn.classList.add('disabled');
 
@@ -2090,6 +2357,10 @@
     finished = true;
     stopTimer();
     closeOptionsMenu();
+
+    /* NEW: Disable FAB and dropdown during win overlay */
+    ddBtn.classList.add('disabled');
+    fabBtn.classList.add('disabled');
 
     flaggedSet.forEach((k) => {
       if (!bombSet.has(k)) { flaggedSet.delete(k); flags--; }
@@ -2128,25 +2399,19 @@
 
   function hideResultOverlay() {
     resultOverlay.classList.remove('show');
+    /* Re-enable FAB and dropdown when overlay closes by any means */
+    ddBtn.classList.remove('disabled');
+    fabBtn.classList.remove('disabled');
   }
 
   resultBtn.addEventListener('click', () => {
     hideResultOverlay();
-    /* NEW: Re-enable buttons just in case */
-    ddBtn.classList.remove('disabled');
-    fabBtn.classList.remove('disabled');
-    newGame(activeMode);
+    newGame(currentKey);
   });
 
   resultSecondary.addEventListener('click', () => {
     hideResultOverlay();
-    if (resultOverlay.classList.contains('win')) {
-      openDashboard();
-    } else {
-      /* NEW: Lose → re-enable buttons so player can review */
-      ddBtn.classList.remove('disabled');
-      fabBtn.classList.remove('disabled');
-    }
+    if (resultOverlay.classList.contains('win')) openDashboard();
   });
 
   /* =========================================================
@@ -2180,15 +2445,15 @@
   }
 
   function performDifficultyChange(key) {
-    if (key === 'custom') {
-      currentKey = 'custom';
-      ddLabel.textContent = 'Custom';
+    if (key === 'custom' || key === 'random') {
+      currentKey = key;
+      if (key === 'custom') ddLabel.textContent = 'Custom';
+      else ddLabel.textContent = 'Random';
       Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
         b.classList.toggle('active', b.dataset.key === currentKey);
       });
       syncDiffButtons();
       openDashboard();
-      /* NEW: switch to difficulty tab */
       switchDashboardTab('difficulty');
       return;
     }
@@ -2274,6 +2539,7 @@
 
     let label = CONFIG[key] ? CONFIG[key].label : 'Custom';
     if (infinite) label = 'Custom ∞';
+    if (currentKey === 'random') label = 'Random: ' + label;
 
     history.unshift({ diff: label, result: won ? 'Won' : 'Lost', time: timer });
     if (history.length > 30) history.length = 30;
@@ -2296,6 +2562,10 @@
     bestEasyEl.textContent   = stats.easy.bestTime   !== null ? formatTime(stats.easy.bestTime)   : '—';
     bestMediumEl.textContent = stats.medium.bestTime !== null ? formatTime(stats.medium.bestTime) : '—';
     bestHardEl.textContent   = stats.hard.bestTime   !== null ? formatTime(stats.hard.bestTime)   : '—';
+    bestExpertEl.textContent = stats.expert.bestTime !== null ? formatTime(stats.expert.bestTime) : '—';
+
+    statCellsRevealedEl.textContent = totalCellsRevealed;
+    statBombsFlaggedEl.textContent  = totalBombsCorrectlyFlagged;
   }
 
   function updateHistoryUI() {
@@ -2324,22 +2594,35 @@
       btns[i].classList.toggle('active', btns[i].dataset.diff === currentKey);
     }
     updateCustomConfigVisibility();
+    syncIncludeCustomRow();
   }
 
   function updateCustomConfigVisibility() {
     customConfigEl.classList.toggle('show', currentKey === 'custom');
   }
 
+  /* Show "Include Custom" / "Custom Only" toggles only when Random is selected */
+  function syncIncludeCustomRow() {
+    const show = currentKey === 'random';
+    includeCustomRow.classList.toggle('show', show);
+    customOnlyRow.classList.toggle('show', show);
+    optIncludeCustom.classList.toggle('on', randomIncludeCustom);
+    optCustomOnly.classList.toggle('on', randomCustomOnly);
+  }
+
   function syncSoundSwitch() { optSound.classList.toggle('on', !muted); }
   function syncUnlimitedZoomSwitch() { optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut); }
 
-  function syncHeartsRow() {
-    heartsRowEl.classList.add('show');
-  }
-
   function syncDensityRow() {
-    densityRowEl.classList.toggle('show', customConfig.infinite);
-    densityHintEl.classList.toggle('show', customConfig.infinite);
+    /* Show density only when Infinite is ON */
+    densityRowEl.style.display = customConfig.infinite ? 'flex' : 'none';
+    densityHintEl.style.display = customConfig.infinite ? 'block' : 'none';
+
+    /* NEW: hide Width / Height / Bombs when Infinite is ON */
+    const hideWHB = customConfig.infinite;
+    cfgColsRowEl.classList.toggle('hidden', hideWHB);
+    cfgRowsRowEl.classList.toggle('hidden', hideWHB);
+    cfgMinesRowEl.classList.toggle('hidden', hideWHB);
   }
 
   function syncDashboardActions() {
@@ -2363,16 +2646,9 @@
     cfgHeartsEl.value = customConfig.hearts;
     cfgDensityEl.value = Math.round(customConfig.density * 100);
     cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
-    const dis = customConfig.infinite;
-    cfgColsEl.disabled = dis;
-    cfgRowsEl.disabled = dis;
-    cfgMinesEl.disabled = dis;
-    cfgColsEl.style.opacity = dis ? '0.4' : '1';
-    cfgRowsEl.style.opacity = dis ? '0.4' : '1';
-    cfgMinesEl.style.opacity = dis ? '0.4' : '1';
 
-    syncHeartsRow();
     syncDensityRow();
+    syncIncludeCustomRow();
 
     updateStatsUI();
     updateHistoryUI();
@@ -2411,12 +2687,14 @@
     optionsTarget = { r: r, c: c };
     optionsMenu.classList.add('show');
 
+    optionsMenu.style.setProperty('--opt-btn-size', menuSize + 'px');
+
     const appRect = appEl.getBoundingClientRect();
     const popupW = optionsMenu.offsetWidth;
     const popupH = optionsMenu.offsetHeight;
 
     let x = (clientX - appRect.left) - popupW / 2;
-    let y = (clientY - appRect.top) - popupH - 12;
+    let y = (clientY - appRect.top) - popupH + menuVerticalOffset;
     if (y < 8) y = (clientY - appRect.top) + cellSize + 12;
 
     x = Math.max(8, Math.min(appRect.width - popupW - 8, x));
@@ -2648,19 +2926,31 @@
      NEW GAME
      ========================================================= */
   function newGame(key) {
-    if (key && (CONFIG[key] || key === 'custom')) currentKey = key;
-    activeMode = currentKey;
+    if (key && (CONFIG[key] || key === 'custom' || key === 'random')) currentKey = key;
+
+    /* Resolve random */
+    if (currentKey === 'random') {
+      if (randomCustomOnly) {
+        /* Custom Only: always resolve to custom (config was pre-randomized by caller) */
+        activeMode = 'custom';
+      } else {
+        const candidates = ['easy', 'medium', 'hard', 'expert'];
+        if (randomIncludeCustom) candidates.push('custom');
+        activeMode = candidates[Math.floor(Math.random() * candidates.length)];
+      }
+    } else {
+      activeMode = currentKey;
+    }
+
     zoomCellSize = null;
 
-    /* NEW: Re-enable buttons defensively */
     ddBtn.classList.remove('disabled');
     fabBtn.classList.remove('disabled');
 
-    if (currentKey === 'custom') {
+    if (activeMode === 'custom') {
       if (customConfig.infinite) {
         infinite = true;
         gridCols = 0; gridRows = 0; gridMines = 0;
-        /* NEW: Density min is 0.10 */
         density = Math.max(0.10, Math.min(0.35, customConfig.density || 0.15));
         seed = Math.floor(Math.random() * 2147483647);
         overrides.clear();
@@ -2674,19 +2964,27 @@
         generateFiniteBombs();
         maxHearts = Math.max(1, Math.min(99, customConfig.hearts | 0 || 1));
       }
-      ddLabel.textContent = 'Custom';
     } else {
-      const cc = CONFIG[currentKey];
+      const cc = CONFIG[activeMode];
       infinite = false;
       gridCols = cc.cols;
       gridRows = cc.rows;
       gridMines = cc.mines;
       generateFiniteBombs();
-      ddLabel.textContent = cc.label;
       maxHearts = 1;
     }
 
     currentHearts = maxHearts;
+
+    /* Header label */
+    if (currentKey === 'random') {
+      let pickedLabel = CONFIG[activeMode] ? CONFIG[activeMode].label : 'Custom';
+      ddLabel.textContent = 'Random: ' + pickedLabel;
+    } else if (activeMode === 'custom') {
+      ddLabel.textContent = 'Custom';
+    } else {
+      ddLabel.textContent = CONFIG[activeMode].label;
+    }
 
     Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
       b.classList.toggle('active', b.dataset.key === currentKey);
@@ -2854,8 +3152,8 @@
       return;
     }
 
-    if (key === 'custom') {
-      performDifficultyChange('custom');
+    if (key === 'custom' || key === 'random') {
+      performDifficultyChange(key);
       return;
     }
     if (key === currentKey) return;
@@ -2882,7 +3180,7 @@
     const dbtn = e.target.closest('.diff-btn');
     if (!dbtn) return;
     const key = dbtn.dataset.diff;
-    if (!CONFIG[key] && key !== 'custom') return;
+    if (!CONFIG[key] && key !== 'custom' && key !== 'random') return;
     if (key === currentKey) return;
 
     if (started && !finished) {
@@ -2894,6 +3192,7 @@
 
     currentKey = key;
     if (key === 'custom') ddLabel.textContent = 'Custom';
+    else if (key === 'random') ddLabel.textContent = 'Random';
     else ddLabel.textContent = CONFIG[key].label;
 
     Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
@@ -2901,6 +3200,48 @@
     });
     syncDiffButtons();
     beep(700, 0.05, 'sine', 0.04);
+  });
+
+  /* Include Custom toggle (mutually exclusive with Custom Only) */
+  optIncludeCustom.addEventListener('click', () => {
+    randomIncludeCustom = !randomIncludeCustom;
+    if (randomIncludeCustom) {
+      randomCustomOnly = false;
+      optCustomOnly.classList.remove('on');
+    }
+    optIncludeCustom.classList.toggle('on', randomIncludeCustom);
+    beep(700, 0.05, 'sine', 0.04);
+  });
+
+  /* NEW: Custom Only toggle (mutually exclusive with Include Custom) */
+  optCustomOnly.addEventListener('click', () => {
+    randomCustomOnly = !randomCustomOnly;
+    if (randomCustomOnly) {
+      randomIncludeCustom = false;
+      optIncludeCustom.classList.remove('on');
+    }
+    optCustomOnly.classList.toggle('on', randomCustomOnly);
+    beep(700, 0.05, 'sine', 0.04);
+  });
+
+  /* Settings sliders */
+  menuOffsetSlider.addEventListener('input', () => {
+    menuVerticalOffset = parseInt(menuOffsetSlider.value, 10);
+    menuOffsetVal.textContent = menuVerticalOffset + 'px';
+  });
+  menuOffsetSlider.addEventListener('change', () => {
+    menuOffsetVal.textContent = menuVerticalOffset + 'px';
+    beep(700, 0.04, 'sine', 0.03);
+  });
+
+  menuSizeSlider.addEventListener('input', () => {
+    menuSize = parseInt(menuSizeSlider.value, 10);
+    menuSizeVal.textContent = menuSize + 'px';
+    optionsMenu.style.setProperty('--opt-btn-size', menuSize + 'px');
+  });
+  menuSizeSlider.addEventListener('change', () => {
+    menuSizeVal.textContent = menuSize + 'px';
+    beep(700, 0.04, 'sine', 0.03);
   });
 
   cfgColsEl.addEventListener('change', () => {
@@ -2925,7 +3266,6 @@
     cfgHeartsEl.value = customConfig.hearts;
   });
 
-  /* NEW: Density min is now 10 */
   cfgDensityEl.addEventListener('change', () => {
     const v = parseInt(cfgDensityEl.value, 10);
     const pct = isNaN(v) ? 15 : Math.max(10, Math.min(35, v));
@@ -2950,13 +3290,6 @@
     }
 
     cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
-    const dis = customConfig.infinite;
-    cfgColsEl.disabled = dis;
-    cfgRowsEl.disabled = dis;
-    cfgMinesEl.disabled = dis;
-    cfgColsEl.style.opacity = dis ? '0.4' : '1';
-    cfgRowsEl.style.opacity = dis ? '0.4' : '1';
-    cfgMinesEl.style.opacity = dis ? '0.4' : '1';
 
     syncDensityRow();
     beep(700, 0.05, 'sine', 0.04);
@@ -2984,8 +3317,20 @@
     if (!muted) beep(700, 0.06, 'sine', 0.05);
   });
 
+  /* Play button — generates random custom config if Custom Only is ON */
   playBtn.addEventListener('click', () => {
-    if (currentKey === 'custom') {
+    /* NEW: If Random + Custom Only → generate random custom parameters */
+    if (currentKey === 'random' && randomCustomOnly) {
+      customConfig.cols   = 5 + Math.floor(Math.random() * 96);       /* 5-100 */
+      customConfig.rows   = 5 + Math.floor(Math.random() * 96);       /* 5-100 */
+      const total = customConfig.cols * customConfig.rows;
+      const minePct = 0.10 + Math.random() * 0.20;                    /* 10-30% */
+      customConfig.mines  = Math.max(1, Math.floor(total * minePct));
+      customConfig.hearts = 1 + Math.floor(Math.random() * 99);       /* 1-99 */
+      customConfig.density = 0.10 + Math.random() * 0.25;             /* 10-35% */
+      customConfig.infinite = Math.random() < 0.5;                    /* 50% chance */
+    } else if (currentKey === 'custom') {
+      /* Read current inputs */
       const v1 = parseInt(cfgColsEl.value, 10);
       const v2 = parseInt(cfgRowsEl.value, 10);
       const v3 = parseInt(cfgMinesEl.value, 10);
@@ -2996,7 +3341,6 @@
       const maxMines = customConfig.cols * customConfig.rows - 1;
       customConfig.mines = isNaN(v3) ? customConfig.mines : Math.max(1, Math.min(maxMines, v3));
       customConfig.hearts = isNaN(v4) ? customConfig.hearts : Math.max(1, Math.min(99, v4));
-      /* NEW: Density min 0.10 */
       customConfig.density = isNaN(v5) ? customConfig.density : Math.max(0.10, Math.min(0.35, v5 / 100));
     }
     newGame(currentKey);
@@ -3030,6 +3374,7 @@
     setTimeout(() => { setupView(); requestDraw(); }, 220);
   });
 
+  /* Escape closes overlays and re-enables FAB/dropdown */
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (historyOverlay.classList.contains('show')) closeHistoryModal();
@@ -3048,6 +3393,16 @@
      ========================================================= */
   syncSoundSwitch();
   syncUnlimitedZoomSwitch();
+
+  menuOffsetSlider.value = menuVerticalOffset;
+  menuOffsetVal.textContent = menuVerticalOffset + 'px';
+  menuSizeSlider.value = menuSize;
+  menuSizeVal.textContent = menuSize + 'px';
+  optionsMenu.style.setProperty('--opt-btn-size', menuSize + 'px');
+
+  statCellsRevealedEl.textContent = totalCellsRevealed;
+  statBombsFlaggedEl.textContent = totalBombsCorrectlyFlagged;
+
   newGame('medium');
 
 })();

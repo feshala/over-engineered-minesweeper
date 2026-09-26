@@ -51,9 +51,7 @@
   .stats {
     justify-self: center;
     display: flex; align-items: center; justify-content: center;
-    gap: 14px;
-    min-width: 0;
-    flex-wrap: nowrap;
+    gap: 14px; min-width: 0; flex-wrap: nowrap;
   }
   .stat {
     display: inline-flex; align-items: center; gap: 5px;
@@ -63,7 +61,6 @@
   }
   .stat .ico { width: 18px; height: 18px; display: block; flex: 0 0 auto; }
 
-  /* NEW: Hearts indicator — hidden unless active */
   .stat-hearts { display: none; }
   .stat-hearts.show { display: inline-flex; }
   .stat-hearts .ico { fill: #ff4d4d; }
@@ -73,8 +70,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     width: 38px; height: 38px; padding: 0; border: none; border-radius: 50%;
     background: rgba(255, 255, 255, .10); cursor: pointer;
-    transition: background .15s;
-    flex: 0 0 auto;
+    transition: background .15s; flex: 0 0 auto;
   }
   .sound:active { background: rgba(255, 255, 255, .22); }
   .sound svg { width: 21px; height: 21px; display: block; }
@@ -82,7 +78,7 @@
   .sound.muted .waves { display: none; }
   .sound.muted .slash { display: block; }
 
-  /* ============ DROPDOWN MENU (header) ============ */
+  /* ============ DROPDOWN MENU ============ */
   .menu {
     position: absolute;
     top: calc(58px + env(safe-area-inset-top));
@@ -104,44 +100,44 @@
   .menu button:active { background: rgba(255, 255, 255, .1); }
   .menu button.active { background: rgba(163, 209, 72, .18); color: #c9e86a; }
 
-  /* ============ BOARD (CANVAS) ============ */
+  /* ============ BOARD ============ */
   .board-wrap {
     flex: 1 1 auto; min-height: 0;
-    position: relative;
-    overflow: hidden;
-    padding: 0;
-    touch-action: none;
+    position: relative; overflow: hidden;
+    padding: 0; touch-action: none;
   }
   .board {
-    display: block;
-    width: 100%;
-    height: 100%;
-    touch-action: none;
-    cursor: grab;
-    background: #33501a;
+    display: block; width: 100%; height: 100%;
+    touch-action: none; cursor: grab; background: #33501a;
   }
   .board:active { cursor: grabbing; }
-  .board.shake { animation: shake .4s ease; }
-  @keyframes shake {
-    0%, 100% { transform: translate(0, 0); }
-    20% { transform: translate(-4px, 2px); }
-    40% { transform: translate(4px, -2px); }
-    60% { transform: translate(-3px, -2px); }
-    80% { transform: translate(3px, 2px); }
+
+  /* NEW: Stronger shake animation */
+  .board.shake { animation: shakeIntense .85s cubic-bezier(.36,.07,.19,.97); }
+  @keyframes shakeIntense {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    6%  { transform: translate(-14px, 8px) rotate(-1.2deg); }
+    12% { transform: translate(13px, -10px) rotate(1.1deg); }
+    20% { transform: translate(-12px, -7px) rotate(-1deg); }
+    28% { transform: translate(10px, 9px) rotate(0.9deg); }
+    36% { transform: translate(-9px, 5px) rotate(-0.7deg); }
+    44% { transform: translate(7px, -4px) rotate(0.6deg); }
+    52% { transform: translate(-6px, 4px) rotate(-0.4deg); }
+    60% { transform: translate(4px, -3px) rotate(0.3deg); }
+    70% { transform: translate(-3px, 2px) rotate(-0.2deg); }
+    80% { transform: translate(2px, -2px); }
+    90% { transform: translate(-1px, 1px); }
   }
 
-  /* ============ OPTIONS POPUP MENU ============ */
+  /* ============ OPTIONS POPUP ============ */
   .options-menu {
-    position: absolute;
-    top: 0; left: 0;
-    z-index: 55;
+    position: absolute; top: 0; left: 0; z-index: 55;
     display: flex; align-items: center; gap: 4px;
     padding: 5px; border-radius: 999px;
     background: #16250a;
-    box-shadow:
-      0 12px 28px rgba(0, 0, 0, .55),
-      0 0 0 1px rgba(163, 209, 72, .30),
-      inset 0 1px 0 rgba(255, 255, 255, .06);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .55),
+                0 0 0 1px rgba(163, 209, 72, .30),
+                inset 0 1px 0 rgba(255, 255, 255, .06);
     opacity: 0; visibility: hidden;
     transform: scale(.72); transform-origin: center bottom;
     transition: opacity .16s ease, transform .18s cubic-bezier(.2, 1.4, .5, 1), visibility .16s;
@@ -171,14 +167,13 @@
 
   /* ============ SIDE BUTTONS ============ */
   .side-buttons {
-    position: absolute;
-    right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
+    position: absolute; right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 30;
     display: flex; flex-direction: column; align-items: center;
     gap: 10px; pointer-events: none;
   }
   .side-buttons > * { pointer-events: auto; }
-
   .fab {
     width: 50px; height: 50px;
     display: flex; align-items: center; justify-content: center;
@@ -189,39 +184,33 @@
   }
   .fab:active { transform: scale(.9); background: #b7e05e; }
   .fab svg { width: 24px; height: 24px; }
-
   .zoom-btn {
-    display: none;
-    width: 44px; height: 44px;
+    display: none; width: 44px; height: 44px;
     align-items: center; justify-content: center;
     padding: 0; border: none; border-radius: 50%;
-    background: rgba(36, 57, 14, .88);
-    color: #eaf5d8; cursor: pointer;
+    background: rgba(36, 57, 14, .88); color: #eaf5d8; cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .4), inset 0 -2px 0 rgba(0, 0, 0, .18);
     transition: transform .12s, background .15s, opacity .15s;
-    -webkit-tap-highlight-color: transparent;
   }
   .zoom-btn:active { transform: scale(.9); background: rgba(36, 57, 14, 1); }
   .zoom-btn svg { width: 20px; height: 20px; display: block; }
   .zoom-btn.disabled { opacity: 0.35; pointer-events: none; }
   .side-buttons.zoom-available .zoom-btn { display: flex; }
 
-  /* ============ DASHBOARD MODAL ============ */
+  /* ============ DASHBOARD ============ */
   .dashboard {
     position: absolute; inset: 0; z-index: 70;
     display: flex; align-items: center; justify-content: center;
     padding: 20px 16px;
     background: rgba(8, 16, 3, .68);
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
     opacity: 0; visibility: hidden;
     transition: opacity .25s, visibility .25s;
   }
   .dashboard.show { opacity: 1; visibility: visible; }
   .dash-card {
     width: 100%; max-width: 380px;
-    max-height: calc(100vh - 40px);
-    max-height: calc(100dvh - 40px);
+    max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px);
     display: flex; flex-direction: column;
     padding: 18px; border-radius: 22px;
     background: #f3f9e6;
@@ -231,14 +220,10 @@
     overflow: hidden;
   }
   .dashboard.show .dash-card { transform: scale(1); }
-
   .dash-tabs {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 4px; padding: 4px;
-    border-radius: 12px;
-    background: #e0ecc3;
-    margin-bottom: 14px;
-    flex: 0 0 auto;
+    gap: 4px; padding: 4px; border-radius: 12px;
+    background: #e0ecc3; margin-bottom: 14px; flex: 0 0 auto;
   }
   .dash-tab {
     padding: 9px 6px; border: none; border-radius: 9px;
@@ -251,11 +236,9 @@
     box-shadow: 0 2px 6px rgba(0,0,0,.08);
   }
   .dash-tab:active { transform: scale(.97); }
-
   .dash-body {
     flex: 1 1 auto; min-height: 0;
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-    padding: 2px;
+    overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px;
   }
   .dash-pane { display: none; }
   .dash-pane.active { display: block; animation: fadeIn .2s ease; }
@@ -263,23 +246,20 @@
     from { opacity: 0; transform: translateY(4px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   .stat-grid {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 8px; margin-bottom: 14px;
   }
   .stat-box {
     padding: 12px 10px; border-radius: 12px;
-    background: #ffffff; border: 1px solid #dbe8c0;
-    text-align: center;
+    background: #ffffff; border: 1px solid #dbe8c0; text-align: center;
   }
   .stat-val {
     font-size: 22px; font-weight: 800; color: #2b4112;
     font-variant-numeric: tabular-nums; line-height: 1.1;
   }
   .stat-lbl {
-    margin-top: 3px;
-    font-size: 10px; font-weight: 700;
+    margin-top: 3px; font-size: 10px; font-weight: 700;
     color: #7c9256; letter-spacing: .6px; text-transform: uppercase;
   }
   .best-title {
@@ -305,8 +285,7 @@
   }
   .opt-diff { flex-direction: column; align-items: stretch; gap: 10px; }
   .diff-group {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
   }
   .diff-group-4 { grid-template-columns: repeat(4, 1fr); }
   .diff-btn {
@@ -321,6 +300,22 @@
   }
   .diff-btn:active { transform: scale(.96); }
 
+  /* NEW: Map preset segmented control */
+  .preset-group {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  }
+  .preset-btn {
+    padding: 10px 4px; border: 1.5px solid #dbe8c0; border-radius: 10px;
+    background: #f7fbe8; color: #5c7233;
+    font-size: 11px; font-weight: 800; letter-spacing: .3px;
+    cursor: pointer; transition: all .15s;
+  }
+  .preset-btn.active {
+    background: #7cb518; color: #ffffff; border-color: #7cb518;
+    box-shadow: 0 3px 0 #5d8a10;
+  }
+  .preset-btn:active { transform: scale(.96); }
+
   .custom-config { display: none; }
   .custom-config.show { display: block; animation: fadeIn .2s ease; }
   .cfg-input {
@@ -328,24 +323,30 @@
     border: 1.5px solid #dbe8c0; border-radius: 8px;
     background: #f7fbe8; color: #2b4112;
     font-size: 13px; font-weight: 700; font-family: inherit;
-    text-align: right; outline: none;
-    -moz-appearance: textfield;
+    text-align: right; outline: none; -moz-appearance: textfield;
   }
   .cfg-input::-webkit-outer-spin-button,
   .cfg-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .cfg-input:focus { border-color: #7cb518; background: #ffffff; }
 
-  /* NEW: Hearts row hidden by default, shown when infinite is ON */
-  .hearts-row { display: none; }
-  .hearts-row.show { display: flex; }
+  /* NEW: Hearts row & Density row */
+  .opt-row.hearts-row,
+  .opt-row.density-row { display: none; }
+  .opt-row.hearts-row.show,
+  .opt-row.density-row.show { display: flex; }
+  .opt-hint {
+    display: none;
+    font-size: 11px; font-weight: 700;
+    color: #7c9256; padding: 0 6px 12px;
+    line-height: 1.4;
+  }
+  .opt-hint.show { display: block; }
 
   .switch {
-    position: relative;
-    width: 46px; height: 26px;
+    position: relative; width: 46px; height: 26px;
     border: none; border-radius: 999px;
     background: #c5d6a3; cursor: pointer; padding: 0;
-    transition: background .2s;
-    flex: 0 0 auto;
+    transition: background .2s; flex: 0 0 auto;
   }
   .switch-knob {
     position: absolute; top: 3px; left: 3px;
@@ -431,29 +432,25 @@
 
   .opt-warning {
     display: flex; gap: 6px; align-items: flex-start;
-    font-size: 11px; font-weight: 700;
-    color: #b8721e;
-    padding: 0 6px 12px;
-    line-height: 1.4;
+    font-size: 11px; font-weight: 700; color: #b8721e;
+    padding: 0 6px 12px; line-height: 1.4;
   }
   .opt-warning::before { content: '⚠'; font-size: 12px; flex: 0 0 auto; }
 
-  /* ============ RESULT OVERLAY (Win / Lose) ============ */
+  /* ============ RESULT OVERLAY ============ */
   .result-overlay {
     position: absolute; inset: 0; z-index: 80;
     display: flex; align-items: center; justify-content: center;
     padding: 24px;
     background: rgba(8, 16, 3, .72);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
     opacity: 0; visibility: hidden;
     transition: opacity .3s, visibility .3s;
   }
   .result-overlay.show { opacity: 1; visibility: visible; }
   .result-card {
     width: 100%; max-width: 300px;
-    padding: 28px 24px 22px;
-    border-radius: 24px; text-align: center;
+    padding: 28px 24px 22px; border-radius: 24px; text-align: center;
     transform: scale(.85);
     transition: transform .35s cubic-bezier(.2, 1.4, .5, 1);
     box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
@@ -484,8 +481,7 @@
   .result-overlay.win .result-title { color: #2b4112; }
   .result-overlay.lose .result-title { color: #7a2020; }
   .result-sub {
-    font-size: 14px; font-weight: 600;
-    margin: 0 0 22px;
+    font-size: 14px; font-weight: 600; margin: 0 0 22px;
   }
   .result-overlay.win .result-sub { color: #5c7233; }
   .result-overlay.lose .result-sub { color: #9b5252; }
@@ -525,22 +521,69 @@
   .result-overlay.lose .result-btn-secondary { color: #9b5252; }
   .result-overlay.lose .result-btn-secondary:active { background: rgba(224, 82, 82, .12); }
 
+  /* NEW: Confirm modal for difficulty change */
+  .confirm-overlay {
+    position: absolute; inset: 0; z-index: 95;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(8, 16, 3, .72);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+  }
+  .confirm-overlay.show { opacity: 1; visibility: visible; }
+  .confirm-card {
+    width: 100%; max-width: 320px;
+    padding: 24px 22px 18px; border-radius: 20px;
+    background: #f3f9e6;
+    box-shadow: 0 22px 50px rgba(0,0,0,.55);
+    transform: scale(.9);
+    transition: transform .28s cubic-bezier(.2, 1.4, .5, 1);
+  }
+  .confirm-overlay.show .confirm-card { transform: scale(1); }
+  .confirm-title {
+    margin: 0 0 8px;
+    font-size: 17px; font-weight: 800; color: #2b4112;
+    letter-spacing: -.2px;
+  }
+  .confirm-sub {
+    margin: 0 0 20px;
+    font-size: 13px; font-weight: 600;
+    color: #5c7233; line-height: 1.5;
+  }
+  .confirm-actions { display: flex; gap: 10px; }
+  .confirm-btn {
+    flex: 1; padding: 12px;
+    border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 800;
+    letter-spacing: .3px; cursor: pointer;
+    font-family: inherit;
+    transition: transform .1s, box-shadow .1s, background .15s;
+  }
+  .confirm-cancel { background: #e0ecc3; color: #5c7233; }
+  .confirm-cancel:active { background: #d0dca8; }
+  .confirm-yes {
+    background: #7cb518; color: #fff;
+    box-shadow: 0 3px 0 #5d8a10;
+  }
+  .confirm-yes:active {
+    transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10;
+  }
+
   /* ============ TUTORIAL OVERLAY ============ */
   .tutorial-overlay {
     position: absolute; inset: 0; z-index: 90;
     display: flex; align-items: center; justify-content: center;
     padding: 20px;
     background: rgba(8, 16, 3, .82);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
     opacity: 0; visibility: hidden;
     transition: opacity .25s, visibility .25s;
   }
   .tutorial-overlay.show { opacity: 1; visibility: visible; }
   .tutorial-card {
     width: 100%; max-width: 340px;
-    max-height: calc(100vh - 40px);
-    max-height: calc(100dvh - 40px);
+    max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px);
     display: flex; flex-direction: column;
     padding: 18px 18px 16px; border-radius: 22px;
     background: #f3f9e6;
@@ -614,8 +657,8 @@
 
   .mini-board {
     display: grid; grid-template-columns: repeat(3, 38px);
-    gap: 2px; padding: 4px;
-    border-radius: 8px; background: #16250a;
+    gap: 2px; padding: 4px; border-radius: 8px;
+    background: #16250a;
     box-shadow: 0 4px 12px rgba(0,0,0,.2);
   }
   .mini-cell {
@@ -630,9 +673,7 @@
   .mini-cell.revealed { background: #e6f2cc; }
   .mini-cell.revealed.dark { background: #dbecb9; }
   .mini-cell.flagged { background: #b7dd63; }
-  .mini-cell.flagged::before {
-    content: '🚩'; font-size: 17px; line-height: 1;
-  }
+  .mini-cell.flagged::before { content: '🚩'; font-size: 17px; line-height: 1; }
   .mini-cell.highlight {
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #7cb518;
     z-index: 1;
@@ -664,8 +705,7 @@
 
   .num-row {
     display: flex; flex-wrap: wrap;
-    gap: 8px; justify-content: center;
-    padding: 4px;
+    gap: 8px; justify-content: center; padding: 4px;
   }
   .num-chip {
     width: 40px; height: 40px;
@@ -691,7 +731,6 @@
     </button>
 
     <div class="stats">
-      <!-- Flag counter -->
       <div class="stat">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M7 21V3.8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
@@ -701,7 +740,6 @@
         <span id="mineCount">0 / 40</span>
       </div>
 
-      <!-- NEW: Hearts indicator (hidden unless active) -->
       <div class="stat stat-hearts" id="heartsStat">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -709,7 +747,6 @@
         <span id="heartsCount">3</span>
       </div>
 
-      <!-- Timer -->
       <div class="stat">
         <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"
              stroke="#ffd23f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -744,12 +781,11 @@
     <button data-key="custom">Custom <small>Configure…</small></button>
   </div>
 
-  <!-- ================= BOARD (Canvas) ================= -->
   <main class="board-wrap" id="boardWrap">
     <canvas class="board" id="board"></canvas>
   </main>
 
-  <!-- ================= OPTIONS POPUP MENU ================= -->
+  <!-- ================= OPTIONS POPUP ================= -->
   <div class="options-menu" id="optionsMenu" role="dialog" aria-label="Cell actions">
     <button class="opt-btn opt-cancel" id="optCancel" aria-label="Cancel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -801,7 +837,7 @@
     </button>
   </div>
 
-  <!-- ================= RESULT OVERLAY (Win / Lose) ================= -->
+  <!-- ================= RESULT OVERLAY ================= -->
   <div class="result-overlay" id="resultOverlay">
     <div class="result-card">
       <span class="result-icon" id="resultIcon">🏆</span>
@@ -809,6 +845,18 @@
       <p class="result-sub" id="resultSub">Time: 000</p>
       <button class="result-btn" id="resultBtn">Play Again</button>
       <button class="result-btn-secondary" id="resultSecondary">View Stats</button>
+    </div>
+  </div>
+
+  <!-- ================= NEW: CONFIRM MODAL ================= -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-card">
+      <h3 class="confirm-title" id="confirmTitle">Leave current game?</h3>
+      <p class="confirm-sub" id="confirmSub">You're still playing. Changing difficulty will reset the board.</p>
+      <div class="confirm-actions">
+        <button class="confirm-btn confirm-cancel" id="confirmCancel">Cancel</button>
+        <button class="confirm-btn confirm-yes" id="confirmYes">Yes, Change</button>
+      </div>
     </div>
   </div>
 
@@ -870,7 +918,6 @@
             </button>
           </div>
 
-          <!-- CHANGED: Renamed to "Maks Zoom" -->
           <div class="opt-row">
             <span>Maks Zoom</span>
             <button class="switch" id="optUnlimitedZoom" aria-label="Toggle maximum zoom out">
@@ -911,10 +958,29 @@
               </button>
             </div>
 
-            <!-- NEW: Hearts row — visible only when Infinite Mode is ON -->
-            <div class="opt-row hearts-row" id="heartsRow">
+            <!-- NEW: Hearts row (always visible in Custom; hidden only in presets) -->
+            <div class="opt-row hearts-row show" id="heartsRow">
               <span>Hearts</span>
-              <input type="number" class="cfg-input" id="cfgHearts" value="3" min="1" max="99">
+              <input type="number" class="cfg-input" id="cfgHearts" value="1" min="1" max="99">
+            </div>
+
+            <!-- NEW: Bomb Density row (only in Infinite mode) -->
+            <div class="opt-row density-row" id="densityRow">
+              <span>Bomb Density (%)</span>
+              <input type="number" class="cfg-input" id="cfgDensity" value="15" min="5" max="35" step="1">
+            </div>
+            <div class="opt-hint" id="densityHint">
+              Higher density = more mines, harder to clear.
+            </div>
+
+            <!-- NEW: Map Preset selector -->
+            <div class="opt-row opt-diff">
+              <span>Map Preset</span>
+              <div class="preset-group">
+                <button class="preset-btn active" data-preset="default">Default</button>
+                <button class="preset-btn" data-preset="diagonal">Diagonal</button>
+                <button class="preset-btn" data-preset="vertical">Vertical</button>
+              </div>
             </div>
 
             <div style="font-size:11px;color:#7c9256;font-weight:700;padding:0 4px 4px;line-height:1.4;">
@@ -958,7 +1024,6 @@
         <div class="tutorial-step-indicator" id="tutorialStep">Step 1 of 5</div>
         <button class="tutorial-close" id="tutorialClose" aria-label="Close tutorial">×</button>
       </div>
-
       <div class="tutorial-body">
         <div class="tutorial-visual" id="tutorialVisual"></div>
         <h3 class="tutorial-title" id="tutorialTitle">Reveal Cells</h3>
@@ -966,7 +1031,6 @@
           Tap any unrevealed cell to open the options menu...
         </p>
       </div>
-
       <div class="tutorial-nav">
         <button class="tutorial-prev" id="tutorialPrev">Back</button>
         <button class="tutorial-next" id="tutorialNext">Next</button>
@@ -981,7 +1045,7 @@
   'use strict';
 
   /* =========================================================
-     CONFIG — preset difficulties (Hard = 16×24 · 100 bombs ≈ 26%)
+     CONFIG — preset difficulties
      ========================================================= */
   const CONFIG = {
     easy:   { cols: 9,  rows: 9,  mines: 10,  label: 'Easy'   },
@@ -1022,6 +1086,11 @@
   const resultBtn       = document.getElementById('resultBtn');
   const resultSecondary = document.getElementById('resultSecondary');
 
+  /* NEW: Confirm modal refs */
+  const confirmOverlay = document.getElementById('confirmOverlay');
+  const confirmCancel  = document.getElementById('confirmCancel');
+  const confirmYes     = document.getElementById('confirmYes');
+
   const dashboard  = document.getElementById('dashboard');
   const dashActions     = document.getElementById('dashActions');
   const playBtn         = document.getElementById('playBtn');
@@ -1047,6 +1116,9 @@
   const cfgInfiniteBtn = document.getElementById('cfgInfinite');
   const heartsRowEl    = document.getElementById('heartsRow');
   const cfgHeartsEl    = document.getElementById('cfgHearts');
+  const densityRowEl   = document.getElementById('densityRow');
+  const cfgDensityEl   = document.getElementById('cfgDensity');
+  const densityHintEl  = document.getElementById('densityHint');
 
   /* Tutorial */
   const tutorialOverlay = document.getElementById('tutorialOverlay');
@@ -1075,8 +1147,6 @@
   const revealedSet = new Set();
   const flaggedSet  = new Set();
   const adjCache    = new Map();
-
-  /* NEW: explodedMines Set replaces single explodedCell */
   const explodedMines = new Set();
 
   let started      = false;
@@ -1087,12 +1157,12 @@
   let timerId      = null;
   let muted        = false;
 
-  /* NEW: Hearts state */
   let maxHearts     = 1;
   let currentHearts = 1;
 
-  /* NEW: Active explosion animation state */
+  /* NEW: Explosion & visual effect state */
   let activeExplosion = null;
+  let canvasFlash = null;
 
   let unlimitedZoomOut = false;
 
@@ -1105,6 +1175,9 @@
   let optionsTarget = null;
   let lastTap = null;
 
+  /* NEW: Pending difficulty change */
+  let pendingDifficultyKey = null;
+
   /* Pointer / pinch state */
   const activePointers = new Map();
   let pointerDown = null;
@@ -1116,8 +1189,16 @@
   /* Tutorial state */
   let tutorialIndex = 0;
 
-  /* Custom config — NEW: added hearts */
-  const customConfig = { cols: 16, rows: 16, mines: 40, infinite: false, hearts: 3 };
+  /* Custom config — NEW: hearts default 1, density, mapPreset */
+  const customConfig = {
+    cols: 16,
+    rows: 16,
+    mines: 40,
+    infinite: false,
+    hearts: 1,
+    density: 0.15,
+    mapPreset: 'default'
+  };
 
   /* Statistics + history */
   const stats = {
@@ -1143,20 +1224,15 @@
   /* =========================================================
      UTIL
      ========================================================= */
-  /* NEW: formatTime for dynamic timer display (handles >999s) */
   function formatTime(seconds) {
     seconds = Math.max(0, Math.floor(seconds));
     if (seconds < 1000) return String(seconds).padStart(3, '0');
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    if (h > 0) {
-      return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    }
+    if (h > 0) return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
     return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   }
-
-  /* Legacy pad3 kept for compatibility but no clamp */
   function pad3(n) { return formatTime(n); }
 
   function hashBomb(r, c, s) {
@@ -1166,11 +1242,32 @@
     return (h >>> 0) / 4294967296;
   }
 
+  /* =========================================================
+     BOMB LOOKUP — with map preset weighting (infinite mode)
+     ========================================================= */
   function isBomb(r, c) {
     if (infinite) {
       const k = makeKey(r, c);
       if (overrides.has(k)) return overrides.get(k);
-      return hashBomb(r, c, seed) < density;
+
+      const baseHash = hashBomb(r, c, seed);
+      let weight = density;
+
+      /* NEW: Map preset weighting */
+      const preset = customConfig.mapPreset;
+      if (preset === 'diagonal') {
+        const mod = ((r + c) % 3 + 3) % 3;
+        if (mod === 0) weight = density * 2.0;
+        else if (mod === 1) weight = density * 0.6;
+        else weight = density * 0.4;
+      } else if (preset === 'vertical') {
+        const mod = ((c % 3) + 3) % 3;
+        if (mod === 0) weight = density * 2.0;
+        else if (mod === 1) weight = density * 0.6;
+        else weight = density * 0.4;
+      }
+
+      return baseHash < Math.min(0.95, weight);
     }
     return bombSet.has(makeKey(r, c));
   }
@@ -1194,10 +1291,12 @@
   }
 
   /* =========================================================
-     AUDIO
+     AUDIO — boosted to 4.0× with +1.3× base
      ========================================================= */
   let actx = null;
-  const VOLUME_MULTIPLIER = 2.5;
+  const VOLUME_MULTIPLIER = 4.0;   /* NEW: was 2.5 */
+  const BASE_VOL_BOOST = 1.3;      /* NEW: additional boost */
+  const VOL_CAP = 0.95;            /* NEW: cap raised to 0.95 */
 
   function ensureAudio() {
     if (!actx) {
@@ -1217,7 +1316,8 @@
       const t = ac.currentTime;
       const osc = ac.createOscillator();
       const gain = ac.createGain();
-      const boostedVol = Math.min(0.9, (vol || 0.05) * VOLUME_MULTIPLIER);
+      const raw = (vol || 0.05) * BASE_VOL_BOOST * VOLUME_MULTIPLIER;
+      const boostedVol = Math.min(VOL_CAP, raw);
       osc.type = type || 'sine';
       osc.frequency.setValueAtTime(freq, t);
       gain.gain.setValueAtTime(boostedVol, t);
@@ -1229,7 +1329,54 @@
     } catch (e) {}
   }
 
-  /* NEW: Dramatic explosion sound (deep sawtooth + noise burst) */
+  /* NEW: Special sound for rare numbers 5-8 (arpeggio C5→E5→G5→C6) */
+  function playRareNumberSound(adj) {
+    if (muted) return;
+    try {
+      const ac = ensureAudio();
+      if (!ac) return;
+      const t = ac.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.50]; /* C5 E5 G5 C6 */
+      const noteDelay = 0.055;
+
+      for (let i = 0; i < notes.length; i++) {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(notes[i], t + i * noteDelay);
+        gain.gain.setValueAtTime(0.0001, t + i * noteDelay);
+        gain.gain.linearRampToValueAtTime(0.25, t + i * noteDelay + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + i * noteDelay + 0.28);
+        osc.connect(gain);
+        gain.connect(ac.destination);
+        osc.start(t + i * noteDelay);
+        osc.stop(t + i * noteDelay + 0.32);
+      }
+
+      /* Extra sparkle for the very rare 8 */
+      if (adj === 8) {
+        setTimeout(() => {
+          const ac2 = ensureAudio();
+          if (!ac2) return;
+          const t2 = ac2.currentTime;
+          for (let i = 0; i < notes.length; i++) {
+            const osc = ac2.createOscillator();
+            const gain = ac2.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(notes[i] * 1.02, t2 + i * noteDelay);
+            gain.gain.setValueAtTime(0.0001, t2 + i * noteDelay);
+            gain.gain.linearRampToValueAtTime(0.13, t2 + i * noteDelay + 0.012);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t2 + i * noteDelay + 0.26);
+            osc.connect(gain);
+            gain.connect(ac2.destination);
+            osc.start(t2 + i * noteDelay);
+            osc.stop(t2 + i * noteDelay + 0.3);
+          }
+        }, 200);
+      }
+    } catch (e) {}
+  }
+
   function playExplosionSound() {
     if (muted) return;
     try {
@@ -1237,16 +1384,16 @@
       if (!ac) return;
       const t = ac.currentTime;
 
-      /* Deep low-frequency "boom" — sawtooth sweep 90→30 Hz */
+      /* Deep sawtooth sweep */
       const osc1 = ac.createOscillator();
       const gain1 = ac.createGain();
       osc1.type = 'sawtooth';
       osc1.frequency.setValueAtTime(90, t);
       osc1.frequency.exponentialRampToValueAtTime(28, t + 0.55);
-      gain1.gain.setValueAtTime(0.55, t);
-      gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.75);
+      gain1.gain.setValueAtTime(0.62, t);
+      gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.78);
       osc1.connect(gain1); gain1.connect(ac.destination);
-      osc1.start(t); osc1.stop(t + 0.8);
+      osc1.start(t); osc1.stop(t + 0.82);
 
       /* Mid punch */
       const osc2 = ac.createOscillator();
@@ -1254,13 +1401,13 @@
       osc2.type = 'triangle';
       osc2.frequency.setValueAtTime(140, t);
       osc2.frequency.exponentialRampToValueAtTime(45, t + 0.35);
-      gain2.gain.setValueAtTime(0.35, t);
-      gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      gain2.gain.setValueAtTime(0.42, t);
+      gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
       osc2.connect(gain2); gain2.connect(ac.destination);
-      osc2.start(t); osc2.stop(t + 0.45);
+      osc2.start(t); osc2.stop(t + 0.46);
 
-      /* Noise burst (crunch) */
-      const bufferSize = Math.floor(ac.sampleRate * 0.55);
+      /* Noise burst */
+      const bufferSize = Math.floor(ac.sampleRate * 0.6);
       const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -1270,35 +1417,42 @@
       const noise = ac.createBufferSource();
       noise.buffer = buffer;
       const noiseGain = ac.createGain();
-      noiseGain.gain.setValueAtTime(0.42, t);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+      noiseGain.gain.setValueAtTime(0.5, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.52);
       noise.connect(noiseGain); noiseGain.connect(ac.destination);
-      noise.start(t); noise.stop(t + 0.55);
+      noise.start(t); noise.stop(t + 0.58);
     } catch (e) {}
   }
 
   /* =========================================================
-     EXPLOSION ANIMATION (flash + shockwave + particles)
+     EXPLOSION ANIMATION — More particles + canvas flash
      ========================================================= */
   function startExplosion(r, c) {
     const particles = [];
-    const count = 10;
+    const count = 14;   /* NEW: more particles */
     for (let i = 0; i < count; i++) {
-      /* Particles evenly distributed with slight randomness */
       const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.6;
-      const speed = 0.7 + Math.random() * 1.1;
+      const speed = 0.7 + Math.random() * 1.3;
       particles.push({
         angle: angle,
         speed: speed,
-        size: 2 + Math.random() * 2.5
+        size: 2.2 + Math.random() * 3.0
       });
     }
     activeExplosion = {
       r: r, c: c,
       startTime: performance.now(),
-      duration: 750,
-      particles: particles
+      duration: 800,
+      particles: particles,
+      pulseDuration: 500    /* NEW: pulse red cell for 500ms */
     };
+
+    /* NEW: full-canvas white flash */
+    canvasFlash = {
+      startTime: performance.now(),
+      duration: 120
+    };
+
     requestDraw();
   }
 
@@ -1436,6 +1590,7 @@
     }
 
     const size = cellSize;
+    const now = performance.now();
     ctx.font = 'bold ' + Math.round(size * 0.58) + 'px -apple-system, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1449,12 +1604,25 @@
         const isRev = revealedSet.has(k);
         const isFlag = flaggedSet.has(k);
         const dark = ((r + c) & 1) === 0;
+        const isExploded = explodedMines.has(k);
 
         let fill;
         if (isRev) {
           if (isBomb(r, c)) {
-            /* NEW: Use explodedMines Set */
-            fill = explodedMines.has(k) ? '#e05252' : '#f0c9c9';
+            if (isExploded) {
+              /* NEW: Pulse red for ~500ms after explosion */
+              let pulse = 0;
+              if (activeExplosion && activeExplosion.r === r && activeExplosion.c === c) {
+                const elapsed = now - activeExplosion.startTime;
+                if (elapsed < activeExplosion.pulseDuration) {
+                  pulse = 0.5 + 0.5 * Math.sin(elapsed / 40);
+                }
+              }
+              const red = Math.round(180 + 75 * pulse);
+              fill = 'rgb(' + red + ', ' + Math.round(40 + 30 * pulse) + ', ' + Math.round(40 + 30 * pulse) + ')';
+            } else {
+              fill = '#f0c9c9';
+            }
           } else {
             fill = dark ? '#e6f2cc' : '#dbecb9';
           }
@@ -1501,10 +1669,10 @@
     }
 
     /* =============================================
-       NEW: Explosion animation overlay
+       Explosion animation overlay
        ============================================= */
     if (activeExplosion) {
-      const elapsed = performance.now() - activeExplosion.startTime;
+      const elapsed = now - activeExplosion.startTime;
       const duration = activeExplosion.duration;
       const progress = Math.min(1, elapsed / duration);
 
@@ -1513,12 +1681,11 @@
       const cx = cellPx + size / 2;
       const cy = cellPy + size / 2;
 
-      /* Flash on the cell — first 250ms */
+      /* Flash on the cell */
       if (elapsed < 250) {
         const flashAlpha = (1 - elapsed / 250) * 0.9;
         ctx.fillStyle = 'rgba(255, 220, 80, ' + flashAlpha.toFixed(3) + ')';
         ctx.fillRect(cellPx, cellPy, size, size);
-        /* White-hot core */
         const coreAlpha = (1 - elapsed / 150) * 0.85;
         if (coreAlpha > 0) {
           ctx.fillStyle = 'rgba(255, 255, 255, ' + coreAlpha.toFixed(3) + ')';
@@ -1527,21 +1694,21 @@
         }
       }
 
-      /* Outer shockwave ring */
-      const waveRadius = size * 0.4 + progress * size * 3.2;
-      const waveAlpha = Math.max(0, (1 - progress) * 0.85);
+      /* Outer shockwave */
+      const waveRadius = size * 0.4 + progress * size * 3.5;
+      const waveAlpha = Math.max(0, (1 - progress) * 0.9);
       ctx.strokeStyle = 'rgba(255, 130, 30, ' + waveAlpha.toFixed(3) + ')';
-      ctx.lineWidth = Math.max(1, 3.5 * (1 - progress * 0.6));
+      ctx.lineWidth = Math.max(1, 4 * (1 - progress * 0.6));
       ctx.beginPath();
       ctx.arc(cx, cy, waveRadius, 0, Math.PI * 2);
       ctx.stroke();
 
-      /* Inner shockwave ring */
-      const innerRadius = size * 0.35 + progress * size * 1.8;
-      const innerAlpha = Math.max(0, (1 - progress * 1.3) * 0.75);
+      /* Inner shockwave */
+      const innerRadius = size * 0.35 + progress * size * 1.9;
+      const innerAlpha = Math.max(0, (1 - progress * 1.3) * 0.8);
       if (innerAlpha > 0) {
         ctx.strokeStyle = 'rgba(255, 210, 80, ' + innerAlpha.toFixed(3) + ')';
-        ctx.lineWidth = Math.max(1, 2.5 * (1 - progress * 0.5));
+        ctx.lineWidth = Math.max(1, 2.8 * (1 - progress * 0.5));
         ctx.beginPath();
         ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2);
         ctx.stroke();
@@ -1569,8 +1736,22 @@
       if (progress >= 1) {
         activeExplosion = null;
       } else {
-        /* Keep animating */
         requestDraw();
+      }
+    }
+
+    /* =============================================
+       NEW: Full canvas white flash
+       ============================================= */
+    if (canvasFlash) {
+      const elapsed = now - canvasFlash.startTime;
+      if (elapsed < canvasFlash.duration) {
+        const alpha = (1 - elapsed / canvasFlash.duration) * 0.75;
+        ctx.fillStyle = 'rgba(255, 255, 255, ' + alpha.toFixed(3) + ')';
+        ctx.fillRect(0, 0, viewWidth, viewHeight);
+        requestDraw();
+      } else {
+        canvasFlash = null;
       }
     }
 
@@ -1585,7 +1766,7 @@
       ctx.font = 'bold ' + Math.round(size * 0.58) + 'px -apple-system, "Segoe UI", Roboto, sans-serif';
     }
 
-    /* Highlight of the current options-menu target */
+    /* Options-menu target highlight */
     if (optionsTarget) {
       const x = Math.round(optionsTarget.c * size - cameraX);
       const y = Math.round(optionsTarget.r * size - cameraY);
@@ -1642,21 +1823,54 @@
   }
 
   /* =========================================================
-     BOMB GENERATION
+     BOMB GENERATION — with map preset weighting
      ========================================================= */
   function generateFiniteBombs() {
     bombSet = new Set();
     const total = gridCols * gridRows;
     const count = Math.max(1, Math.min(gridMines, total - 1));
-    const pool = new Array(total);
-    for (let i = 0; i < total; i++) pool[i] = i;
-    for (let i = total - 1; i > 0; i--) {
+    const preset = customConfig.mapPreset;
+
+    /* NEW: Build weighted pool based on map preset */
+    const pool = [];
+    for (let r = 0; r < gridRows; r++) {
+      for (let c = 0; c < gridCols; c++) {
+        let w = 1;
+        if (preset === 'diagonal') {
+          const mod = ((r + c) % 3 + 3) % 3;
+          if (mod === 0) w = 2.0;
+          else if (mod === 1) w = 0.6;
+          else w = 0.4;
+        } else if (preset === 'vertical') {
+          const mod = ((c % 3) + 3) % 3;
+          if (mod === 0) w = 2.0;
+          else if (mod === 1) w = 0.6;
+          else w = 0.4;
+        }
+        const reps = Math.max(1, Math.round(w * 4));
+        for (let i = 0; i < reps; i++) {
+          pool.push({ r: r, c: c });
+        }
+      }
+    }
+
+    /* Fisher-Yates shuffle */
+    for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
     }
-    for (let k = 0; k < count; k++) {
-      const p = pool[k];
-      bombSet.add(makeKey(Math.floor(p / gridCols), p % gridCols));
+
+    /* Pick unique cells */
+    for (let i = 0; i < pool.length && bombSet.size < count; i++) {
+      bombSet.add(makeKey(pool[i].r, pool[i].c));
+    }
+
+    /* Fallback (rare, when pool exhausted) */
+    let guard = 0;
+    while (bombSet.size < count && guard++ < 100000) {
+      const rr = Math.floor(Math.random() * gridRows);
+      const cc = Math.floor(Math.random() * gridCols);
+      bombSet.add(makeKey(rr, cc));
     }
   }
 
@@ -1679,7 +1893,7 @@
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
         const rr = r + dr, cc = c + dc;
-        if (hashBomb(rr, cc, seed) < density) overrides.set(makeKey(rr, cc), false);
+        if (isBomb(rr, cc)) overrides.set(makeKey(rr, cc), false);
       }
     }
   }
@@ -1706,6 +1920,13 @@
 
     floodFill(r, c);
     beep(560, 0.035, 'square', 0.025);
+
+    /* NEW: Rare number special sound (only for the clicked cell) */
+    const adj = getAdj(r, c);
+    if (adj >= 5 && adj <= 8) {
+      playRareNumberSound(adj);
+    }
+
     if (!infinite) checkWin();
     requestDraw();
   }
@@ -1796,35 +2017,32 @@
   }
 
   /* =========================================================
-     EXPLODE (with hearts support) & WIN
+     EXPLODE — with delayed overlay + intense shake + vibrate
      ========================================================= */
   function explode(r, c) {
     if (finished) return;
     const k = makeKey(r, c);
-
-    /* Skip already-exploded mines */
     if (explodedMines.has(k)) return;
 
-    /* Visual + sound effects */
+    /* Visual + audio + haptics */
     startExplosion(r, c);
     playExplosionSound();
-    if (navigator.vibrate) navigator.vibrate([60, 40, 100]);
-
-    /* Deduct a heart */
-    currentHearts--;
-
-    /* Mark the cell as exploded */
-    explodedMines.add(k);
-    revealedSet.add(k);
-    if (flaggedSet.has(k)) {
-      flaggedSet.delete(k);
-      flags--;
+    if (navigator.vibrate) {
+      try { navigator.vibrate([100, 50, 200, 50, 300]); } catch (e) {}
     }
 
-    /* Update HUD (flags + hearts) */
+    /* Intense screen shake */
+    canvas.classList.add('shake');
+    setTimeout(() => canvas.classList.remove('shake'), 900);
+
+    /* Deduct heart, mark exploded */
+    currentHearts--;
+    explodedMines.add(k);
+    revealedSet.add(k);
+    if (flaggedSet.has(k)) { flaggedSet.delete(k); flags--; }
     updateHud();
 
-    /* If still have hearts, continue playing */
+    /* Still have hearts → continue playing */
     if (currentHearts > 0) {
       requestDraw();
       return;
@@ -1835,7 +2053,6 @@
     stopTimer();
     closeOptionsMenu();
 
-    /* Reveal all remaining bombs (finite only) */
     if (!infinite) {
       for (let rr = 0; rr < gridRows; rr++) {
         for (let cc = 0; cc < gridCols; cc++) {
@@ -1847,12 +2064,13 @@
       }
     }
 
-    canvas.classList.add('shake');
-    setTimeout(() => canvas.classList.remove('shake'), 450);
-
     requestDraw();
     recordResult(false);
-    showResultOverlay(false, 'Game Over', 'You hit a mine!');
+
+    /* NEW: Delay overlay so player can see the explosion */
+    setTimeout(() => {
+      showResultOverlay(false, 'Game Over', 'You hit a mine!');
+    }, 2000);
   }
 
   function checkWin() {
@@ -1879,7 +2097,11 @@
     setTimeout(() => beep(1568, 0.22, 'sine', 0.07), 260);
 
     recordResult(true);
-    showResultOverlay(true, 'You Won!', 'Time: ' + formatTime(timer));
+
+    /* NEW: Delay Win overlay ~800ms so animation is visible */
+    setTimeout(() => {
+      showResultOverlay(true, 'You Won!', 'Time: ' + formatTime(timer));
+    }, 800);
   }
 
   /* =========================================================
@@ -1911,7 +2133,58 @@
   });
 
   /* =========================================================
-     TIMER — NEW: dynamic format, no clamp
+     CONFIRM MODAL — difficulty change
+     ========================================================= */
+  function showConfirmModal() {
+    confirmOverlay.classList.add('show');
+  }
+  function hideConfirmModal() {
+    confirmOverlay.classList.remove('show');
+  }
+
+  confirmCancel.addEventListener('click', () => {
+    pendingDifficultyKey = null;
+    hideConfirmModal();
+    beep(600, 0.04, 'sine', 0.03);
+  });
+
+  confirmYes.addEventListener('click', () => {
+    const key = pendingDifficultyKey;
+    pendingDifficultyKey = null;
+    hideConfirmModal();
+    if (!key) return;
+    performDifficultyChange(key);
+    beep(700, 0.05, 'sine', 0.04);
+  });
+
+  /* NEW: Attempt change — shows confirm if playing */
+  function attemptDifficultyChange(key) {
+    if (started && !finished && key !== currentKey) {
+      pendingDifficultyKey = key;
+      showConfirmModal();
+      return;
+    }
+    performDifficultyChange(key);
+  }
+
+  /* Perform the actual difficulty change (no confirm) */
+  function performDifficultyChange(key) {
+    if (key === 'custom') {
+      currentKey = 'custom';
+      ddLabel.textContent = 'Custom';
+      Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
+        b.classList.toggle('active', b.dataset.key === currentKey);
+      });
+      syncDiffButtons();
+      openDashboard();
+      switchDashboardTab('options');
+      return;
+    }
+    newGame(key);
+  }
+
+  /* =========================================================
+     TIMER
      ========================================================= */
   function tick() {
     timer++;
@@ -1928,7 +2201,7 @@
   function stopTimer() { pauseTimer(); }
 
   /* =========================================================
-     HUD — NEW: flag indicator "N / M" and hearts
+     HUD — NEW: hearts visible in infinite always, custom only if hearts > 1
      ========================================================= */
   function updateHud() {
     /* Flag indicator */
@@ -1938,12 +2211,9 @@
       mineCountEl.textContent = flags + ' / ' + gridMines;
     }
 
-    /* Hearts indicator — show only when hearts feature is active */
-    const showHearts = (activeMode === 'custom' && maxHearts > 1) || (infinite && maxHearts > 0);
-    if (showHearts && !finished) {
-      heartsStat.classList.add('show');
-      heartsCountEl.textContent = String(currentHearts);
-    } else if (showHearts && finished) {
+    /* Hearts indicator */
+    const showHearts = infinite || (activeMode === 'custom' && maxHearts > 1);
+    if (showHearts) {
       heartsStat.classList.add('show');
       heartsCountEl.textContent = String(currentHearts);
     } else {
@@ -2019,6 +2289,13 @@
     updateCustomConfigVisibility();
   }
 
+  function syncPresetButtons() {
+    const btns = dashboard.querySelectorAll('.preset-btn');
+    for (let i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].dataset.preset === customConfig.mapPreset);
+    }
+  }
+
   function updateCustomConfigVisibility() {
     customConfigEl.classList.toggle('show', currentKey === 'custom');
   }
@@ -2026,9 +2303,15 @@
   function syncSoundSwitch() { optSound.classList.toggle('on', !muted); }
   function syncUnlimitedZoomSwitch() { optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut); }
 
-  /* NEW: sync hearts row visibility based on Infinite toggle */
+  /* NEW: sync hearts & density row visibility */
   function syncHeartsRow() {
-    heartsRowEl.classList.toggle('show', customConfig.infinite);
+    /* Hearts always visible in custom-config now */
+    heartsRowEl.classList.add('show');
+  }
+
+  function syncDensityRow() {
+    densityRowEl.classList.toggle('show', customConfig.infinite);
+    densityHintEl.classList.toggle('show', customConfig.infinite);
   }
 
   function syncDashboardActions() {
@@ -2050,6 +2333,7 @@
     cfgRowsEl.value  = customConfig.rows;
     cfgMinesEl.value = customConfig.mines;
     cfgHeartsEl.value = customConfig.hearts;
+    cfgDensityEl.value = Math.round(customConfig.density * 100);
     cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
     const dis = customConfig.infinite;
     cfgColsEl.disabled = dis;
@@ -2058,7 +2342,10 @@
     cfgColsEl.style.opacity = dis ? '0.4' : '1';
     cfgRowsEl.style.opacity = dis ? '0.4' : '1';
     cfgMinesEl.style.opacity = dis ? '0.4' : '1';
+
     syncHeartsRow();
+    syncDensityRow();
+    syncPresetButtons();
 
     updateStatsUI();
     updateHistoryUI();
@@ -2342,11 +2629,10 @@
       if (customConfig.infinite) {
         infinite = true;
         gridCols = 0; gridRows = 0; gridMines = 0;
-        density = 0.15;
+        density = Math.max(0.05, Math.min(0.35, customConfig.density || 0.15));
         seed = Math.floor(Math.random() * 2147483647);
         overrides.clear();
         bombSet = null;
-        /* NEW: hearts in infinite mode */
         maxHearts = Math.max(1, Math.min(99, customConfig.hearts | 0 || 3));
       } else {
         infinite = false;
@@ -2354,8 +2640,7 @@
         gridRows = Math.max(5, Math.min(500, customConfig.rows | 0));
         gridMines = Math.max(1, Math.min(gridCols * gridRows - 1, customConfig.mines | 0));
         generateFiniteBombs();
-        /* Custom non-infinite: hearts not shown in UI, always 1 */
-        maxHearts = 1;
+        maxHearts = Math.max(1, Math.min(99, customConfig.hearts | 0 || 1));
       }
       ddLabel.textContent = 'Custom';
     } else {
@@ -2378,6 +2663,7 @@
     closeOptionsMenu();
     closeDashboard();
     hideResultOverlay();
+    hideConfirmModal();
 
     stopTimer();
     timer = 0;
@@ -2388,6 +2674,7 @@
     finished = false;
     explodedMines.clear();
     activeExplosion = null;
+    canvasFlash = null;
     revealedSet.clear();
     flaggedSet.clear();
     adjCache.clear();
@@ -2407,7 +2694,7 @@
   }
 
   /* =========================================================
-     ZOOM BUTTON EVENTS
+     ZOOM BUTTONS & WHEEL
      ========================================================= */
   zoomInBtn.addEventListener('click', (e) => { e.stopPropagation(); zoomStep(+1); });
   zoomOutBtn.addEventListener('click', (e) => { e.stopPropagation(); zoomStep(-1); });
@@ -2529,18 +2816,17 @@
     ddBtn.classList.remove('open');
     const key = btn.dataset.key;
 
-    if (key === 'custom') {
-      currentKey = 'custom';
-      ddLabel.textContent = 'Custom';
-      Array.prototype.forEach.call(menuEl.querySelectorAll('button'), (b) => {
-        b.classList.toggle('active', b.dataset.key === currentKey);
-      });
-      syncDiffButtons();
-      openDashboard();
-      switchDashboardTab('options');
+    /* NEW: Route through confirm check */
+    if (started && !finished && key !== currentKey) {
+      attemptDifficultyChange(key);
       return;
     }
 
+    if (key === 'custom') {
+      performDifficultyChange('custom');
+      return;
+    }
+    if (key === currentKey) return;
     newGame(key);
   });
 
@@ -2560,12 +2846,24 @@
     if (tab) switchDashboardTab(tab.dataset.tab);
   });
 
+  /* NEW: Dashboard difficulty with confirm check */
   dashboard.addEventListener('click', (e) => {
     const dbtn = e.target.closest('.diff-btn');
     if (!dbtn) return;
     const key = dbtn.dataset.diff;
     if (!CONFIG[key] && key !== 'custom') return;
+    if (key === currentKey) return;
 
+    /* Show confirm if game is in progress */
+    if (started && !finished) {
+      pendingDifficultyKey = key;
+      /* Close dashboard first, then show confirm */
+      closeDashboard();
+      showConfirmModal();
+      return;
+    }
+
+    /* Not playing → change directly */
     currentKey = key;
     if (key === 'custom') ddLabel.textContent = 'Custom';
     else ddLabel.textContent = CONFIG[key].label;
@@ -2594,16 +2892,37 @@
     customConfig.mines = isNaN(v) ? 40 : Math.max(1, Math.min(total - 1, v));
     cfgMinesEl.value = customConfig.mines;
   });
-
-  /* NEW: Hearts input handler */
   cfgHeartsEl.addEventListener('change', () => {
     const v = parseInt(cfgHeartsEl.value, 10);
-    customConfig.hearts = isNaN(v) ? 3 : Math.max(1, Math.min(99, v));
+    customConfig.hearts = isNaN(v) ? 1 : Math.max(1, Math.min(99, v));
     cfgHeartsEl.value = customConfig.hearts;
+  });
+  cfgDensityEl.addEventListener('change', () => {
+    const v = parseInt(cfgDensityEl.value, 10);
+    const pct = isNaN(v) ? 15 : Math.max(5, Math.min(35, v));
+    customConfig.density = pct / 100;
+    cfgDensityEl.value = pct;
   });
 
   cfgInfiniteBtn.addEventListener('click', () => {
+    const wasInfinite = customConfig.infinite;
     customConfig.infinite = !customConfig.infinite;
+
+    /* Auto-adjust hearts default when toggling */
+    if (!wasInfinite && customConfig.infinite) {
+      /* Turning on infinite: default hearts to 3 if currently 1 */
+      if (customConfig.hearts === 1) {
+        customConfig.hearts = 3;
+        cfgHeartsEl.value = 3;
+      }
+    } else if (wasInfinite && !customConfig.infinite) {
+      /* Turning off infinite: default hearts to 1 if currently 3 */
+      if (customConfig.hearts === 3) {
+        customConfig.hearts = 1;
+        cfgHeartsEl.value = 1;
+      }
+    }
+
     cfgInfiniteBtn.classList.toggle('on', customConfig.infinite);
     const dis = customConfig.infinite;
     cfgColsEl.disabled = dis;
@@ -2613,9 +2932,16 @@
     cfgRowsEl.style.opacity = dis ? '0.4' : '1';
     cfgMinesEl.style.opacity = dis ? '0.4' : '1';
 
-    /* NEW: show/hide hearts row */
-    syncHeartsRow();
+    syncDensityRow();
+    beep(700, 0.05, 'sine', 0.04);
+  });
 
+  /* NEW: Map preset buttons */
+  dashboard.addEventListener('click', (e) => {
+    const pbtn = e.target.closest('.preset-btn');
+    if (!pbtn) return;
+    customConfig.mapPreset = pbtn.dataset.preset;
+    syncPresetButtons();
     beep(700, 0.05, 'sine', 0.04);
   });
 
@@ -2647,11 +2973,13 @@
       const v2 = parseInt(cfgRowsEl.value, 10);
       const v3 = parseInt(cfgMinesEl.value, 10);
       const v4 = parseInt(cfgHeartsEl.value, 10);
+      const v5 = parseInt(cfgDensityEl.value, 10);
       customConfig.cols  = isNaN(v1) ? customConfig.cols : Math.max(5, Math.min(500, v1));
       customConfig.rows  = isNaN(v2) ? customConfig.rows : Math.max(5, Math.min(500, v2));
       const maxMines = customConfig.cols * customConfig.rows - 1;
       customConfig.mines = isNaN(v3) ? customConfig.mines : Math.max(1, Math.min(maxMines, v3));
       customConfig.hearts = isNaN(v4) ? customConfig.hearts : Math.max(1, Math.min(99, v4));
+      customConfig.density = isNaN(v5) ? customConfig.density : Math.max(0.05, Math.min(0.35, v5 / 100));
     }
     newGame(currentKey);
   });
@@ -2686,7 +3014,8 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (tutorialOverlay.classList.contains('show')) closeTutorial();
+      if (confirmOverlay.classList.contains('show')) hideConfirmModal();
+      else if (tutorialOverlay.classList.contains('show')) closeTutorial();
       else if (resultOverlay.classList.contains('show')) hideResultOverlay();
       else if (optionsMenu.classList.contains('show')) closeOptionsMenu();
       else if (dashboard.classList.contains('show')) closeDashboard();

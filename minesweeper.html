@@ -78,6 +78,9 @@
   .sound.muted .waves { display: none; }
   .sound.muted .slash { display: block; }
 
+  /* ============ NEW: Disabled state for header/FAB ============ */
+  .disabled { pointer-events: none; opacity: 0.4; }
+
   /* ============ DROPDOWN MENU ============ */
   .menu {
     position: absolute;
@@ -112,7 +115,6 @@
   }
   .board:active { cursor: grabbing; }
 
-  /* NEW: Stronger shake animation */
   .board.shake { animation: shakeIntense .85s cubic-bezier(.36,.07,.19,.97); }
   @keyframes shakeIntense {
     0%, 100% { transform: translate(0, 0) rotate(0); }
@@ -180,7 +182,7 @@
     padding: 0; border: none; border-radius: 50%;
     background: #a3d148; color: #2b4112; cursor: pointer;
     box-shadow: 0 6px 18px rgba(0, 0, 0, .45), inset 0 -3px 0 rgba(0, 0, 0, .18);
-    transition: transform .12s, background .15s;
+    transition: transform .12s, background .15s, opacity .15s;
   }
   .fab:active { transform: scale(.9); background: #b7e05e; }
   .fab svg { width: 24px; height: 24px; }
@@ -267,7 +269,7 @@
     letter-spacing: .8px; text-transform: uppercase;
     margin: 4px 0 8px;
   }
-  .best-list { display: flex; flex-direction: column; gap: 6px; }
+  .best-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
   .best-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 12px; border-radius: 10px;
@@ -284,37 +286,35 @@
     font-size: 13px; font-weight: 700; color: #3f5720;
   }
   .opt-diff { flex-direction: column; align-items: stretch; gap: 10px; }
+
+  /* ============ NEW: Difficulty buttons (2 columns, 2-line) ============ */
   .diff-group {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
-  .diff-group-4 { grid-template-columns: repeat(4, 1fr); }
   .diff-btn {
-    padding: 10px 4px; border: 1.5px solid #dbe8c0; border-radius: 10px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px;
+    padding: 12px 8px;
+    border: 1.5px solid #dbe8c0; border-radius: 10px;
     background: #f7fbe8; color: #5c7233;
-    font-size: 11px; font-weight: 800; letter-spacing: .3px;
     cursor: pointer; transition: all .15s;
+    font-family: inherit;
+  }
+  .diff-btn .diff-name {
+    font-size: 14px; font-weight: 800; letter-spacing: .3px;
+  }
+  .diff-btn .diff-desc {
+    font-size: 10px; font-weight: 700; opacity: 0.7;
+    letter-spacing: .2px;
   }
   .diff-btn.active {
     background: #7cb518; color: #ffffff; border-color: #7cb518;
     box-shadow: 0 3px 0 #5d8a10;
   }
+  .diff-btn.active .diff-desc { opacity: 0.95; }
   .diff-btn:active { transform: scale(.96); }
-
-  /* NEW: Map preset segmented control */
-  .preset-group {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-  }
-  .preset-btn {
-    padding: 10px 4px; border: 1.5px solid #dbe8c0; border-radius: 10px;
-    background: #f7fbe8; color: #5c7233;
-    font-size: 11px; font-weight: 800; letter-spacing: .3px;
-    cursor: pointer; transition: all .15s;
-  }
-  .preset-btn.active {
-    background: #7cb518; color: #ffffff; border-color: #7cb518;
-    box-shadow: 0 3px 0 #5d8a10;
-  }
-  .preset-btn:active { transform: scale(.96); }
 
   .custom-config { display: none; }
   .custom-config.show { display: block; animation: fadeIn .2s ease; }
@@ -329,7 +329,6 @@
   .cfg-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .cfg-input:focus { border-color: #7cb518; background: #ffffff; }
 
-  /* NEW: Hearts row & Density row */
   .opt-row.hearts-row,
   .opt-row.density-row { display: none; }
   .opt-row.hearts-row.show,
@@ -358,9 +357,11 @@
   .switch.on { background: #7cb518; }
   .switch.on .switch-knob { transform: translateX(20px); }
 
+  /* ============ History modal list ============ */
   .history-list {
     display: flex; flex-direction: column; gap: 6px;
-    max-height: 260px; overflow-y: auto;
+    max-height: 60vh; overflow-y: auto;
+    padding: 2px;
   }
   .hist-item {
     display: grid; grid-template-columns: 1fr auto auto;
@@ -521,7 +522,7 @@
   .result-overlay.lose .result-btn-secondary { color: #9b5252; }
   .result-overlay.lose .result-btn-secondary:active { background: rgba(224, 82, 82, .12); }
 
-  /* NEW: Confirm modal for difficulty change */
+  /* ============ CONFIRM MODAL ============ */
   .confirm-overlay {
     position: absolute; inset: 0; z-index: 95;
     display: flex; align-items: center; justify-content: center;
@@ -567,6 +568,65 @@
     box-shadow: 0 3px 0 #5d8a10;
   }
   .confirm-yes:active {
+    transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10;
+  }
+
+  /* ============ NEW: History modal ============ */
+  .history-overlay {
+    position: absolute; inset: 0; z-index: 96;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(8, 16, 3, .72);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+  }
+  .history-overlay.show { opacity: 1; visibility: visible; }
+  .history-card {
+    width: 100%; max-width: 360px;
+    max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px);
+    display: flex; flex-direction: column;
+    padding: 20px; border-radius: 20px;
+    background: #f3f9e6;
+    box-shadow: 0 22px 50px rgba(0,0,0,.55);
+    transform: scale(.9);
+    transition: transform .28s cubic-bezier(.2, 1.4, .5, 1);
+    overflow: hidden;
+  }
+  .history-overlay.show .history-card { transform: scale(1); }
+  .history-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex: 0 0 auto;
+  }
+  .history-title {
+    margin: 0;
+    font-size: 17px; font-weight: 800; color: #2b4112;
+    letter-spacing: -.2px;
+  }
+  .history-close-x {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; border-radius: 50%;
+    background: #e0ecc3; color: #5c7233;
+    font-size: 20px; font-weight: 700;
+    cursor: pointer; line-height: 1; padding: 0;
+    font-family: inherit;
+    transition: background .15s;
+  }
+  .history-close-x:active { background: #d0dca8; }
+  .history-close-btn {
+    flex: 0 0 auto;
+    margin-top: 14px;
+    width: 100%; padding: 13px;
+    border: none; border-radius: 12px;
+    background: #7cb518; color: #fff;
+    font-size: 14px; font-weight: 800;
+    letter-spacing: .3px; cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 3px 0 #5d8a10;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .history-close-btn:active {
     transform: translateY(2px); box-shadow: 0 1px 0 #5d8a10;
   }
 
@@ -848,7 +908,7 @@
     </div>
   </div>
 
-  <!-- ================= NEW: CONFIRM MODAL ================= -->
+  <!-- ================= CONFIRM MODAL ================= -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-card">
       <h3 class="confirm-title" id="confirmTitle">Leave current game?</h3>
@@ -860,19 +920,34 @@
     </div>
   </div>
 
+  <!-- ================= NEW: HISTORY MODAL ================= -->
+  <div class="history-overlay" id="historyOverlay">
+    <div class="history-card">
+      <div class="history-header">
+        <h3 class="history-title">Game History</h3>
+        <button class="history-close-x" id="historyCloseX" aria-label="Close history">×</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="hist-empty">No games played yet.</div>
+      </div>
+      <button class="history-close-btn" id="historyCloseBtn">Close</button>
+    </div>
+  </div>
+
   <!-- ================= DASHBOARD ================= -->
   <div class="dashboard" id="dashboard">
     <div class="dash-card">
 
+      <!-- NEW: 3 tabs: Statistics, Difficulty, Settings -->
       <div class="dash-tabs">
         <button class="dash-tab active" data-tab="stats">Statistics</button>
-        <button class="dash-tab" data-tab="options">Options</button>
-        <button class="dash-tab" data-tab="history">History</button>
+        <button class="dash-tab" data-tab="difficulty">Difficulty</button>
+        <button class="dash-tab" data-tab="settings">Settings</button>
       </div>
 
       <div class="dash-body">
 
-        <!-- Statistics -->
+        <!-- ===== Statistics tab ===== -->
         <div class="dash-pane active" data-pane="stats">
           <div class="stat-grid">
             <div class="stat-box">
@@ -898,46 +973,43 @@
             <div class="best-row"><span>Medium</span><span id="bestMedium">—</span></div>
             <div class="best-row"><span>Hard</span><span id="bestHard">—</span></div>
           </div>
-        </div>
-
-        <!-- Options -->
-        <div class="dash-pane" data-pane="options">
-          <button class="tutorial-btn" id="playTutorialBtn">
+          <!-- NEW: View History button -->
+          <button class="tutorial-btn" id="viewHistoryBtn" style="margin-top: 4px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9"/>
-              <path d="M12 16v-4M12 8h.01"/>
+              <path d="M12 7v5l3 2"/>
             </svg>
-            Play Tutorial
+            View History
           </button>
+        </div>
 
-          <div class="opt-row">
-            <span>Sound</span>
-            <button class="switch on" id="optSound" aria-label="Toggle sound">
-              <span class="switch-knob"></span>
-            </button>
-          </div>
-
-          <div class="opt-row">
-            <span>Maks Zoom</span>
-            <button class="switch" id="optUnlimitedZoom" aria-label="Toggle maximum zoom out">
-              <span class="switch-knob"></span>
-            </button>
-          </div>
-          <div class="opt-warning">
-            Warning: Enabling this may cause performance issues on low-end devices.
-          </div>
-
+        <!-- ===== NEW: Difficulty tab (replaces old Options position) ===== -->
+        <div class="dash-pane" data-pane="difficulty">
           <div class="opt-row opt-diff">
             <span>Difficulty</span>
-            <div class="diff-group diff-group-4">
-              <button class="diff-btn" data-diff="easy">Easy</button>
-              <button class="diff-btn active" data-diff="medium">Medium</button>
-              <button class="diff-btn" data-diff="hard">Hard</button>
-              <button class="diff-btn" data-diff="custom">Custom</button>
+            <!-- NEW: 2 columns with 2-line buttons -->
+            <div class="diff-group">
+              <button class="diff-btn" data-diff="easy">
+                <span class="diff-name">Easy</span>
+                <span class="diff-desc">9 × 9 · 10 bombs</span>
+              </button>
+              <button class="diff-btn active" data-diff="medium">
+                <span class="diff-name">Medium</span>
+                <span class="diff-desc">12 × 16 · 40 bombs</span>
+              </button>
+              <button class="diff-btn" data-diff="hard">
+                <span class="diff-name">Hard</span>
+                <span class="diff-desc">16 × 24 · 100 bombs</span>
+              </button>
+              <button class="diff-btn" data-diff="custom">
+                <span class="diff-name">Custom</span>
+                <span class="diff-desc">Configure below</span>
+              </button>
             </div>
           </div>
 
+          <!-- Custom config block (visible only when Custom selected) -->
           <div class="custom-config" id="customConfig">
             <div class="opt-row">
               <span>Width (cols)</span>
@@ -958,41 +1030,53 @@
               </button>
             </div>
 
-            <!-- NEW: Hearts row (always visible in Custom; hidden only in presets) -->
             <div class="opt-row hearts-row show" id="heartsRow">
               <span>Hearts</span>
               <input type="number" class="cfg-input" id="cfgHearts" value="1" min="1" max="99">
             </div>
 
-            <!-- NEW: Bomb Density row (only in Infinite mode) -->
             <div class="opt-row density-row" id="densityRow">
               <span>Bomb Density (%)</span>
-              <input type="number" class="cfg-input" id="cfgDensity" value="15" min="5" max="35" step="1">
+              <!-- NEW: min is now 10 -->
+              <input type="number" class="cfg-input" id="cfgDensity" value="15" min="10" max="35" step="1">
             </div>
             <div class="opt-hint" id="densityHint">
               Higher density = more mines, harder to clear.
             </div>
 
-            <!-- NEW: Map Preset selector -->
-            <div class="opt-row opt-diff">
-              <span>Map Preset</span>
-              <div class="preset-group">
-                <button class="preset-btn active" data-preset="default">Default</button>
-                <button class="preset-btn" data-preset="diagonal">Diagonal</button>
-                <button class="preset-btn" data-preset="vertical">Vertical</button>
-              </div>
-            </div>
-
-            <div style="font-size:11px;color:#7c9256;font-weight:700;padding:0 4px 4px;line-height:1.4;">
+            <div style="font-size:11px;color:#7c9256;font-weight:700;padding:0 4px 8px;line-height:1.4;">
               Infinite mode uses hash-based lazy bomb generation — pan the board to explore endlessly. No win condition.
             </div>
           </div>
+
+          <!-- Play Tutorial moved here (same ID) -->
+          <button class="tutorial-btn" id="playTutorialBtn" style="margin-top: 10px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            Play Tutorial
+          </button>
         </div>
 
-        <!-- History -->
-        <div class="dash-pane" data-pane="history">
-          <div class="history-list" id="historyList">
-            <div class="hist-empty">No games played yet.</div>
+        <!-- ===== NEW: Settings tab (replaces old History) ===== -->
+        <div class="dash-pane" data-pane="settings">
+          <div class="opt-row">
+            <span>Sound</span>
+            <button class="switch on" id="optSound" aria-label="Toggle sound">
+              <span class="switch-knob"></span>
+            </button>
+          </div>
+
+          <div class="opt-row">
+            <span>Maks Zoom</span>
+            <button class="switch" id="optUnlimitedZoom" aria-label="Toggle maximum zoom out">
+              <span class="switch-knob"></span>
+            </button>
+          </div>
+          <div class="opt-warning">
+            Warning: Enabling this may cause performance issues on low-end devices.
           </div>
         </div>
 
@@ -1086,10 +1170,16 @@
   const resultBtn       = document.getElementById('resultBtn');
   const resultSecondary = document.getElementById('resultSecondary');
 
-  /* NEW: Confirm modal refs */
   const confirmOverlay = document.getElementById('confirmOverlay');
   const confirmCancel  = document.getElementById('confirmCancel');
   const confirmYes     = document.getElementById('confirmYes');
+
+  /* NEW: History modal refs */
+  const historyOverlay  = document.getElementById('historyOverlay');
+  const historyListEl   = document.getElementById('historyList');
+  const historyCloseX   = document.getElementById('historyCloseX');
+  const historyCloseBtn = document.getElementById('historyCloseBtn');
+  const viewHistoryBtn  = document.getElementById('viewHistoryBtn');
 
   const dashboard  = document.getElementById('dashboard');
   const dashActions     = document.getElementById('dashActions');
@@ -1107,7 +1197,6 @@
   const bestEasyEl     = document.getElementById('bestEasy');
   const bestMediumEl   = document.getElementById('bestMedium');
   const bestHardEl     = document.getElementById('bestHard');
-  const historyListEl  = document.getElementById('historyList');
 
   const customConfigEl = document.getElementById('customConfig');
   const cfgColsEl      = document.getElementById('cfgCols');
@@ -1160,13 +1249,11 @@
   let maxHearts     = 1;
   let currentHearts = 1;
 
-  /* NEW: Explosion & visual effect state */
   let activeExplosion = null;
   let canvasFlash = null;
 
   let unlimitedZoomOut = false;
 
-  /* Camera & cell size */
   let cameraX = 0, cameraY = 0;
   let cellSize = 30;
   let viewWidth = 0, viewHeight = 0;
@@ -1175,10 +1262,8 @@
   let optionsTarget = null;
   let lastTap = null;
 
-  /* NEW: Pending difficulty change */
   let pendingDifficultyKey = null;
 
-  /* Pointer / pinch state */
   const activePointers = new Map();
   let pointerDown = null;
   let panPointerId = null;
@@ -1186,18 +1271,16 @@
   let pinchState = null;
   let suppressTapUntil = 0;
 
-  /* Tutorial state */
   let tutorialIndex = 0;
 
-  /* Custom config — NEW: hearts default 1, density, mapPreset */
+  /* Custom config — mapPreset REMOVED */
   const customConfig = {
     cols: 16,
     rows: 16,
     mines: 40,
     infinite: false,
     hearts: 1,
-    density: 0.15,
-    mapPreset: 'default'
+    density: 0.15
   };
 
   /* Statistics + history */
@@ -1243,31 +1326,13 @@
   }
 
   /* =========================================================
-     BOMB LOOKUP — with map preset weighting (infinite mode)
+     BOMB LOOKUP — simplified, no map preset
      ========================================================= */
   function isBomb(r, c) {
     if (infinite) {
       const k = makeKey(r, c);
       if (overrides.has(k)) return overrides.get(k);
-
-      const baseHash = hashBomb(r, c, seed);
-      let weight = density;
-
-      /* NEW: Map preset weighting */
-      const preset = customConfig.mapPreset;
-      if (preset === 'diagonal') {
-        const mod = ((r + c) % 3 + 3) % 3;
-        if (mod === 0) weight = density * 2.0;
-        else if (mod === 1) weight = density * 0.6;
-        else weight = density * 0.4;
-      } else if (preset === 'vertical') {
-        const mod = ((c % 3) + 3) % 3;
-        if (mod === 0) weight = density * 2.0;
-        else if (mod === 1) weight = density * 0.6;
-        else weight = density * 0.4;
-      }
-
-      return baseHash < Math.min(0.95, weight);
+      return hashBomb(r, c, seed) < density;
     }
     return bombSet.has(makeKey(r, c));
   }
@@ -1291,12 +1356,12 @@
   }
 
   /* =========================================================
-     AUDIO — boosted to 4.0× with +1.3× base
+     AUDIO
      ========================================================= */
   let actx = null;
-  const VOLUME_MULTIPLIER = 4.0;   /* NEW: was 2.5 */
-  const BASE_VOL_BOOST = 1.3;      /* NEW: additional boost */
-  const VOL_CAP = 0.95;            /* NEW: cap raised to 0.95 */
+  const VOLUME_MULTIPLIER = 4.0;
+  const BASE_VOL_BOOST = 1.3;
+  const VOL_CAP = 0.95;
 
   function ensureAudio() {
     if (!actx) {
@@ -1329,14 +1394,13 @@
     } catch (e) {}
   }
 
-  /* NEW: Special sound for rare numbers 5-8 (arpeggio C5→E5→G5→C6) */
   function playRareNumberSound(adj) {
     if (muted) return;
     try {
       const ac = ensureAudio();
       if (!ac) return;
       const t = ac.currentTime;
-      const notes = [523.25, 659.25, 783.99, 1046.50]; /* C5 E5 G5 C6 */
+      const notes = [523.25, 659.25, 783.99, 1046.50];
       const noteDelay = 0.055;
 
       for (let i = 0; i < notes.length; i++) {
@@ -1353,7 +1417,6 @@
         osc.stop(t + i * noteDelay + 0.32);
       }
 
-      /* Extra sparkle for the very rare 8 */
       if (adj === 8) {
         setTimeout(() => {
           const ac2 = ensureAudio();
@@ -1384,7 +1447,6 @@
       if (!ac) return;
       const t = ac.currentTime;
 
-      /* Deep sawtooth sweep */
       const osc1 = ac.createOscillator();
       const gain1 = ac.createGain();
       osc1.type = 'sawtooth';
@@ -1395,7 +1457,6 @@
       osc1.connect(gain1); gain1.connect(ac.destination);
       osc1.start(t); osc1.stop(t + 0.82);
 
-      /* Mid punch */
       const osc2 = ac.createOscillator();
       const gain2 = ac.createGain();
       osc2.type = 'triangle';
@@ -1406,7 +1467,6 @@
       osc2.connect(gain2); gain2.connect(ac.destination);
       osc2.start(t); osc2.stop(t + 0.46);
 
-      /* Noise burst */
       const bufferSize = Math.floor(ac.sampleRate * 0.6);
       const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
       const data = buffer.getChannelData(0);
@@ -1424,12 +1484,9 @@
     } catch (e) {}
   }
 
-  /* =========================================================
-     EXPLOSION ANIMATION — More particles + canvas flash
-     ========================================================= */
   function startExplosion(r, c) {
     const particles = [];
-    const count = 14;   /* NEW: more particles */
+    const count = 14;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.6;
       const speed = 0.7 + Math.random() * 1.3;
@@ -1444,15 +1501,12 @@
       startTime: performance.now(),
       duration: 800,
       particles: particles,
-      pulseDuration: 500    /* NEW: pulse red cell for 500ms */
+      pulseDuration: 500
     };
-
-    /* NEW: full-canvas white flash */
     canvasFlash = {
       startTime: performance.now(),
       duration: 120
     };
-
     requestDraw();
   }
 
@@ -1610,7 +1664,6 @@
         if (isRev) {
           if (isBomb(r, c)) {
             if (isExploded) {
-              /* NEW: Pulse red for ~500ms after explosion */
               let pulse = 0;
               if (activeExplosion && activeExplosion.r === r && activeExplosion.c === c) {
                 const elapsed = now - activeExplosion.startTime;
@@ -1668,9 +1721,7 @@
       }
     }
 
-    /* =============================================
-       Explosion animation overlay
-       ============================================= */
+    /* Explosion overlay */
     if (activeExplosion) {
       const elapsed = now - activeExplosion.startTime;
       const duration = activeExplosion.duration;
@@ -1681,7 +1732,6 @@
       const cx = cellPx + size / 2;
       const cy = cellPy + size / 2;
 
-      /* Flash on the cell */
       if (elapsed < 250) {
         const flashAlpha = (1 - elapsed / 250) * 0.9;
         ctx.fillStyle = 'rgba(255, 220, 80, ' + flashAlpha.toFixed(3) + ')';
@@ -1694,7 +1744,6 @@
         }
       }
 
-      /* Outer shockwave */
       const waveRadius = size * 0.4 + progress * size * 3.5;
       const waveAlpha = Math.max(0, (1 - progress) * 0.9);
       ctx.strokeStyle = 'rgba(255, 130, 30, ' + waveAlpha.toFixed(3) + ')';
@@ -1703,7 +1752,6 @@
       ctx.arc(cx, cy, waveRadius, 0, Math.PI * 2);
       ctx.stroke();
 
-      /* Inner shockwave */
       const innerRadius = size * 0.35 + progress * size * 1.9;
       const innerAlpha = Math.max(0, (1 - progress * 1.3) * 0.8);
       if (innerAlpha > 0) {
@@ -1714,7 +1762,6 @@
         ctx.stroke();
       }
 
-      /* Particles */
       for (let i = 0; i < activeExplosion.particles.length; i++) {
         const p = activeExplosion.particles[i];
         const dist = progress * p.speed * size * 2.8;
@@ -1740,9 +1787,7 @@
       }
     }
 
-    /* =============================================
-       NEW: Full canvas white flash
-       ============================================= */
+    /* Canvas white flash */
     if (canvasFlash) {
       const elapsed = now - canvasFlash.startTime;
       if (elapsed < canvasFlash.duration) {
@@ -1755,7 +1800,6 @@
       }
     }
 
-    /* Infinite empty-state hint */
     if (infinite && !started) {
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.font = 'bold 15px -apple-system, sans-serif';
@@ -1766,7 +1810,6 @@
       ctx.font = 'bold ' + Math.round(size * 0.58) + 'px -apple-system, "Segoe UI", Roboto, sans-serif';
     }
 
-    /* Options-menu target highlight */
     if (optionsTarget) {
       const x = Math.round(optionsTarget.c * size - cameraX);
       const y = Math.round(optionsTarget.r * size - cameraY);
@@ -1823,54 +1866,22 @@
   }
 
   /* =========================================================
-     BOMB GENERATION — with map preset weighting
+     BOMB GENERATION — simplified, no map preset
      ========================================================= */
   function generateFiniteBombs() {
     bombSet = new Set();
     const total = gridCols * gridRows;
     const count = Math.max(1, Math.min(gridMines, total - 1));
-    const preset = customConfig.mapPreset;
 
-    /* NEW: Build weighted pool based on map preset */
-    const pool = [];
-    for (let r = 0; r < gridRows; r++) {
-      for (let c = 0; c < gridCols; c++) {
-        let w = 1;
-        if (preset === 'diagonal') {
-          const mod = ((r + c) % 3 + 3) % 3;
-          if (mod === 0) w = 2.0;
-          else if (mod === 1) w = 0.6;
-          else w = 0.4;
-        } else if (preset === 'vertical') {
-          const mod = ((c % 3) + 3) % 3;
-          if (mod === 0) w = 2.0;
-          else if (mod === 1) w = 0.6;
-          else w = 0.4;
-        }
-        const reps = Math.max(1, Math.round(w * 4));
-        for (let i = 0; i < reps; i++) {
-          pool.push({ r: r, c: c });
-        }
-      }
-    }
-
-    /* Fisher-Yates shuffle */
-    for (let i = pool.length - 1; i > 0; i--) {
+    const pool = new Array(total);
+    for (let i = 0; i < total; i++) pool[i] = i;
+    for (let i = total - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
     }
-
-    /* Pick unique cells */
-    for (let i = 0; i < pool.length && bombSet.size < count; i++) {
-      bombSet.add(makeKey(pool[i].r, pool[i].c));
-    }
-
-    /* Fallback (rare, when pool exhausted) */
-    let guard = 0;
-    while (bombSet.size < count && guard++ < 100000) {
-      const rr = Math.floor(Math.random() * gridRows);
-      const cc = Math.floor(Math.random() * gridCols);
-      bombSet.add(makeKey(rr, cc));
+    for (let k = 0; k < count; k++) {
+      const p = pool[k];
+      bombSet.add(makeKey(Math.floor(p / gridCols), p % gridCols));
     }
   }
 
@@ -1921,7 +1932,6 @@
     floodFill(r, c);
     beep(560, 0.035, 'square', 0.025);
 
-    /* NEW: Rare number special sound (only for the clicked cell) */
     const adj = getAdj(r, c);
     if (adj >= 5 && adj <= 8) {
       playRareNumberSound(adj);
@@ -2017,32 +2027,28 @@
   }
 
   /* =========================================================
-     EXPLODE — with delayed overlay + intense shake + vibrate
+     EXPLODE — with disabled buttons + delayed overlay
      ========================================================= */
   function explode(r, c) {
     if (finished) return;
     const k = makeKey(r, c);
     if (explodedMines.has(k)) return;
 
-    /* Visual + audio + haptics */
     startExplosion(r, c);
     playExplosionSound();
     if (navigator.vibrate) {
       try { navigator.vibrate([100, 50, 200, 50, 300]); } catch (e) {}
     }
 
-    /* Intense screen shake */
     canvas.classList.add('shake');
     setTimeout(() => canvas.classList.remove('shake'), 900);
 
-    /* Deduct heart, mark exploded */
     currentHearts--;
     explodedMines.add(k);
     revealedSet.add(k);
     if (flaggedSet.has(k)) { flaggedSet.delete(k); flags--; }
     updateHud();
 
-    /* Still have hearts → continue playing */
     if (currentHearts > 0) {
       requestDraw();
       return;
@@ -2052,6 +2058,10 @@
     finished = true;
     stopTimer();
     closeOptionsMenu();
+
+    /* NEW: Disable dropdown and FAB during the lose UI delay */
+    ddBtn.classList.add('disabled');
+    fabBtn.classList.add('disabled');
 
     if (!infinite) {
       for (let rr = 0; rr < gridRows; rr++) {
@@ -2067,7 +2077,6 @@
     requestDraw();
     recordResult(false);
 
-    /* NEW: Delay overlay so player can see the explosion */
     setTimeout(() => {
       showResultOverlay(false, 'Game Over', 'You hit a mine!');
     }, 2000);
@@ -2098,7 +2107,6 @@
 
     recordResult(true);
 
-    /* NEW: Delay Win overlay ~800ms so animation is visible */
     setTimeout(() => {
       showResultOverlay(true, 'You Won!', 'Time: ' + formatTime(timer));
     }, 800);
@@ -2124,23 +2132,28 @@
 
   resultBtn.addEventListener('click', () => {
     hideResultOverlay();
+    /* NEW: Re-enable buttons just in case */
+    ddBtn.classList.remove('disabled');
+    fabBtn.classList.remove('disabled');
     newGame(activeMode);
   });
 
   resultSecondary.addEventListener('click', () => {
     hideResultOverlay();
-    if (resultOverlay.classList.contains('win')) openDashboard();
+    if (resultOverlay.classList.contains('win')) {
+      openDashboard();
+    } else {
+      /* NEW: Lose → re-enable buttons so player can review */
+      ddBtn.classList.remove('disabled');
+      fabBtn.classList.remove('disabled');
+    }
   });
 
   /* =========================================================
-     CONFIRM MODAL — difficulty change
+     CONFIRM MODAL
      ========================================================= */
-  function showConfirmModal() {
-    confirmOverlay.classList.add('show');
-  }
-  function hideConfirmModal() {
-    confirmOverlay.classList.remove('show');
-  }
+  function showConfirmModal() { confirmOverlay.classList.add('show'); }
+  function hideConfirmModal() { confirmOverlay.classList.remove('show'); }
 
   confirmCancel.addEventListener('click', () => {
     pendingDifficultyKey = null;
@@ -2157,7 +2170,6 @@
     beep(700, 0.05, 'sine', 0.04);
   });
 
-  /* NEW: Attempt change — shows confirm if playing */
   function attemptDifficultyChange(key) {
     if (started && !finished && key !== currentKey) {
       pendingDifficultyKey = key;
@@ -2167,7 +2179,6 @@
     performDifficultyChange(key);
   }
 
-  /* Perform the actual difficulty change (no confirm) */
   function performDifficultyChange(key) {
     if (key === 'custom') {
       currentKey = 'custom';
@@ -2177,11 +2188,39 @@
       });
       syncDiffButtons();
       openDashboard();
-      switchDashboardTab('options');
+      /* NEW: switch to difficulty tab */
+      switchDashboardTab('difficulty');
       return;
     }
     newGame(key);
   }
+
+  /* =========================================================
+     HISTORY MODAL
+     ========================================================= */
+  function openHistoryModal() {
+    updateHistoryUI();
+    historyOverlay.classList.add('show');
+  }
+  function closeHistoryModal() {
+    historyOverlay.classList.remove('show');
+  }
+
+  viewHistoryBtn.addEventListener('click', () => {
+    openHistoryModal();
+    beep(700, 0.05, 'sine', 0.04);
+  });
+  historyCloseX.addEventListener('click', () => {
+    closeHistoryModal();
+    beep(600, 0.04, 'sine', 0.03);
+  });
+  historyCloseBtn.addEventListener('click', () => {
+    closeHistoryModal();
+    beep(600, 0.04, 'sine', 0.03);
+  });
+  historyOverlay.addEventListener('click', (e) => {
+    if (e.target === historyOverlay) closeHistoryModal();
+  });
 
   /* =========================================================
      TIMER
@@ -2201,17 +2240,15 @@
   function stopTimer() { pauseTimer(); }
 
   /* =========================================================
-     HUD — NEW: hearts visible in infinite always, custom only if hearts > 1
+     HUD
      ========================================================= */
   function updateHud() {
-    /* Flag indicator */
     if (infinite) {
       mineCountEl.textContent = String(flags);
     } else {
       mineCountEl.textContent = flags + ' / ' + gridMines;
     }
 
-    /* Hearts indicator */
     const showHearts = infinite || (activeMode === 'custom' && maxHearts > 1);
     if (showHearts) {
       heartsStat.classList.add('show');
@@ -2289,13 +2326,6 @@
     updateCustomConfigVisibility();
   }
 
-  function syncPresetButtons() {
-    const btns = dashboard.querySelectorAll('.preset-btn');
-    for (let i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle('active', btns[i].dataset.preset === customConfig.mapPreset);
-    }
-  }
-
   function updateCustomConfigVisibility() {
     customConfigEl.classList.toggle('show', currentKey === 'custom');
   }
@@ -2303,9 +2333,7 @@
   function syncSoundSwitch() { optSound.classList.toggle('on', !muted); }
   function syncUnlimitedZoomSwitch() { optUnlimitedZoom.classList.toggle('on', unlimitedZoomOut); }
 
-  /* NEW: sync hearts & density row visibility */
   function syncHeartsRow() {
-    /* Hearts always visible in custom-config now */
     heartsRowEl.classList.add('show');
   }
 
@@ -2345,7 +2373,6 @@
 
     syncHeartsRow();
     syncDensityRow();
-    syncPresetButtons();
 
     updateStatsUI();
     updateHistoryUI();
@@ -2625,11 +2652,16 @@
     activeMode = currentKey;
     zoomCellSize = null;
 
+    /* NEW: Re-enable buttons defensively */
+    ddBtn.classList.remove('disabled');
+    fabBtn.classList.remove('disabled');
+
     if (currentKey === 'custom') {
       if (customConfig.infinite) {
         infinite = true;
         gridCols = 0; gridRows = 0; gridMines = 0;
-        density = Math.max(0.05, Math.min(0.35, customConfig.density || 0.15));
+        /* NEW: Density min is 0.10 */
+        density = Math.max(0.10, Math.min(0.35, customConfig.density || 0.15));
         seed = Math.floor(Math.random() * 2147483647);
         overrides.clear();
         bombSet = null;
@@ -2664,6 +2696,7 @@
     closeDashboard();
     hideResultOverlay();
     hideConfirmModal();
+    closeHistoryModal();
 
     stopTimer();
     timer = 0;
@@ -2816,7 +2849,6 @@
     ddBtn.classList.remove('open');
     const key = btn.dataset.key;
 
-    /* NEW: Route through confirm check */
     if (started && !finished && key !== currentKey) {
       attemptDifficultyChange(key);
       return;
@@ -2846,7 +2878,6 @@
     if (tab) switchDashboardTab(tab.dataset.tab);
   });
 
-  /* NEW: Dashboard difficulty with confirm check */
   dashboard.addEventListener('click', (e) => {
     const dbtn = e.target.closest('.diff-btn');
     if (!dbtn) return;
@@ -2854,16 +2885,13 @@
     if (!CONFIG[key] && key !== 'custom') return;
     if (key === currentKey) return;
 
-    /* Show confirm if game is in progress */
     if (started && !finished) {
       pendingDifficultyKey = key;
-      /* Close dashboard first, then show confirm */
       closeDashboard();
       showConfirmModal();
       return;
     }
 
-    /* Not playing → change directly */
     currentKey = key;
     if (key === 'custom') ddLabel.textContent = 'Custom';
     else ddLabel.textContent = CONFIG[key].label;
@@ -2875,7 +2903,6 @@
     beep(700, 0.05, 'sine', 0.04);
   });
 
-  /* Custom config input handlers */
   cfgColsEl.addEventListener('change', () => {
     const v = parseInt(cfgColsEl.value, 10);
     customConfig.cols = isNaN(v) ? 16 : Math.max(5, Math.min(500, v));
@@ -2897,9 +2924,11 @@
     customConfig.hearts = isNaN(v) ? 1 : Math.max(1, Math.min(99, v));
     cfgHeartsEl.value = customConfig.hearts;
   });
+
+  /* NEW: Density min is now 10 */
   cfgDensityEl.addEventListener('change', () => {
     const v = parseInt(cfgDensityEl.value, 10);
-    const pct = isNaN(v) ? 15 : Math.max(5, Math.min(35, v));
+    const pct = isNaN(v) ? 15 : Math.max(10, Math.min(35, v));
     customConfig.density = pct / 100;
     cfgDensityEl.value = pct;
   });
@@ -2908,15 +2937,12 @@
     const wasInfinite = customConfig.infinite;
     customConfig.infinite = !customConfig.infinite;
 
-    /* Auto-adjust hearts default when toggling */
     if (!wasInfinite && customConfig.infinite) {
-      /* Turning on infinite: default hearts to 3 if currently 1 */
       if (customConfig.hearts === 1) {
         customConfig.hearts = 3;
         cfgHeartsEl.value = 3;
       }
     } else if (wasInfinite && !customConfig.infinite) {
-      /* Turning off infinite: default hearts to 1 if currently 3 */
       if (customConfig.hearts === 3) {
         customConfig.hearts = 1;
         cfgHeartsEl.value = 1;
@@ -2933,15 +2959,6 @@
     cfgMinesEl.style.opacity = dis ? '0.4' : '1';
 
     syncDensityRow();
-    beep(700, 0.05, 'sine', 0.04);
-  });
-
-  /* NEW: Map preset buttons */
-  dashboard.addEventListener('click', (e) => {
-    const pbtn = e.target.closest('.preset-btn');
-    if (!pbtn) return;
-    customConfig.mapPreset = pbtn.dataset.preset;
-    syncPresetButtons();
     beep(700, 0.05, 'sine', 0.04);
   });
 
@@ -2979,7 +2996,8 @@
       const maxMines = customConfig.cols * customConfig.rows - 1;
       customConfig.mines = isNaN(v3) ? customConfig.mines : Math.max(1, Math.min(maxMines, v3));
       customConfig.hearts = isNaN(v4) ? customConfig.hearts : Math.max(1, Math.min(99, v4));
-      customConfig.density = isNaN(v5) ? customConfig.density : Math.max(0.05, Math.min(0.35, v5 / 100));
+      /* NEW: Density min 0.10 */
+      customConfig.density = isNaN(v5) ? customConfig.density : Math.max(0.10, Math.min(0.35, v5 / 100));
     }
     newGame(currentKey);
   });
@@ -3014,7 +3032,8 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (confirmOverlay.classList.contains('show')) hideConfirmModal();
+      if (historyOverlay.classList.contains('show')) closeHistoryModal();
+      else if (confirmOverlay.classList.contains('show')) hideConfirmModal();
       else if (tutorialOverlay.classList.contains('show')) closeTutorial();
       else if (resultOverlay.classList.contains('show')) hideResultOverlay();
       else if (optionsMenu.classList.contains('show')) closeOptionsMenu();
